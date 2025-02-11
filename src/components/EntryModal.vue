@@ -8,7 +8,7 @@
 
   const DEFAULT_FORM_DATA: Entry = {
     title: '',
-    date: new Date(),
+    date: new Date().toLocaleDateString('en-CA'),
     balanceChange: 0,
   }
 
@@ -58,6 +58,8 @@
     }
 
     dialogRef.value.showModal();
+
+    console.log(formData.value.date)
   }
 
   const closeModal = () => {
