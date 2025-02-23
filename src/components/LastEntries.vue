@@ -1,17 +1,17 @@
 <script setup lang="ts">
 
 import EntryItem from "@/components/EntryItem.vue";
-import type {Entry} from "@/main.ts";
 import EntryModal from "@/components/EntryModal.vue";
 import {ref} from "vue";
-
-const props = defineProps<{
-  lastEntries: Entry[],
-}>();
+import {useEntryStore} from "@/store/entries.ts";
+import {storeToRefs} from "pinia";
 
 const entryModalRef = ref<typeof EntryModal | null>(null);
 
-const handleAddEntry = () => {
+const entriesStore = useEntryStore();
+const { lastEntries } = storeToRefs(entriesStore);
+
+const handleOpenModal = () => {
   if (!entryModalRef.value) {
     throw new Error("Entry modal ref is null");
   }
@@ -26,9 +26,9 @@ const handleAddEntry = () => {
       Last entries
     </h3>
     <ul>
-      <EntryItem v-for="entry in props.lastEntries" :key="entry.date.getTime" :entry="entry" />
+      <EntryItem v-for="entry in lastEntries" :key="entry.date.getTime" :entry="entry" />
     </ul>
-    <button @click="handleAddEntry">Add entry</button>
+    <button @click="handleOpenModal">Add entry</button>
   </section>
 
   <Teleport to="body">

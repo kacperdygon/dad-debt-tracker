@@ -1,8 +1,11 @@
 <script setup lang="ts">
 
-defineProps<{
-  totalDebt: number;
-}>();
+import {useEntryStore} from "@/store/entries.ts";
+import {storeToRefs} from "pinia";
+
+const entriesStore = useEntryStore();
+
+const { totalDebt } = storeToRefs(entriesStore);
 
 </script>
 

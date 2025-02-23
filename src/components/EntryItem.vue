@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import type {Entry} from "@/main.ts";
+import type {Entry} from "@/lib/entries.ts";
 
 const props = defineProps<{
   entry: Entry;

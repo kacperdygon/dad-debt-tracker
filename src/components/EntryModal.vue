@@ -1,10 +1,9 @@
 <script setup lang="ts">
 
-  import type {Entry} from "@/main.ts";
-  import {inject, ref} from "vue";
+import type {Entry} from "@/lib/entries.ts";
 
-  const addEntry = inject<(newEntry: Entry) => void>("addEntry");
-  const editEntry = inject<(entry: Entry, changedEntry: Entry) => void>("editEntry");
+  import {ref} from "vue";
+import {useEntryStore} from "@/store/entries.ts";
 
   const DEFAULT_FORM_DATA: Entry = {
     title: '',
@@ -16,6 +15,8 @@
 
   let isEditing: boolean;
   let targetEntry: Entry;
+
+  const entryStore = useEntryStore();
 
   const onSubmit = (event: Event) => {
 
@@ -29,15 +30,12 @@
       balanceChange: formData.value.balanceChange,
     }
 
-    if (!editEntry || !addEntry) {
-      throw new Error('Add or edit entry methods not passed');
+    if(isEditing) {
+      entryStore.editEntry(targetEntry, newEntry);
+    } else {
+      entryStore.addEntry(newEntry);
     }
 
-    if(isEditing) {
-      editEntry(targetEntry, newEntry);
-    } else {
-      addEntry(newEntry);
-    }
 
   }
 
