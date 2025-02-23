@@ -1,89 +1,86 @@
 <script setup lang="ts">
-
-import {EllipsisVerticalIcon} from "@heroicons/vue/24/solid"
-import {computed} from 'vue'
-import type {Entry} from "@/lib/entries.ts";
+import { EllipsisVerticalIcon } from '@heroicons/vue/24/solid'
+import { computed } from 'vue'
+import type { Entry } from '@/lib/entries.ts'
 
 const props = defineProps<{
-  entry: Entry;
+  entry: Entry
 }>()
 
 const balanceTextColor = computed(() => {
-  return props.entry.balanceChange > 0 ? 'var(--income)' : 'var(--expense)';
+  return props.entry.balanceChange > 0 ? 'var(--income)' : 'var(--expense)'
 })
 
 const balanceText = computed(() => {
-  return props.entry.balanceChange < 0 ? props.entry.balanceChange.toFixed(2) : "+" + props.entry.balanceChange.toFixed(2)
+  return props.entry.balanceChange < 0
+    ? props.entry.balanceChange.toFixed(2)
+    : '+' + props.entry.balanceChange.toFixed(2)
 })
-
 </script>
 
 <template>
-    <div class="entry-item">
+  <div class="entry-item">
     <div class="header">
       <h6 class="title">
-        {{props.entry.title}}
+        {{ props.entry.title }}
       </h6>
       <button>
-        <EllipsisVerticalIcon class="icon" :stroke-width="3"/>
+        <EllipsisVerticalIcon class="icon" :stroke-width="3" />
       </button>
     </div>
-    <p class="date-text">{{props.entry.date}}</p>
-    <h6 class="balance">{{balanceText}} zł</h6>
+    <p class="date-text">{{ props.entry.date }}</p>
+    <h6 class="balance">{{ balanceText }} zł</h6>
   </div>
-
 </template>
 
 <style scoped>
+* {
+  margin: 0;
+  font-size: 1rem;
+}
 
-  *{
-    margin:0;
-    font-size:1rem;
-  }
+.icon {
+  height: 1.5rem;
+}
 
-  .icon{
-    height:1.5rem;
-  }
+.header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+}
 
-  .header{
-    display:flex;
-    align-items:end;
-    justify-content:space-between
-  }
+.entry-item {
+  background-color: var(--foreground-color);
+  padding: 1rem;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.3);
+  border-radius: 0.25rem;
+}
 
-  .entry-item{
-    background-color: var(--foreground-color);
-    padding:1rem;
-    box-shadow: 0 4px 4px  rgba(0, 0, 0, 0.3);
-    border-radius:0.25rem;
-  }
+h6 {
+  font-size: 1.5rem;
+  font-weight: unset;
+}
 
-  h6{
-    font-size:1.5rem;
-    font-weight:unset;
-  }
+p {
+  font-size: 1.25rem;
+}
 
-  p{
-    font-size:1.25rem;
-  }
+button {
+  all: unset;
+  cursor: pointer;
+}
 
-  button{
-    all:unset;
-    cursor:pointer;
-  }
+.title {
+  margin-bottom: 0.25rem;
+  color: var(--text-color);
+}
 
-  .title{
-    margin-bottom:0.25rem;
-    color: var(--text-color);
-  }
+.date-text {
+  margin-bottom: 0.75rem;
+  color: var(--secondary-text-color);
+}
 
-  .date-text{
-    margin-bottom:0.75rem;
-    color: var(--secondary-text-color)
-  }
-
-  .balance{
-    color: v-bind(balanceTextColor)
-  }
-
+.balance {
+  color: v-bind(balanceTextColor);
+}
 </style>
