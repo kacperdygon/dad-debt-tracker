@@ -1,9 +1,18 @@
 :root {
-    --text-color: #333333;
-    --secondary-text-color: #696969;
-    --background-color: #F0F0F0;
-    --foreground-color: #EBEBEB;
-    --primary-color: #0051E7;
-    --income: #006513;
-    --expense: #960000;
+  --text-color: #333333;
+  --secondary-text-color: #696969;
+  --background-color: #f0f0f0;
+  --foreground-color: #ebebeb;
+  --primary-color: #0051e7;
+  --income: #006513;
+  --expense: #960000;
+  --text-font-size: 1rem;
+}
+
+* {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  background-color: var(--background-color);
 }

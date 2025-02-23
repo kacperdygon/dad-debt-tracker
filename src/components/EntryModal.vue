@@ -7,7 +7,7 @@ import {useEntryStore} from "@/store/entries.ts";
 
   const DEFAULT_FORM_DATA: Entry = {
     title: '',
-    date: new Date(),
+    date: new Date().toLocaleDateString('en-CA'),
     balanceChange: 0,
   }
 
@@ -56,6 +56,8 @@ import {useEntryStore} from "@/store/entries.ts";
     }
 
     dialogRef.value.showModal();
+
+    console.log(formData.value.date)
   }
 
   const closeModal = () => {

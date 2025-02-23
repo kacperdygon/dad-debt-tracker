@@ -37,5 +37,12 @@ const handleOpenModal = () => {
 </template>
 
 <style scoped>
+  ul{
+    padding-left:0;
+  }
+
+  ul > * {
+    margin: 0 0 1rem;
+  }
 
 </style>
