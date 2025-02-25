@@ -1,5 +1,6 @@
 :root {
-  --text-color: #333333;
+  --text-normal: #333333;
+  --text-gray: #696969;
   --secondary-text-color: #696969;
   --background-color: #f0f0f0;
   --foreground-color: #ebebeb;
@@ -11,8 +12,37 @@
 
 * {
   font-family: Arial, Helvetica, sans-serif;
+  color: var(--text-normal);
 }
 
 body {
   background-color: var(--background-color);
+  margin: 1.25rem;
+}
+
+h3 {
+  font-weight: 200;
+  font-size: 1.25rem;
+}
+
+h2 {
+  font-weight: 250;
+}
+
+.button-main {
+  background-color: var(--primary-color);
+  color: var(--background-color);
+  font-size: 1.25rem;
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  border: 0;
+  cursor: pointer;
+}
+
+.button-plain {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

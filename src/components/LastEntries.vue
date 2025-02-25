@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import EntryItem from '@/components/EntryItem.vue'
-import EntryModal from '@/components/EntryModal.vue'
-import { ref } from 'vue'
-import { useEntryStore } from '@/store/entries.ts'
-import { storeToRefs } from 'pinia'
+import EntryItem from '@/components/EntryItem.vue';
+import EntryModal from '@/components/EntryModal.vue';
+import { ref } from 'vue';
+import { useEntryStore } from '@/store/entries.ts';
+import { storeToRefs } from 'pinia';
 
-const entryModalRef = ref<typeof EntryModal | null>(null)
+const entryModalRef = ref<typeof EntryModal | null>(null);
 
-const entriesStore = useEntryStore()
-const { lastEntries } = storeToRefs(entriesStore)
+const entriesStore = useEntryStore();
+const { lastEntries } = storeToRefs(entriesStore);
 
 const handleOpenModal = () => {
   if (!entryModalRef.value) {
-    throw new Error('Entry modal ref is null')
+    throw new Error('Entry modal ref is null');
   }
-  entryModalRef.value.openModal()
-}
+  entryModalRef.value.openModal();
+};
 </script>
 
 <template>
@@ -24,7 +24,7 @@ const handleOpenModal = () => {
     <ul>
       <EntryItem v-for="entry in lastEntries" :key="entry.date.getTime" :entry="entry" />
     </ul>
-    <button @click="handleOpenModal">Add entry</button>
+    <button @click="handleOpenModal" class="button-main">Add new entry</button>
   </section>
 
   <Teleport to="body">
@@ -39,5 +39,12 @@ ul {
 
 ul > * {
   margin: 0 0 1rem;
+}
+
+button {
+  align-self: center;
+  position: relative;
+  left: 50%;
+  transform: translate(-50%, 0%);
 }
 </style>

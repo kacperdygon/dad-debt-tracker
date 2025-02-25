@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useEntryStore } from '@/store/entries.ts'
-import { storeToRefs } from 'pinia'
+import { useEntryStore } from '@/store/entries.ts';
+import { storeToRefs } from 'pinia';
 
-const entriesStore = useEntryStore()
+const entriesStore = useEntryStore();
 
-const { totalDebt } = storeToRefs(entriesStore)
+const { totalDebt } = storeToRefs(entriesStore);
 </script>
 
 <template>
@@ -14,4 +14,14 @@ const { totalDebt } = storeToRefs(entriesStore)
   </section>
 </template>
 
-<style scoped></style>
+<style scoped>
+h3 {
+  color: var(--text-gray);
+  margin: 0;
+}
+
+h2 {
+  margin: 0;
+  font-size: 3.5rem;
+}
+</style>
