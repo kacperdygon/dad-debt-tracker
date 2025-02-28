@@ -12,8 +12,7 @@ const DEFAULT_FORM_DATA: Entry = {
 
 const formData = ref<Entry>(DEFAULT_FORM_DATA);
 
-let isEditing: boolean;
-let targetEntry: Entry;
+let targetEntry: Entry | undefined = undefined;
 
 const entryStore = useEntryStore();
 
@@ -28,10 +27,12 @@ const onSubmit = (event: Event) => {
     balanceChange: formData.value.balanceChange,
   };
 
-  if (isEditing) {
+  if (targetEntry) {
     entryStore.editEntry(targetEntry, newEntry);
+    console.log('sigma');
   } else {
     entryStore.addEntry(newEntry);
+    console.log('brak sigma');
   }
 };
 
@@ -43,17 +44,13 @@ const openModal = (entry?: Entry) => {
   }
 
   if (entry) {
-    isEditing = true;
-    targetEntry = entry;
-    Object.assign(formData.value, entry);
+    formData.value = JSON.parse(JSON.stringify(entry));
   } else {
-    isEditing = false;
     formData.value = JSON.parse(JSON.stringify(DEFAULT_FORM_DATA));
   }
 
+  targetEntry = entry;
   dialogRef.value.showModal();
-
-  console.log(formData.value.date);
 };
 
 const closeModal = () => {
@@ -71,7 +68,7 @@ defineExpose({
 <template>
   <dialog ref="dialogRef">
     <header>
-      <h3>{{ isEditing ? 'Edit entry' : 'Add new entry' }}</h3>
+      <h3>{{ targetEntry ? 'Edit entry' : 'Add new entry' }}</h3>
       <button @click="closeModal" class="button-plain">
         <i class="fa-solid fa-xmark"></i>
       </button>

@@ -1,17 +1,16 @@
 <script setup lang="ts">
 import EntryItem from '@/components/EntryItem.vue';
 import EntryModal from '@/components/EntryModal.vue';
-import { ref } from 'vue';
+import { inject } from 'vue';
 import { useEntryStore } from '@/store/entries.ts';
 import { storeToRefs } from 'pinia';
 
-const entryModalRef = ref<typeof EntryModal | null>(null);
-
+const entryModalRef = inject('entryModalRef') as typeof EntryModal;
 const entriesStore = useEntryStore();
 const { lastEntries } = storeToRefs(entriesStore);
 
 const handleOpenModal = () => {
-  if (!entryModalRef.value) {
+  if (!entryModalRef) {
     throw new Error('Entry modal ref is null');
   }
   entryModalRef.value.openModal();
@@ -27,9 +26,7 @@ const handleOpenModal = () => {
     <button @click="handleOpenModal" class="button-main">Add new entry</button>
   </section>
 
-  <Teleport to="body">
-    <EntryModal ref="entryModalRef" />
-  </Teleport>
+
 </template>
 
 <style scoped>

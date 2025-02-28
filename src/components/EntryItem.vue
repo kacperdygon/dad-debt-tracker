@@ -1,11 +1,26 @@
 <script setup lang="ts">
-import { EllipsisVerticalIcon } from '@heroicons/vue/24/solid';
-import { computed } from 'vue';
+import { computed, inject } from 'vue';
 import type { Entry } from '@/lib/entries.ts';
+import { useEntryStore } from '@/store/entries.ts';
+import EntryModal from '@/components/EntryModal.vue';
+
+const entryStore = useEntryStore();
+const entryModalRef = inject('entryModalRef') as typeof EntryModal;
 
 const props = defineProps<{
   entry: Entry;
 }>();
+
+function handleDelete(){
+  entryStore.deleteEntry(props.entry);
+}
+
+function handleEdit(){
+  if (!entryModalRef) {
+    throw new Error('Entry modal ref is null');
+  }
+  entryModalRef.value.openModal(props.entry);
+}
 
 const balanceTextColor = computed(() => {
   return props.entry.balanceChange > 0 ? 'var(--income)' : 'var(--expense)';
@@ -36,6 +51,14 @@ const formattedDate = computed(() => {
         <i class="fas fa-ellipsis-v"></i>
       </button>
     </div>
+    <ul class="dropdown">
+      <li @click="handleEdit">
+        Edit
+      </li>
+      <li @click="handleDelete">
+        Delete
+      </li>
+    </ul>
     <p class="date-text">{{ formattedDate }}</p>
     <h6 class="balance">{{ balanceText }} zł</h6>
   </div>
