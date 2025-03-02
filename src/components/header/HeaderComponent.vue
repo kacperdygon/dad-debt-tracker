@@ -19,6 +19,8 @@ h1{
 
 .header-border {
   border-bottom: solid 1px var(--text-gray);
+  position: relative;
+  z-index:10;
 }
 
 header {
@@ -30,6 +32,8 @@ header {
   min-width:800px;
   box-sizing:border-box;
   align-items: center;
+  height:5rem;
+  background:var(--background-color);
 }
 
 a{
