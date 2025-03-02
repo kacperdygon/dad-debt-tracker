@@ -17,7 +17,8 @@
 
 body {
   background-color: var(--background-color);
-  margin: 1.25rem;
+  /*margin: 1.25rem;*/
+  margin:0;
 }
 
 h3 {
@@ -27,6 +28,10 @@ h3 {
 
 h2 {
   font-weight: 250;
+}
+
+h1{
+  font-weight: 500;
 }
 
 .button-main {

@@ -8,7 +8,7 @@ export const useEntryStore = defineStore('entry', () => {
   const lastEntries = computed(() => {
     return [...entries.value]
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      .slice(0, 3);
+      // .slice(0, 3);
   });
 
   const totalDebt = computed(() => {

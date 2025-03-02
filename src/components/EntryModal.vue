@@ -114,7 +114,7 @@ dialog {
   box-sizing: border-box;
   position: fixed;
   top: 50%;
-  transform: translate(0, -75%);
+  transform: translate(0, -100%);
   border: none;
 }
 
