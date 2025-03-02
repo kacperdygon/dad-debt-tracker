@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, onMounted, ref } from 'vue';
+import { computed, inject, onMounted, onUnmounted, ref } from 'vue';
 import type { Entry } from '@/lib/entries.ts';
 import { useEntryStore } from '@/store/entries.ts';
 import EntryModal from '@/components/EntryModal.vue';
@@ -14,13 +14,12 @@ const props = defineProps<{
   entry: Entry;
 }>();
 
-function handleDelete(){
+function handleDelete() {
   toggleDropdown();
   entryStore.deleteEntry(props.entry);
-
 }
 
-function handleEdit(){
+function handleEdit() {
   toggleDropdown();
   if (!entryModalRef) {
     throw new Error('Entry modal ref is null');
@@ -28,9 +27,8 @@ function handleEdit(){
   entryModalRef.value.openModal(props.entry);
 }
 
-function toggleDropdown(){
+function toggleDropdown() {
   showDropdown.value = !showDropdown.value;
-  console.log(showDropdown.value);
 }
 
 const balanceTextColor = computed(() => {
@@ -51,15 +49,20 @@ const formattedDate = computed(() => {
   });
 });
 
-onMounted(() => {
-  document.addEventListener('click', (event) => {
-    if (dropdownListRef.value && dropdownButtonRef.value
-      && !dropdownListRef.value.contains(event.target as Node) && !dropdownButtonRef.value.contains(event.target as Node)
-    && showDropdown.value == true) {
-      showDropdown.value = false;
-    }
-  });
-})
+const closeDropdown = (event: Event) => {
+  if (
+    dropdownListRef.value &&
+    dropdownButtonRef.value &&
+    !dropdownListRef.value.contains(event.target as Node) &&
+    !dropdownButtonRef.value.contains(event.target as Node) &&
+    showDropdown.value
+  ) {
+    showDropdown.value = false;
+  }
+};
+
+onMounted(() => document.addEventListener('click', closeDropdown));
+onUnmounted(() => document.removeEventListener('click', closeDropdown));
 </script>
 
 <template>
@@ -73,12 +76,8 @@ onMounted(() => {
           <i class="fas fa-ellipsis-v"></i>
         </button>
         <ul class="dropdown-list" ref="dropdownListRef" v-if="showDropdown">
-          <li @click="handleEdit">
-            Edit
-          </li>
-          <li @click="handleDelete" style="color: var(--expense)">
-            Delete
-          </li>
+          <li @click="handleEdit">Edit</li>
+          <li @click="handleDelete" style="color: var(--expense)">Delete</li>
         </ul>
       </div>
     </div>
@@ -134,7 +133,7 @@ p {
 }
 
 .dropdown {
-  position:relative;
+  position: relative;
   height: 1rem;
   width: 1rem;
   top: 0.125rem;
@@ -146,12 +145,12 @@ button {
   width: 1rem;
 }
 
-.dropdown-list{
+.dropdown-list {
   list-style: none;
   background-color: var(--background-color);
   position: absolute;
   z-index: 1;
-  border-radius:0.25rem;
+  border-radius: 0.25rem;
   right: 0;
   top: 140%;
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
@@ -159,12 +158,12 @@ button {
 }
 
 .dropdown-list li {
-  padding: 0.25rem 0.75rem 0.25rem 0.75rem;
-  cursor:pointer;
+  padding: 0.5rem 1rem 0.5rem 1rem;
+  cursor: pointer;
 }
 
 .dropdown-list li:hover {
-  background-color: #eaeaea
+  background-color: #eaeaea;
 }
 
 @media screen and (max-width: 600px) {

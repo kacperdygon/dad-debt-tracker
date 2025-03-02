@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import Navbar from './NavbarComponent.vue'
+import Navbar from './NavbarComponent.vue';
 </script>
 
 <template>
@@ -9,35 +9,34 @@
       <Navbar />
     </header>
   </div>
-
 </template>
 
 <style scoped>
-h1{
-  text-wrap:nowrap;
+h1 {
+  text-wrap: nowrap;
 }
 
 .header-border {
   border-bottom: solid 1px var(--text-gray);
   position: relative;
-  z-index:10;
+  z-index: 10;
 }
 
 header {
-  margin:auto;
-  width:60%;
+  margin: auto;
+  width: 60%;
   display: flex;
   justify-content: space-between;
-  padding:1rem;
-  min-width:800px;
-  box-sizing:border-box;
+  padding: 1rem;
+  min-width: 800px;
+  box-sizing: border-box;
   align-items: center;
-  height:5rem;
-  background:var(--background-color);
+  height: 5rem;
+  background: var(--background-color);
 }
 
-a{
-  display:flex;
+a {
+  display: flex;
   align-items: center;
   text-decoration: none;
 }
@@ -54,11 +53,9 @@ i {
 }
 
 @media screen and (max-width: 800px) {
-  header{
-    width:100%;
-    min-width:0;
+  header {
+    width: 100%;
+    min-width: 0;
   }
 }
-
-
 </style>

@@ -12,25 +12,24 @@ provide('entryModalRef', entryModalRef);
 <template>
   <HeaderComponent />
   <div class="margin-div">
-      <RouterView />
+    <RouterView />
   </div>
 
   <EntryModal ref="entryModalRef" />
-
 </template>
 
 <style scoped>
 .margin-div {
-  margin:auto;
-  padding:1.25rem;
-  width:50%;
+  margin: auto;
+  padding: 1.25rem;
+  width: 50%;
   box-sizing: border-box;
   min-width: 600px;
 }
 
 @media screen and (max-width: 600px) {
   .margin-div {
-    width:100%;
+    width: 100%;
     min-width: 0;
   }
 }

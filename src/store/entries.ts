@@ -6,9 +6,9 @@ export const useEntryStore = defineStore('entry', () => {
   const entries = ref(getEntriesFromLocalStorage());
 
   const lastEntries = computed(() => {
-    return [...entries.value]
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      // .slice(0, 3);
+    return [...entries.value].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+    );
   });
 
   const totalDebt = computed(() => {

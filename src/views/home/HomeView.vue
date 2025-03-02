@@ -10,6 +10,4 @@ import LastEntries from '@/views/home/components/LastEntries.vue';
   </main>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

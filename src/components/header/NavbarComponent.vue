@@ -1,122 +1,151 @@
 <script setup lang="ts">
-
-import { computed, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 
 const displayUl = ref(false);
 
 const ulTop = computed(() => {
   return displayUl.value ? '5rem' : '-15rem';
-})
+});
 
 function toggleNavbar() {
-  displayUl.value = !displayUl.value;
+  if (displayUl.value) {
+    displayUl.value = false;
+    changeClassesToHidden();
+  } else {
+    displayUl.value = true;
+    changeClassesToShown();
+  }
+}
+function closeNavbar() {
+  displayUl.value = false;
 }
 
-const isScreenWide = computed(() => {
-  return window.innerWidth > 600;
-})
+const navbarClassObject = ref<Record<string, boolean>>({});
+function changeClassesToHidden() {
+  navbarClassObject.value['slide-up'] = true;
+  delete navbarClassObject.value['slide-down'];
+}
+function changeClassesToShown() {
+  navbarClassObject.value['slide-down'] = true;
+  delete navbarClassObject.value['slide-up'];
+}
 
+const route = useRoute();
+watch(route, () => {
+  closeNavbar(); // Close dropdown when route changes
+});
+
+const isScreenWide = ref(window.innerWidth > 600);
+const updateScreenWidth = () => {
+  isScreenWide.value = window.innerWidth > 600;
+  navbarClassObject.value = {};
+};
+
+onMounted(() => window.addEventListener('resize', updateScreenWidth));
+onUnmounted(() => window.removeEventListener('resize', updateScreenWidth));
 </script>
 
 <template>
   <nav>
     <Teleport to="#app" :disabled="isScreenWide">
-
-        <ul :class="{'slide-down': displayUl, 'slide-up': !displayUl}">
-          <li>
-            <RouterLink to="/">Overview</RouterLink>
-          </li>
-          <li>
-            <RouterLink to="/entries">Entries</RouterLink>
-          </li>
-          <li>
-            <RouterLink to="/settings">Settings</RouterLink>
-          </li>
-        </ul>
-
+      <ul :class="navbarClassObject">
+        <li>
+          <RouterLink to="/">Overview</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/entries">Entries</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/settings">Settings</RouterLink>
+        </li>
+      </ul>
     </Teleport>
 
     <button class="button-plain" @click="toggleNavbar">
       <i class="fa-solid fa-bars"></i>
     </button>
   </nav>
-
 </template>
 
 <style scoped>
-  nav{
-    display:flex;
-    width:100%;
-    justify-content: end;
+nav {
+  display: flex;
+  width: 100%;
+  justify-content: end;
+}
+
+ul {
+  display: flex;
+  list-style: none;
+  box-sizing: border-box;
+  overflow: auto;
+  padding: 0;
+  gap: 2rem;
+  margin: 0;
+}
+
+li {
+  box-sizing: border-box;
+}
+
+a {
+  display: block;
+}
+
+i {
+  width: 1.5rem;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+button {
+  display: none;
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 600px) {
+  button {
+    display: block;
+    padding: 0.5rem;
   }
-
-  ul{
-    display:flex;
-    list-style:none;
-    box-sizing:border-box;
-    overflow: auto;
-    padding:0;
-    gap: 2rem;
-    margin:0;
+  ul {
+    left: 0;
+    top: v-bind(ulTop);
+    padding: 0.5rem 0 0.5rem 0;
+    display: block;
+    position: fixed;
+    background-color: var(--background-color);
+    z-index: 3;
+    width: 100%;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
   }
-
-  li{
-    box-sizing:border-box;
+  li {
+    padding: 1rem;
   }
+}
 
-  a{
-    display:block;
+@keyframes slide-down {
+  0% {
+    top: -15rem;
   }
-
-  i{
-    width:1.5rem;
-    font-size:1.5rem;
-    text-align:center;
+  100% {
+    top: 5rem;
   }
+}
+.slide-down {
+  animation: slide-down 0.4s;
+}
 
-  button{
-    display:none;
-    box-sizing: border-box;
-
+@keyframes slide-up {
+  0% {
+    top: 5rem;
   }
-
-  @media screen and (max-width: 600px) {
-    button{
-      display: block;
-      padding:0.5rem;
-    }
-    ul{
-
-      left: 0;
-      top:v-bind(ulTop);
-      padding: 0.5rem 0 0.5rem 0;
-      display:block;
-      position:fixed;
-      background-color: var(--background-color);
-      z-index: 3;
-      width:100%;
-      box-shadow:0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
-    }
-    li{
-      padding:1rem;
-    }
+  100% {
+    top: -15rem;
   }
-
-  @keyframes slide-down {
-    0%   {top:-15rem;}
-    100% {top:5rem;}
-  }
-  .slide-down {
-    animation: slide-down .4s;
-  }
-
-  @keyframes slide-up {
-    0%   {top:5rem;}
-    100% {top:-15rem;}
-  }
-  .slide-up {
-    animation: slide-up .4s;
-  }
-
-
+}
+.slide-up {
+  animation: slide-up 0.4s;
+}
 </style>
