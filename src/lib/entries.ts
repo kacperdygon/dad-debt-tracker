@@ -1,6 +1,9 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface Entry {
+  id: string;
   title: string;
-  date: Date;
+  timestamp: Timestamp;
   balanceChange: number;
 }
 

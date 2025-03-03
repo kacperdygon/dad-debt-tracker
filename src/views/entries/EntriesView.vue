@@ -1,19 +1,18 @@
 <script setup lang="ts">
 import EntryItem from '@/components/EntryItem.vue';
 import { inject } from 'vue';
-import EntryModal from '@/components/EntryModal.vue';
 import { useEntryStore } from '@/store/entries.ts';
 import { storeToRefs } from 'pinia';
 
-const entryModalRef = inject('entryModalRef') as typeof EntryModal;
 const entriesStore = useEntryStore();
 const { lastEntries } = storeToRefs(entriesStore);
 
+const openEntryModal = inject<() => void | null>('openEntryModal');
 const handleOpenModal = () => {
-  if (!entryModalRef) {
-    throw new Error('Entry modal ref is null');
+  if (!openEntryModal) {
+    throw new Error('Open entry modal not passed');
   }
-  entryModalRef.value.openModal();
+  openEntryModal();
 };
 </script>
 
@@ -22,7 +21,7 @@ const handleOpenModal = () => {
     <section>
       <h2>Entries</h2>
       <ul>
-        <EntryItem v-for="entry in lastEntries" :key="entry.date.getTime" :entry="entry" />
+        <EntryItem v-for="entry in lastEntries" :key="entry.id" :entry="entry" />
       </ul>
       <button @click="handleOpenModal" class="button-main">Add new entry</button>
     </section>

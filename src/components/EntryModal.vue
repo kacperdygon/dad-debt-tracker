@@ -1,40 +1,68 @@
 <script setup lang="ts">
 import type { Entry } from '@/lib/entries.ts';
 
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useEntryStore } from '@/store/entries.ts';
+import { Timestamp } from 'firebase/firestore';
 
-const DEFAULT_FORM_DATA: Entry = {
+interface AddEntryFormData {
+  title: string;
+  timestamp: string;
+  balanceChange: 0;
+}
+
+const DEFAULT_FORM_DATA: AddEntryFormData = {
   title: '',
-  date: new Date().toLocaleDateString('en-CA'),
+  timestamp: new Date().toLocaleDateString('en-CA'),
   balanceChange: 0,
 };
 
-const formData = ref<Entry>(DEFAULT_FORM_DATA);
+const formData = ref(DEFAULT_FORM_DATA);
+const errorMessage = ref('');
 
-let targetEntry: Entry | undefined = undefined;
+const targetEntryId = ref<string | undefined>(undefined);
 
 const entryStore = useEntryStore();
 
 const onSubmit = (event: Event) => {
   event.preventDefault();
+
+  if (formData.value.balanceChange === 0) {
+    errorMessage.value = `Balance change can't be 0`;
+    return;
+  }
+
   if (!dialogRef.value) throw new Error('Dialog ref not set');
   dialogRef.value.close();
 
-  const newEntry: Entry = {
+  const newEntry: Omit<Entry, 'id'> = {
     title: formData.value.title,
-    date: formData.value.date,
+    timestamp: Timestamp.fromDate(new Date(formData.value.timestamp)),
     balanceChange: formData.value.balanceChange,
   };
 
-  if (targetEntry) {
-    entryStore.editEntry(targetEntry, newEntry);
-    console.log('sigma');
+  if (targetEntryId.value) {
+    entryStore.editEntry(targetEntryId.value, newEntry);
   } else {
     entryStore.addEntry(newEntry);
-    console.log('brak sigma');
   }
 };
+
+const gridTemplate = computed(() => {
+  return errorMessage.value.length === 0
+    ? `
+        'title title'
+        'date balanceChange'
+        'submit submit'
+      `
+    : `
+        'title title'
+        'date balanceChange'
+        'errorMessage errorMessage'
+        'submit submit'
+      `;
+});
+
 
 const dialogRef = ref<HTMLDialogElement | null>(null);
 
@@ -45,11 +73,13 @@ const openModal = (entry?: Entry) => {
 
   if (entry) {
     formData.value = JSON.parse(JSON.stringify(entry));
+    const jsDate = entry.timestamp.toDate();
+    formData.value.timestamp = jsDate.toISOString().split('T')[0];
   } else {
     formData.value = JSON.parse(JSON.stringify(DEFAULT_FORM_DATA));
   }
 
-  targetEntry = entry;
+  targetEntryId.value = entry?.id;
   dialogRef.value.showModal();
 };
 
@@ -58,6 +88,7 @@ const closeModal = () => {
     throw new Error('Dialog ref not set');
   }
   dialogRef.value.close();
+  errorMessage.value = '';
 };
 
 defineExpose({
@@ -68,14 +99,14 @@ defineExpose({
 <template>
   <dialog ref="dialogRef">
     <header>
-      <h3>{{ targetEntry ? 'Edit entry' : 'Add new entry' }}</h3>
+      <h3>{{ targetEntryId ? 'Edit entry' : 'Add new entry' }}</h3>
       <button @click="closeModal" class="button-plain">
         <i class="fa-solid fa-xmark"></i>
       </button>
     </header>
     <form @submit="onSubmit">
       <input type="text" v-model="formData.title" required placeholder="Title" />
-      <input type="date" v-model="formData.date" required placeholder="Date" />
+      <input type="date" v-model="formData.timestamp" required placeholder="Date" />
       <input
         type="number"
         v-model="formData.balanceChange"
@@ -83,8 +114,8 @@ defineExpose({
         required
         placeholder="Balance"
       />
-
-      <input type="submit" value="Add entry" class="button-main" />
+      <span class="error-message" v-if="errorMessage.length != 0">{{errorMessage}}</span>
+      <input type="submit" :value="targetEntryId ? 'Edit entry' : 'Add entry'" class="button-main" />
     </form>
   </dialog>
 </template>
@@ -94,9 +125,7 @@ form {
   display: grid;
   grid-template-columns: calc(50% - 0.5rem) calc(50% - 0.5rem);
   grid-template-areas:
-    'title title'
-    'date balanceChange'
-    'submit submit';
+    v-bind(gridTemplate);
   gap: 1rem;
   box-sizing: border-box;
 }
@@ -105,6 +134,14 @@ button {
   height: 1.5rem;
   width: 1.5rem;
   transform: translate(0.25rem, -0.25rem);
+}
+
+.error-message{
+  color: red;
+  text-align: center;
+  margin:0;
+  grid-area: errorMessage;
+  font-size:0.875rem;
 }
 
 dialog {

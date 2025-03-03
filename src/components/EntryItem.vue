@@ -2,10 +2,9 @@
 import { computed, inject, onMounted, onUnmounted, ref } from 'vue';
 import type { Entry } from '@/lib/entries.ts';
 import { useEntryStore } from '@/store/entries.ts';
-import EntryModal from '@/components/EntryModal.vue';
 
 const entryStore = useEntryStore();
-const entryModalRef = inject('entryModalRef') as typeof EntryModal;
+const openEntryModal = inject<(entry: Entry) => void | null>('openEntryModal');
 const dropdownListRef = ref<HTMLElement | null>(null);
 const dropdownButtonRef = ref<HTMLElement | null>(null);
 const showDropdown = ref(false);
@@ -16,15 +15,15 @@ const props = defineProps<{
 
 function handleDelete() {
   toggleDropdown();
-  entryStore.deleteEntry(props.entry);
+  entryStore.deleteEntry(props.entry.id);
 }
 
 function handleEdit() {
   toggleDropdown();
-  if (!entryModalRef) {
+  if (!openEntryModal) {
     throw new Error('Entry modal ref is null');
   }
-  entryModalRef.value.openModal(props.entry);
+  openEntryModal(props.entry);
 }
 
 function toggleDropdown() {
@@ -42,7 +41,7 @@ const balanceText = computed(() => {
 });
 
 const formattedDate = computed(() => {
-  return new Date(props.entry.date).toLocaleDateString('en-US', {
+  return new Date(props.entry.timestamp.toDate()).toLocaleDateString('en-US', {
     weekday: 'long',
     day: 'numeric',
     month: 'long',

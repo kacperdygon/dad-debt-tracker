@@ -1,12 +1,24 @@
 <script setup lang="ts">
 import EntryModal from '@/components/EntryModal.vue';
 import HeaderComponent from '@/components/header/HeaderComponent.vue';
-import { ref, provide } from 'vue';
+import { ref, provide, onMounted } from 'vue';
 import { RouterView } from 'vue-router';
+import { useEntryStore } from '@/store/entries.ts';
 
 const entryModalRef = ref<typeof EntryModal | null>(null);
 
-provide('entryModalRef', entryModalRef);
+
+const entryStore = useEntryStore();
+onMounted(() => {
+  if (entryStore.entries.length === 0) {
+    entryStore.fetchEntries();
+  }
+});
+
+onMounted(() => {
+  if (!entryModalRef.value) throw new Error('Entry modal ref not set');
+  provide('openEntryModal', entryModalRef.value.openModal);
+})
 </script>
 
 <template>

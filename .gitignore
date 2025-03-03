@@ -30,3 +30,5 @@ coverage
 
 .prettierrc.json
 .editorconfig
+.env
+.env.local

@@ -22,20 +22,9 @@ function closeNavbar() {
   displayUl.value = false;
 }
 
-const navbarClassObject = ref<Record<string, boolean>>({});
-function changeClassesToHidden() {
-  navbarClassObject.value['slide-up'] = true;
-  delete navbarClassObject.value['slide-down'];
-}
-function changeClassesToShown() {
-  navbarClassObject.value['slide-down'] = true;
-  delete navbarClassObject.value['slide-up'];
-}
-
 const isScreenWide = ref(window.innerWidth > 600);
 const updateScreenWidth = () => {
   isScreenWide.value = window.innerWidth > 600;
-  navbarClassObject.value = {};
 };
 
 onMounted(() => window.addEventListener('resize', updateScreenWidth));
@@ -50,7 +39,7 @@ watch(route, () => {
 <template>
   <nav>
     <Teleport to="#app" :disabled="isScreenWide">
-      <ul :class="navbarClassObject">
+      <ul :class="{'slide-up': !displayUl, 'slide-down': displayUl}">
         <li>
           <RouterLink to="/">Overview</RouterLink>
         </li>

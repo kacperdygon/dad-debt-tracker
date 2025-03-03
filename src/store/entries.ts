@@ -1,13 +1,27 @@
 import { defineStore } from 'pinia';
-import { type Entry, getEntriesFromLocalStorage, saveEntries } from '@/lib/entries.ts';
+import { type Entry, saveEntries } from '@/lib/entries.ts';
 import { computed, ref } from 'vue';
+import {
+  addEntryToFirestore,
+  deleteEntryFromFirestore,
+  editEntryFromFirestore,
+  getEntriesFromFirestore
+} from '@/lib/database.ts';
 
 export const useEntryStore = defineStore('entry', () => {
-  const entries = ref(getEntriesFromLocalStorage());
+  const entries = ref<Entry[]>([]);
+
+  async function fetchEntries () {
+    try {
+      entries.value = await getEntriesFromFirestore();
+    } catch (error) {
+      console.error('Error fetching entries:', error);
+    }
+  }
 
   const lastEntries = computed(() => {
     return [...entries.value].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+      (a, b) => new Date(b.timestamp.toDate()).getTime() - new Date(a.timestamp.toDate()).getTime(),
     );
   });
 
@@ -19,36 +33,38 @@ export const useEntryStore = defineStore('entry', () => {
     return totalDebt;
   });
 
-  function addEntry(newEntry: Entry) {
+  async function addEntry(newEntry: Omit<Entry, 'id'>) {
     if (!newEntry) {
       return;
     }
-    if (!(newEntry.date && newEntry.balanceChange && newEntry.title)) {
+    if (!(newEntry.timestamp && newEntry.balanceChange && newEntry.title)) {
       return;
     }
-    entries.value.push(newEntry);
-    saveEntries(entries.value);
+    const newEntryId = await addEntryToFirestore(newEntry);
+    entries.value.push({...newEntry, id: newEntryId});
   }
 
-  function editEntry(targetEntry: Entry, newEntry: Entry) {
+  async function editEntry(entryId: string, newEntry: Omit<Entry, 'id'>) {
     if (!newEntry) {
       return;
     }
-    if (!(newEntry.date && newEntry.balanceChange && newEntry.title)) {
+    if (!(newEntry.timestamp && newEntry.balanceChange && newEntry.title)) {
       return;
     }
-    const matchingIndex = entries.value.findIndex((entry) => entry === targetEntry);
-    if (matchingIndex !== -1) {
-      entries.value.splice(matchingIndex, 1, newEntry);
+    await editEntryFromFirestore(entryId, newEntry);
+    const index = entries.value.findIndex((entry) => entry.id === entryId);
+    if (index !== -1) {
+      entries.value[index] = {...newEntry, id: entryId};
     }
-    saveEntries(entries.value);
   }
 
-  function deleteEntry(targetEntry: Entry) {
-    const matchingIndex = entries.value.indexOf(targetEntry);
-    entries.value.splice(matchingIndex, 1);
-    saveEntries(entries.value);
+  async function deleteEntry(entryId: string) {
+    await deleteEntryFromFirestore(entryId);
+    const index = entries.value.findIndex((entry) => entry.id === entryId);
+    if (index !== -1) {
+      entries.value.splice(index, 1);
+    }
   }
 
-  return { entries, lastEntries, totalDebt, addEntry, editEntry, deleteEntry };
+  return { entries, lastEntries, totalDebt, addEntry, editEntry, deleteEntry, fetchEntries };
 });
