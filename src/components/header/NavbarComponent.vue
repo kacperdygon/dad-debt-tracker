@@ -17,6 +17,7 @@ function toggleNavbar() {
     changeClassesToShown();
   }
 }
+
 function closeNavbar() {
   displayUl.value = false;
 }
@@ -31,11 +32,6 @@ function changeClassesToShown() {
   delete navbarClassObject.value['slide-up'];
 }
 
-const route = useRoute();
-watch(route, () => {
-  closeNavbar(); // Close dropdown when route changes
-});
-
 const isScreenWide = ref(window.innerWidth > 600);
 const updateScreenWidth = () => {
   isScreenWide.value = window.innerWidth > 600;
@@ -44,6 +40,11 @@ const updateScreenWidth = () => {
 
 onMounted(() => window.addEventListener('resize', updateScreenWidth));
 onUnmounted(() => window.removeEventListener('resize', updateScreenWidth));
+
+const route = useRoute();
+watch(route, () => {
+  closeNavbar(); // Close dropdown when route changes
+});
 </script>
 
 <template>
