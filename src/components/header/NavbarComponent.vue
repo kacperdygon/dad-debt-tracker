@@ -9,13 +9,7 @@ const ulTop = computed(() => {
 });
 
 function toggleNavbar() {
-  if (displayUl.value) {
-    displayUl.value = false;
-    changeClassesToHidden();
-  } else {
-    displayUl.value = true;
-    changeClassesToShown();
-  }
+  displayUl.value = !displayUl.value;
 }
 
 function closeNavbar() {
@@ -105,7 +99,7 @@ button {
     padding: 0.5rem 0 0.5rem 0;
     display: block;
     position: fixed;
-    background-color: var(--background-color);
+    background-color: var(--foreground-color);
     z-index: 3;
     width: 100%;
     box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);

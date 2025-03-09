@@ -145,14 +145,13 @@ button {
 }
 
 dialog {
-  border: 0;
+  border: 1px solid var(--light-border);
   border-radius: 0.25rem;
   padding: 1.25rem;
   box-sizing: border-box;
   position: fixed;
   top: 50%;
   transform: translate(0, -100%);
-  border: none;
 }
 
 h3 {

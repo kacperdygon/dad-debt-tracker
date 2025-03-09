@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import Navbar from './NavbarComponent.vue';
+import { useRoute } from 'vue-router';
 </script>
 
 <template>
   <div class="header-border">
     <header>
       <h1>Dad debt tracker</h1>
-      <Navbar />
+      <Navbar v-if="useRoute().path !== '/auth'" />
     </header>
   </div>
 </template>
@@ -17,9 +18,10 @@ h1 {
 }
 
 .header-border {
-  border-bottom: solid 1px var(--text-gray);
+  border-bottom: solid 1px var(--light-border);
   position: relative;
   z-index: 10;
+  background-color: var(--foreground-color)
 }
 
 header {
@@ -32,7 +34,6 @@ header {
   box-sizing: border-box;
   align-items: center;
   height: 5rem;
-  background: var(--background-color);
 }
 
 a {

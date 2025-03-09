@@ -32,3 +32,4 @@ coverage
 .editorconfig
 .env
 .env.local
+.vercel

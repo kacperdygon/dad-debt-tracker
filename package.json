@@ -14,14 +14,17 @@
   },
   "dependencies": {
     "firebase": "^11.4.0",
+    "js-cookie": "^3.0.5",
     "pinia": "^3.0.1",
+    "vercel": "^41.3.2",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",
     "@tsconfig/node22": "^22.0.0",
-    "@types/node": "^22.13.8",
+    "@types/js-cookie": "^3.0.6",
+    "@types/node": "^22.13.9",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/eslint-config-prettier": "^10.1.0",
     "@vue/eslint-config-typescript": "^14.1.3",

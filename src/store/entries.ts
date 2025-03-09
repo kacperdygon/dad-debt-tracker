@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { type Entry, saveEntries } from '@/lib/entries.ts';
+import { type Entry } from '@/lib/entries.ts';
 import { computed, ref } from 'vue';
 import {
   addEntryToFirestore,

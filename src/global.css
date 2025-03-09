@@ -4,9 +4,12 @@
   --secondary-text-color: #696969;
   --background-color: #f0f0f0;
   --foreground-color: #ebebeb;
+  /*--background-color: #ebebeb;*/
+  /*--foreground-color: #f0f0f0;*/
   --primary-color: #0051e7;
   --income: #006513;
   --expense: #960000;
+  --light-border: #dadce0;
   --text-font-size: 1rem;
 }
 
