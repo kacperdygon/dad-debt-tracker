@@ -1,18 +1,27 @@
 {
-  "extends": "@tsconfig/node22/tsconfig.json",
-  "include": [
-    "vite.config.*",
-    "vitest.config.*",
-    "cypress.config.*",
-    "nightwatch.conf.*",
-    "playwright.config.*"
-  ],
   "compilerOptions": {
-    "noEmit": true,
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
-
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "types": ["node"]
+    "module": "ESNext",  // Używamy ESNext, żeby Node.js mógł obsługiwać moduły ES
+    "moduleResolution": "node",  // Używamy node resolution dla rozwiązywania importów
+    "outDir": "./dist/backend",  // Wskaż, gdzie chcesz, by pliki JS były zapisywane
+    "rootDir": "./src/backend",  // Gdzie znajdują się pliki TS
+    "esModuleInterop": true,  // Zapewnia kompatybilność z modułami ES
+    "target": "ES6",  // Wersja JavaScriptu, którą chcesz uzyskać
+    "strict": true,  // Włącza tryb ścisły dla TypeScriptu
+    "allowJs": true,  // Włącza obsługę JS w kodzie źródłowym
+    "noEmit": false  // Nie wyłączaj emisji plików .js
+  },
+  "include": [
+    "src/backend/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "tsc-alias": {
+    "verbose": false,
+    "resolveFullPaths": true,
+    "fileExtensions": {
+      "inputGlob": "{js,jsx,mjs}",
+      "outputCheck": ["js", "json", "jsx", "mjs"]
+    }
   }
 }
