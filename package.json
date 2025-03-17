@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
     "build-server": "tsc -p tsconfig.node.json && tsc-alias -p tsconfig.node.json",
-    "server": "npm run build-server && node dist/backend/server.js",
+    "server": "npx tsx src/backend/server.ts",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
@@ -15,7 +15,9 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
     "esbuild": "^0.25.1",
     "express": "^4.21.2",
     "js-cookie": "^3.0.5",
@@ -32,6 +34,7 @@
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",
     "@tsconfig/node22": "^22.0.0",
+    "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/js-cookie": "^3.0.6",

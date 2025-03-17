@@ -1,17 +1,9 @@
 import { Router } from 'express'
+import { signIn, verifySession } from '../controllers/authController';
 
 const router = Router();
 
-router.post('/', (req, res) => {
-  let pin;
-  if (req.cookies) {
-    pin = req.cookies.get('pin') || undefined;
-  }
-  else pin = undefined;
-
-
-
-  res.json({ authenticated:  });
-})
+router.post('/', signIn)
+router.post('/verify-session', verifySession)
 
 export default router;

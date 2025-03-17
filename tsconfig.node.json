@@ -8,7 +8,11 @@
     "target": "ES6",  // Wersja JavaScriptu, którą chcesz uzyskać
     "strict": true,  // Włącza tryb ścisły dla TypeScriptu
     "allowJs": true,  // Włącza obsługę JS w kodzie źródłowym
-    "noEmit": false  // Nie wyłączaj emisji plików .js
+    "noEmit": false,  // Nie wyłączaj emisji plików .js
+    "paths": {
+      "@/*": ["src/*"],
+      "@/backend/*": ["src/backend/*"]
+    }
   },
   "include": [
     "src/backend/**/*.ts"

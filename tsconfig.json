@@ -15,7 +15,11 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"],  // Alias dla `@` do `src`
+    }
   },
   "include": [
     "src/**/*.ts"
