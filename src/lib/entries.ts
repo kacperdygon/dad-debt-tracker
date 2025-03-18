@@ -1,11 +1,11 @@
-export interface Entry {
+export interface IEntry {
   id: string;
   title: string;
   timestamp: Date;
   balanceChange: number;
 }
 
-export const getEntriesFromLocalStorage = (): Entry[] => {
+export const getEntriesFromLocalStorage = (): IEntry[] => {
   const storedEntries = localStorage.getItem('entries');
   let parsedStoredEntries;
 
@@ -18,6 +18,6 @@ export const getEntriesFromLocalStorage = (): Entry[] => {
   return parsedStoredEntries;
 };
 
-export const saveEntries = (entries: Entry[]) => {
+export const saveEntries = (entries: IEntry[]) => {
   localStorage.setItem('entries', JSON.stringify(entries));
 };

@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { computed, inject, onMounted, onUnmounted, ref } from 'vue';
-import type { Entry } from '@/lib/entries.ts';
+import type { IEntry } from '@/lib/entries.ts';
 import { useEntryStore } from '@/store/entries.ts';
 
 const entryStore = useEntryStore();
-const openEntryModal = inject<(entry: Entry) => void | null>('openEntryModal');
+const openEntryModal = inject<(entry: IEntry) => void | null>('openEntryModal');
 const dropdownListRef = ref<HTMLElement | null>(null);
 const dropdownButtonRef = ref<HTMLElement | null>(null);
 const showDropdown = ref(false);
 
 const props = defineProps<{
-  entry: Entry;
+  entry: IEntry;
 }>();
 
 function handleDelete() {

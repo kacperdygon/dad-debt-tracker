@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { type Entry } from '@/lib/entries.ts';
+import { type IEntry } from '@/lib/entries.ts';
 import { computed, ref } from 'vue';
 import {
   addEntryToFirestore,
@@ -9,7 +9,7 @@ import {
 } from '@/lib/database.ts';
 
 export const useEntryStore = defineStore('entry', () => {
-  const entries = ref<Entry[]>([]);
+  const entries = ref<IEntry[]>([]);
 
   async function fetchEntries () {
     try {
@@ -33,7 +33,7 @@ export const useEntryStore = defineStore('entry', () => {
     return totalDebt;
   });
 
-  async function addEntry(newEntry: Omit<Entry, 'id'>) {
+  async function addEntry(newEntry: Omit<IEntry, 'id'>) {
     if (!newEntry) {
       return;
     }
@@ -44,7 +44,7 @@ export const useEntryStore = defineStore('entry', () => {
     entries.value.push({...newEntry, id: newEntryId});
   }
 
-  async function editEntry(entryId: string, newEntry: Omit<Entry, 'id'>) {
+  async function editEntry(entryId: string, newEntry: Omit<IEntry, 'id'>) {
     if (!newEntry) {
       return;
     }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Entry } from '@/lib/entries.ts';
+import type { IEntry } from '@/lib/entries.ts';
 
 import { computed, ref } from 'vue';
 import { useEntryStore } from '@/store/entries.ts';
@@ -35,7 +35,7 @@ const onSubmit = (event: Event) => {
   if (!dialogRef.value) throw new Error('Dialog ref not set');
   dialogRef.value.close();
 
-  const newEntry: Omit<Entry, 'id'> = {
+  const newEntry: Omit<IEntry, 'id'> = {
     title: formData.value.title,
     timestamp: Timestamp.fromDate(new Date(formData.value.timestamp)),
     balanceChange: formData.value.balanceChange,
@@ -66,7 +66,7 @@ const gridTemplate = computed(() => {
 
 const dialogRef = ref<HTMLDialogElement | null>(null);
 
-const openModal = (entry?: Entry) => {
+const openModal = (entry?: IEntry) => {
   if (!dialogRef.value) {
     throw new Error('Dialog ref not set');
   }
