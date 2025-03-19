@@ -4,18 +4,18 @@ import { getRoleByPin } from '@/backend/api/lib/auth';
 export const signIn = async (req: Request, res: Response) => {
   const { pin } = req.body;
   if (!pin) {
-    return res.status(400).json({ message: 'Invalid json body' });
+    return void res.status(400).json({ message: 'Invalid json body' });
   }
   try {
     const role = await getRoleByPin(pin);
     if (!role) {
-      return res.status(401).json({ message: 'Incorrect pin' });
+      return void res.status(401).json({ message: 'Incorrect pin' });
     }
     res.cookie('pin', pin, { maxAge: 900000, httpOnly: true });
-    return res.status(200).json({ message: `Logged in as ${role}`, role: role });
+    return void res.status(200).json({ message: `Logged in as ${role}`, role: role });
   } catch (error) {
     console.error('MongoDB error:', error);
-    return res.status(500).json({ message: 'Server error' });
+    return void res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -24,26 +24,26 @@ export const signIn = async (req: Request, res: Response) => {
 export const verifySession = async (req: Request, res: Response) => {
   const pin = req.cookies['pin'];
   if (!pin) {
-    return res.status(401).json({ message: 'No pin' });
+    return void res.status(401).json({ message: 'No pin' });
   }
   try {
     const role = await getRoleByPin(pin);
     if (!role) {
-      return res.status(401).json({ message: 'Invalid pin' });
+      return void res.status(401).json({ message: 'Invalid pin' });
     } else {
-      return res.status(200).json({ message: `Valid pin`, role: role });
+      return void res.status(200).json({ message: `Valid pin`, role: role });
     }
   } catch (error) {
     console.error('MongoDB error:', error);
-    return res.status(500).json({ message: 'Server error' });
+    return void res.status(500).json({ message: 'Server error' });
   }
 }
 
 export const signOut = async (req: Request, res: Response) => {
   const pin = req.cookies['pin'];
   if (!pin){
-    return res.status(401).json({ message: 'You\'re not logged in' });
+    return void res.status(401).json({ message: 'You\'re not logged in' });
   }
   res.cookie('pin','', { maxAge: 0, httpOnly: true });
-  return res.status(200).json({ message: 'Signed out' });
+  return void res.status(200).json({ message: 'Signed out' });
 }

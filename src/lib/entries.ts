@@ -1,5 +1,5 @@
 export interface IEntry {
-  id: string;
+  _id: string;
   title: string;
   timestamp: Date;
   balanceChange: number;

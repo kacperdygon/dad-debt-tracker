@@ -1,11 +1,15 @@
-import mongoose from 'mongoose';
-import type { IEntry } from '@/lib/entries';
-const { Schema, model } = mongoose;
+import { model, Schema, Document } from 'mongoose';
+
+export interface IEntryDocument extends Document {
+  title: string;
+  timestamp: Date;
+  balanceChange: number;
+}
 
 const entrySchema = new Schema({
   title: String,
-  date: Date,
+  timestamp: Date,
   balanceChange: Number,
 });
 
-export const Entry = model<IEntry>('Entry', entrySchema);
+export const Entry = model<IEntryDocument>('Entry', entrySchema);
