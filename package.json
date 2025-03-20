@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
     "build-server": "tsc -p tsconfig.node.json && tsc-alias -p tsconfig.node.json",
-    "server-prod": "npm run build-server && node dist/backend/server.js",
+    "server-prod": "npm run build-server && node dist/api/server.js",
     "server": "npx tsx src/api/server.ts",
     "preview": "vite preview",
     "build-only": "vite build",

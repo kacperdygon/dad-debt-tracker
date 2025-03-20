@@ -2,20 +2,20 @@
   "compilerOptions": {
     "module": "ESNext",  // Używamy ESNext, żeby Node.js mógł obsługiwać moduły ES
     "moduleResolution": "node",  // Używamy node resolution dla rozwiązywania importów
-    "outDir": "./dist/backend",  // Wskaż, gdzie chcesz, by pliki JS były zapisywane
-    "rootDir": "./src/backend",  // Gdzie znajdują się pliki TS
+    "outDir": "./dist",  // Wskaż, gdzie chcesz, by pliki JS były zapisywane
+    "rootDir": "./src",  // Gdzie znajdują się pliki TS
     "esModuleInterop": true,  // Zapewnia kompatybilność z modułami ES
     "target": "ES6",  // Wersja JavaScriptu, którą chcesz uzyskać
     "strict": true,  // Włącza tryb ścisły dla TypeScriptu
     "allowJs": true,  // Włącza obsługę JS w kodzie źródłowym
     "noEmit": false,  // Nie wyłączaj emisji plików .js
+    "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"],
-      "@/backend/*": ["src/backend/*"]
     }
   },
   "include": [
-    "src/backend/**/*.ts"
+    "src/api/**/*.ts"
   ],
   "exclude": [
     "node_modules"
