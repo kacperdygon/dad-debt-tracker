@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '@/views/home/HomeView.vue';
 import EntriesView from '@/views/entries/EntriesView.vue';
-import { getRole } from '@/lib/database.ts';
+import { getRole } from '@/lib/auth.ts';
 import AuthView from '@/views/auth/AuthView.vue';
 
 const router = createRouter({

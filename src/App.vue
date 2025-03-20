@@ -7,18 +7,15 @@ import { useEntryStore } from '@/store/entries.ts';
 
 const entryModalRef = ref<typeof EntryModal | null>(null);
 
-
 const entryStore = useEntryStore();
 onMounted(() => {
   if (entryStore.entries.length === 0) {
     entryStore.fetchEntries();
   }
-});
-
-onMounted(() => {
+  console.log('mounted');
   if (!entryModalRef.value) throw new Error('Entry modal ref not set');
   provide('openEntryModal', entryModalRef.value.openModal);
-})
+});
 </script>
 
 <template>

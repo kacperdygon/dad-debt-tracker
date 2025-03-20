@@ -5,19 +5,24 @@ export interface IEntry {
   balanceChange: number;
 }
 
-export const getEntriesFromLocalStorage = (): IEntry[] => {
-  const storedEntries = localStorage.getItem('entries');
-  let parsedStoredEntries;
+export async function fetchEntries(): Promise<IEntry[] | null> {
+  if (!process.env.BACKEND_URL) {
+    throw new Error('No backend url set');
+  }
+  try {
+    const res = await fetch(process.env.BACKEND_URL)
 
-  if (storedEntries) {
-    parsedStoredEntries = JSON.parse(storedEntries);
-  } else {
-    parsedStoredEntries = [];
+    if (!res.ok) {
+      console.error('Fetch error: ' + res.status);
+      return null;
+    }
+
+    const { entries } = await res.json();
+
+    return entries;
+
+  } catch (error) {
+    throw new Error("Fetch error:" + error);
   }
 
-  return parsedStoredEntries;
-};
-
-export const saveEntries = (entries: IEntry[]) => {
-  localStorage.setItem('entries', JSON.stringify(entries));
-};
+}

@@ -3,7 +3,6 @@ import type { IEntry } from '@/lib/entries.ts';
 
 import { computed, ref } from 'vue';
 import { useEntryStore } from '@/store/entries.ts';
-import { Timestamp } from 'firebase/firestore';
 
 interface AddEntryFormData {
   title: string;
@@ -35,9 +34,9 @@ const onSubmit = (event: Event) => {
   if (!dialogRef.value) throw new Error('Dialog ref not set');
   dialogRef.value.close();
 
-  const newEntry: Omit<IEntry, 'id'> = {
+  const newEntry: Omit<IEntry, '_id'> = {
     title: formData.value.title,
-    timestamp: Timestamp.fromDate(new Date(formData.value.timestamp)),
+    timestamp: new Date(formData.value.timestamp),
     balanceChange: formData.value.balanceChange,
   };
 
@@ -63,7 +62,6 @@ const gridTemplate = computed(() => {
       `;
 });
 
-
 const dialogRef = ref<HTMLDialogElement | null>(null);
 
 const openModal = (entry?: IEntry) => {
@@ -73,13 +71,13 @@ const openModal = (entry?: IEntry) => {
 
   if (entry) {
     formData.value = JSON.parse(JSON.stringify(entry));
-    const jsDate = entry.timestamp.toDate();
+    const jsDate = entry.timestamp;
     formData.value.timestamp = jsDate.toISOString().split('T')[0];
   } else {
     formData.value = JSON.parse(JSON.stringify(DEFAULT_FORM_DATA));
   }
 
-  targetEntryId.value = entry?.id;
+  targetEntryId.value = entry?._id;
   dialogRef.value.showModal();
 };
 
@@ -114,8 +112,12 @@ defineExpose({
         required
         placeholder="Balance"
       />
-      <span class="error-message" v-if="errorMessage.length != 0">{{errorMessage}}</span>
-      <input type="submit" :value="targetEntryId ? 'Edit entry' : 'Add entry'" class="button-main" />
+      <span class="error-message" v-if="errorMessage.length != 0">{{ errorMessage }}</span>
+      <input
+        type="submit"
+        :value="targetEntryId ? 'Edit entry' : 'Add entry'"
+        class="button-main"
+      />
     </form>
   </dialog>
 </template>
@@ -124,8 +126,7 @@ defineExpose({
 form {
   display: grid;
   grid-template-columns: calc(50% - 0.5rem) calc(50% - 0.5rem);
-  grid-template-areas:
-    v-bind(gridTemplate);
+  grid-template-areas: v-bind(gridTemplate);
   gap: 1rem;
   box-sizing: border-box;
 }
@@ -136,12 +137,12 @@ button {
   transform: translate(0.25rem, -0.25rem);
 }
 
-.error-message{
+.error-message {
   color: red;
   text-align: center;
-  margin:0;
+  margin: 0;
   grid-area: errorMessage;
-  font-size:0.875rem;
+  font-size: 0.875rem;
 }
 
 dialog {

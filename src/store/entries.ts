@@ -1,17 +1,11 @@
 import { defineStore } from 'pinia';
 import { type IEntry } from '@/lib/entries.ts';
 import { computed, ref } from 'vue';
-import {
-  addEntryToFirestore,
-  deleteEntryFromFirestore,
-  editEntryFromFirestore,
-  getEntriesFromFirestore
-} from '@/lib/database.ts';
 
 export const useEntryStore = defineStore('entry', () => {
   const entries = ref<IEntry[]>([]);
 
-  async function fetchEntries () {
+  async function fetchEntries() {
     try {
       entries.value = await getEntriesFromFirestore();
     } catch (error) {
@@ -21,7 +15,7 @@ export const useEntryStore = defineStore('entry', () => {
 
   const lastEntries = computed(() => {
     return [...entries.value].sort(
-      (a, b) => new Date(b.timestamp.toDate()).getTime() - new Date(a.timestamp.toDate()).getTime(),
+      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
     );
   });
 
@@ -33,7 +27,7 @@ export const useEntryStore = defineStore('entry', () => {
     return totalDebt;
   });
 
-  async function addEntry(newEntry: Omit<IEntry, 'id'>) {
+  async function addEntry(newEntry: Omit<IEntry, '_id'>) {
     if (!newEntry) {
       return;
     }
@@ -41,10 +35,10 @@ export const useEntryStore = defineStore('entry', () => {
       return;
     }
     const newEntryId = await addEntryToFirestore(newEntry);
-    entries.value.push({...newEntry, id: newEntryId});
+    entries.value.push({ ...newEntry, _id: newEntryId });
   }
 
-  async function editEntry(entryId: string, newEntry: Omit<IEntry, 'id'>) {
+  async function editEntry(entryId: string, newEntry: Omit<IEntry, '_id'>) {
     if (!newEntry) {
       return;
     }
@@ -52,15 +46,15 @@ export const useEntryStore = defineStore('entry', () => {
       return;
     }
     await editEntryFromFirestore(entryId, newEntry);
-    const index = entries.value.findIndex((entry) => entry.id === entryId);
+    const index = entries.value.findIndex((entry) => entry._id === entryId);
     if (index !== -1) {
-      entries.value[index] = {...newEntry, id: entryId};
+      entries.value[index] = { ...newEntry, _id: entryId };
     }
   }
 
   async function deleteEntry(entryId: string) {
     await deleteEntryFromFirestore(entryId);
-    const index = entries.value.findIndex((entry) => entry.id === entryId);
+    const index = entries.value.findIndex((entry) => entry._id === entryId);
     if (index !== -1) {
       entries.value.splice(index, 1);
     }

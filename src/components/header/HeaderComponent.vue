@@ -21,7 +21,7 @@ h1 {
   border-bottom: solid 1px var(--light-border);
   position: relative;
   z-index: 10;
-  background-color: var(--foreground-color)
+  background-color: var(--foreground-color);
 }
 
 header {

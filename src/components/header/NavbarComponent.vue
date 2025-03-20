@@ -33,7 +33,7 @@ watch(route, () => {
 <template>
   <nav>
     <Teleport to="#app" :disabled="isScreenWide">
-      <ul :class="{'slide-up': !displayUl, 'slide-down': displayUl}">
+      <ul :class="{ 'slide-up': !displayUl, 'slide-down': displayUl }">
         <li>
           <RouterLink to="/">Overview</RouterLink>
         </li>
