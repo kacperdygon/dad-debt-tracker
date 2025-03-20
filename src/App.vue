@@ -9,10 +9,8 @@ const entryModalRef = ref<typeof EntryModal | null>(null);
 
 const entryStore = useEntryStore();
 onMounted(() => {
-  if (entryStore.entries.length === 0) {
-    entryStore.fetchEntries();
-  }
-  console.log('mounted');
+
+  entryStore.fetchEntries();
   if (!entryModalRef.value) throw new Error('Entry modal ref not set');
   provide('openEntryModal', entryModalRef.value.openModal);
 });

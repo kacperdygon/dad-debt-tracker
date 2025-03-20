@@ -23,28 +23,35 @@ export const getEntries = async (req: Request, res: Response) => {
 };
 
 export const addEntry = async (req: Request, res: Response): Promise<void> => {
-  const { title, date, balanceChange } = req.body;
-  if (!title || !date || !balanceChange) {
+  const { title, timestamp, balanceChange } = req.body;
+
+  if (!title || !timestamp || !balanceChange) {
     return void res.status(400).json({ message: 'One or more fields missing' });
   }
+
   try {
+
     const role = await getRoleByPin(req.cookies['pin']);
+
     if (!role) {
       return void res.status(401).json({ message: 'Not authorized or signed in' });
     }
-    const newEntry = new Entry({ title, date, balanceChange });
+
+    const newEntry = new Entry({ title, timestamp, balanceChange });
     await newEntry.save();
-    return void res.status(201).json({ message: 'Entry added successfully' });
+
+    return void res.status(201).json({ message: 'Entry added successfully', entry: newEntry });
+
   } catch (error) {
     console.error('MongoDB error:', error);
     return void res.status(500).json({ message: 'Server error' });
   }
 };
 
-export const editEntry = async (req: Request, res: Response) => {
-  const { _id, title, date, balanceChange } = req.body;
+export const updateEntry = async (req: Request, res: Response) => {
+  const { _id, title, timestamp, balanceChange } = req.body;
 
-  if (!_id || !title || !date || !balanceChange) {
+  if (!_id || !title || !timestamp || !balanceChange) {
     return void res.status(400).json({ message: 'One or more fields missing' });
   }
   if (!Types.ObjectId.isValid(_id)) {
@@ -58,11 +65,11 @@ export const editEntry = async (req: Request, res: Response) => {
     }
 
     entry.title = title;
-    entry.timestamp = date;
+    entry.timestamp = timestamp;
     entry.balanceChange = balanceChange;
     await entry.save();
 
-    return void res.status(200).json({ message: 'Entry edited successfully' });
+    return void res.status(200).json({ message: 'Entry edited successfully', entry: entry });
   } catch (error) {
     console.error('MongoDB error:', error);
     return void res.status(500).json({ message: 'Server error' });

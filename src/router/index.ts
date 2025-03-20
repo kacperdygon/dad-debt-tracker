@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '@/views/home/HomeView.vue';
 import EntriesView from '@/views/entries/EntriesView.vue';
-import { getRole } from '@/lib/auth.ts';
+import { isSignedIn } from '@/lib/auth.ts';
 import AuthView from '@/views/auth/AuthView.vue';
 
 const router = createRouter({
@@ -31,7 +31,7 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  if (await getRole()) {
+  if (await isSignedIn()) {
     next();
   } else {
     if (to.path == '/auth') {

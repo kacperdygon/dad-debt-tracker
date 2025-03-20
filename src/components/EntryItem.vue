@@ -15,7 +15,7 @@ const props = defineProps<{
 
 function handleDelete() {
   toggleDropdown();
-  entryStore.deleteEntry(props.entry.id);
+  entryStore.deleteEntry(props.entry._id);
 }
 
 function handleEdit() {
@@ -41,7 +41,7 @@ const balanceText = computed(() => {
 });
 
 const formattedDate = computed(() => {
-  return new Date(props.entry.timestamp.toDate()).toLocaleDateString('en-US', {
+  return new Date(props.entry.timestamp).toLocaleDateString('en-US', {
     weekday: 'long',
     day: 'numeric',
     month: 'long',

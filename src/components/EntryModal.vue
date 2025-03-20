@@ -71,7 +71,7 @@ const openModal = (entry?: IEntry) => {
 
   if (entry) {
     formData.value = JSON.parse(JSON.stringify(entry));
-    const jsDate = entry.timestamp;
+    const jsDate = new Date(entry.timestamp);
     formData.value.timestamp = jsDate.toISOString().split('T')[0];
   } else {
     formData.value = JSON.parse(JSON.stringify(DEFAULT_FORM_DATA));

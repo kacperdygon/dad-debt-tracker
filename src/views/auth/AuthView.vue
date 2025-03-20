@@ -8,8 +8,8 @@ const showErrorMessage = ref(false);
 const router = useRouter();
 
 async function handleSubmit() {
-  const result = await login(input.value);
-  if (result) {
+  const result = await signIn(input.value);
+  if (result == 200) {
     await router.push('/');
   } else {
     showErrorMessage.value = true;

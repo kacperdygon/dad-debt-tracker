@@ -1,11 +1,16 @@
 import { Auth } from '@/api/models/authModel';
 
 export const getRoleByPin = async (pin: string | undefined): Promise<string | null> => {
-  if (!pin) return null;
-  const existingDoc = await Auth.findOne({ pin });
-  if (!existingDoc || !existingDoc.role) {
-    return null;
-  } else {
-    return existingDoc.role;
+  try {
+    if (!pin) return null;
+    const existingDoc = await Auth.findOne({ pin });
+    if (!existingDoc || !existingDoc.role) {
+      return null;
+    } else {
+      return existingDoc.role;
+    }
+  } catch (error) {
+    throw new Error("Error: " + error);
   }
+
 };

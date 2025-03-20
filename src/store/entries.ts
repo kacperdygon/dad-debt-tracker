@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { type IEntry } from '@/lib/entries.ts';
+import { addEntryDB, updateEntryDB, getEntriesDB, type IEntry, deleteEntryDB } from '@/lib/entries.ts';
 import { computed, ref } from 'vue';
 
 export const useEntryStore = defineStore('entry', () => {
@@ -7,7 +7,7 @@ export const useEntryStore = defineStore('entry', () => {
 
   async function fetchEntries() {
     try {
-      entries.value = await getEntriesFromFirestore();
+      entries.value = await getEntriesDB();
     } catch (error) {
       console.error('Error fetching entries:', error);
     }
@@ -28,37 +28,34 @@ export const useEntryStore = defineStore('entry', () => {
   });
 
   async function addEntry(newEntry: Omit<IEntry, '_id'>) {
-    if (!newEntry) {
-      return;
+    const addedEntry = await addEntryDB(newEntry);
+    if (!addedEntry) {
+      throw new Error("Error adding entry");
     }
-    if (!(newEntry.timestamp && newEntry.balanceChange && newEntry.title)) {
-      return;
-    }
-    const newEntryId = await addEntryToFirestore(newEntry);
-    entries.value.push({ ...newEntry, _id: newEntryId });
+    entries.value.push({ ...newEntry, _id: addedEntry._id });
   }
 
-  async function editEntry(entryId: string, newEntry: Omit<IEntry, '_id'>) {
-    if (!newEntry) {
-      return;
+  async function updateEntry(entryId: string, newEntry: Omit<IEntry, '_id'>) {
+    const updatedEntry = await updateEntryDB(entryId, newEntry);
+    if (!updatedEntry) {
+      throw new Error("Error updating entry");
     }
-    if (!(newEntry.timestamp && newEntry.balanceChange && newEntry.title)) {
-      return;
-    }
-    await editEntryFromFirestore(entryId, newEntry);
     const index = entries.value.findIndex((entry) => entry._id === entryId);
     if (index !== -1) {
-      entries.value[index] = { ...newEntry, _id: entryId };
+      Object.assign(entries.value[index], newEntry);
     }
   }
 
   async function deleteEntry(entryId: string) {
-    await deleteEntryFromFirestore(entryId);
+    const result = await deleteEntryDB(entryId);
+    if (!result) {
+      throw new Error("Error deleting entry");
+    }
     const index = entries.value.findIndex((entry) => entry._id === entryId);
     if (index !== -1) {
       entries.value.splice(index, 1);
     }
   }
 
-  return { entries, lastEntries, totalDebt, addEntry, editEntry, deleteEntry, fetchEntries };
+  return { entries, lastEntries, totalDebt, addEntry, editEntry: updateEntry, deleteEntry, fetchEntries };
 });

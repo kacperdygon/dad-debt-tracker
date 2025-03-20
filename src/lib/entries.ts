@@ -1,3 +1,5 @@
+import { fetchData } from '@/lib/database';
+
 export interface IEntry {
   _id: string;
   title: string;
@@ -5,24 +7,57 @@ export interface IEntry {
   balanceChange: number;
 }
 
-export async function fetchEntries(): Promise<IEntry[] | null> {
-  if (!process.env.BACKEND_URL) {
-    throw new Error('No backend url set');
+export async function getEntriesDB(): Promise<IEntry[]> {
+  const res = await fetchData<{ message: string, entries: IEntry[] }>("api/entries", {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    return [];
   }
-  try {
-    const res = await fetch(process.env.BACKEND_URL)
+  return res.data?.entries as IEntry[];
+}
 
-    if (!res.ok) {
-      console.error('Fetch error: ' + res.status);
-      return null;
-    }
+export async function addEntryDB(newEntry: Omit<IEntry, '_id'>): Promise<IEntry | null> {
+  const res = await fetchData<{ message: string, entry: IEntry }>("api/entries", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      ...newEntry,
+    }),
+    credentials: "include",
+  });
 
-    const { entries } = await res.json();
+  return res.data?.entry ?? null;
 
-    return entries;
+}
 
-  } catch (error) {
-    throw new Error("Fetch error:" + error);
-  }
+export async function updateEntryDB(entryId: string, newEntry: Omit<IEntry, '_id'>): Promise<IEntry | null> {
+  const res = await fetchData<{ message: string, entry: IEntry }>("api/entries", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      _id: entryId,
+      ...newEntry,
+    }),
+    credentials: "include",
+  });
 
+  return res.data?.entry ?? null;
+
+}
+
+export async function deleteEntryDB(entryId: string): Promise<boolean> {
+  const res = await fetchData<{ message: string, entry: IEntry }>("api/entries", {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      _id: entryId,
+    }),
+    credentials: "include",
+  });
+
+  return res.ok;
 }

@@ -2,7 +2,7 @@ import { Router } from 'express';
 import {
   addEntry,
   deleteEntry,
-  editEntry,
+  updateEntry,
   getEntries,
 } from '@/api/controllers/entryController';
 
@@ -11,7 +11,7 @@ const router = Router();
 // router.get('/', )
 router.get('/', getEntries);
 router.post('/', addEntry);
-router.put('/', editEntry);
+router.put('/', updateEntry);
 router.delete('/', deleteEntry);
 
 export default router;
