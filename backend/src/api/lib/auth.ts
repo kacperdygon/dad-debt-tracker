@@ -1,4 +1,5 @@
 import { Auth } from '../models/authModel';
+import { Request } from 'express';
 
 export const getRoleByPin = async (pin: string | undefined): Promise<string | null> => {
   try {

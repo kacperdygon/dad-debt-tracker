@@ -1,4 +1,4 @@
-import type { Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import { getRoleByPin } from '../lib/auth';
 
 export const signIn = async (req: Request, res: Response) => {
@@ -47,3 +47,15 @@ export const signOut = async (req: Request, res: Response) => {
   res.cookie('pin', '', { maxAge: 0, httpOnly: true });
   return void res.status(200).json({ message: 'Signed out' });
 };
+
+export const validateRequest = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const pin = req.cookies['pin'];
+  if (!pin) {
+    return void res.status(401).json({ message: 'Not logged in' });
+  }
+  const result = !!await getRoleByPin(pin);
+  if (!result) {
+    return void res.status(401).json({ message: 'Incorrect pin' });
+  }
+  next();
+}

@@ -5,10 +5,12 @@ import {
   updateEntry,
   getEntries,
 } from '../controllers/entryController';
+import { validateRequest } from '@/api/controllers/authController';
 
 const router = Router();
 
-// router.get('/', )
+router.use(validateRequest)
+
 router.get('/', getEntries);
 router.post('/', addEntry);
 router.put('/', updateEntry);
