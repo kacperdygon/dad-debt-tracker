@@ -20,7 +20,7 @@ const handleOpenModal = () => {
   <section>
     <h3>Last entries</h3>
     <ul>
-      <EntryItem v-for="entry in lastEntries.slice(0, 3)" :key="entry.id" :entry="entry" />
+      <EntryItem v-for="entry in lastEntries.slice(0, 3)" :key="entry._id" :entry="entry" />
     </ul>
     <button @click="handleOpenModal" class="button-main">Add new entry</button>
   </section>

@@ -31,5 +31,4 @@ coverage
 .prettierrc.json
 .editorconfig
 .env
-.env
 .vercel
