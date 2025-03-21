@@ -11,7 +11,12 @@ export const signIn = async (req: Request, res: Response) => {
     if (!role) {
       return void res.status(401).json({ message: 'Incorrect pin' });
     }
-    res.cookie('pin', pin, { maxAge: 900000, httpOnly: true });
+    res.cookie('pin', pin, {
+      maxAge: 900000,
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none'
+    });
     return void res.status(200).json({ message: `Logged in as ${role}`, role: role });
   } catch (error) {
     console.error('MongoDB error:', error);

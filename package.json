@@ -11,11 +11,8 @@
     "type-check": "cd frontend && vue-tsc --build",
     "lint": "eslint . --fix",
     "server": "cd backend && npx tsx src/server.ts",
-    "server-build": "cd backend && tsc -p tsconfig.json && tsc-alias -p tsconfig.node.json",
+    "server-build": "cd backend && tsc-alias -p tsconfig.node.json",
     "server-prod": "cd backend && npm run build-server && node dist/api/server.js",
     "format": "prettier --write frontend/src/ && prettier --write backend/src/"
-  },
-  "devDependencies": {
-    "@tsconfig/node22": "^22.0.0"
   }
 }
