@@ -2,14 +2,17 @@
 import { ref } from 'vue';
 import { signIn } from '../../lib/auth.ts';
 import { useRouter } from 'vue-router';
+import { useEntryStore } from '@/store/entries.ts';
 
 const input = ref('');
 const showErrorMessage = ref(false);
 const router = useRouter();
+const entriesStore = useEntryStore();
 
 async function handleSubmit() {
   const result = await signIn(input.value);
   if (result == 200) {
+    await entriesStore.fetchEntries();
     await router.push('/');
   } else {
     showErrorMessage.value = true;

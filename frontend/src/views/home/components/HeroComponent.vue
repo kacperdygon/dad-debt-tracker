@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useEntryStore } from '../../../store/entries.ts';
+import { useEntryStore } from '@/store/entries.ts';
 import { storeToRefs } from 'pinia';
 
 const entriesStore = useEntryStore();
