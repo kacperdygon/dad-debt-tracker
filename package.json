@@ -4,16 +4,16 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "frontend": "cd frontend && npm run dev",
     "build": "run-p type-check \"build-only {@}\" --",
-    "build-server": "tsc -p tsconfig.node.json && tsc-alias -p tsconfig.node.json",
+    "build-server": "tsc -p backend/tsconfig.json && tsc-alias -p tsconfig.node.json",
     "server-prod": "npm run build-server && node dist/api/server.js",
-    "server": "npx tsx src/api/server.ts",
+    "server": "npx tsx backend/src/server.ts",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
-    "format": "prettier --write src/"
+    "format": "prettier --write frontend/src/"
   },
   "dependencies": {
     "cookie-parser": "^1.4.7",
@@ -26,6 +26,7 @@
     "mongoose": "^8.12.1",
     "path-to-regexp": "^8.2.0",
     "pinia": "^3.0.1",
+    "tsx": "^4.19.3",
     "undici": "^7.5.0",
     "uuid": "^11.1.0",
     "vercel": "^41.4.0",
