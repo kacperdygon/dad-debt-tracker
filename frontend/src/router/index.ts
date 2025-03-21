@@ -1,7 +1,13 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import {
+  createRouter,
+  createWebHistory,
+  type NavigationGuardNext,
+  type RouteLocationNormalized,
+  type RouteLocationNormalizedLoaded
+} from 'vue-router';
 import HomeView from '../views/home/HomeView.vue';
 import EntriesView from '../views/entries/EntriesView.vue';
-import { isSignedIn } from '../lib/auth.ts';
+import { isSignedIn } from '@/lib/auth';
 import AuthView from '../views/auth/AuthView.vue';
 
 const router = createRouter({
@@ -30,7 +36,7 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async ( to: RouteLocationNormalized, from: RouteLocationNormalizedLoaded, next: NavigationGuardNext) => {
   if (await isSignedIn()) {
     next();
   } else {

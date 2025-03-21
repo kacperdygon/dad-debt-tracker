@@ -18,7 +18,7 @@ export async function signIn(pin: string): Promise<number> {
 }
 
 export async function isSignedIn(): Promise<boolean> {
-  const res = await fetchData<IAuth>("api/auth/verify-session", {
+  const res = await fetchData<IAuth>("api/auth/is-signed-in", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({  }),

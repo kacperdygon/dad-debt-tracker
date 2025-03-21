@@ -2,30 +2,10 @@
   "files": [],
   "references": [
     {
-      "path": "../backend/tsconfig.json"
+      "path": "./tsconfig.node.json"
     },
     {
       "path": "./tsconfig.app.json"
     }
-  ],
-  "compilerOptions": {
-    "verbatimModuleSyntax": true,
-    "types": ["node"],
-    "target": "ES6",
-    "module": "ESNext",
-    "outDir": "../dist",
-    "rootDir": "./src",
-    "strict": true,
-    "esModuleInterop": true,
-    "baseUrl": "./",
-    "paths": {
-      "@/*": ["src/*"]  // Alias dla `@` do `src`
-    }
-  },
-  "include": [
-    "./src/**/*.ts"
-  ],
-  "exclude": [
-    "./node_modules"
   ]
 }
