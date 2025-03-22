@@ -5,6 +5,7 @@ export interface IEntry {
   title: string;
   timestamp: Date;
   balanceChange: number;
+  confirmed?: boolean;
 }
 
 export async function getEntriesDB(): Promise<IEntry[]> {
@@ -35,11 +36,10 @@ export async function addEntryDB(newEntry: Omit<IEntry, '_id'>): Promise<IEntry 
 }
 
 export async function updateEntryDB(entryId: string, newEntry: Omit<IEntry, '_id'>): Promise<IEntry | null> {
-  const res = await fetchData<{ message: string, entry: IEntry }>("api/entries", {
+  const res = await fetchData<{ message: string, entry: IEntry }>(`api/entries/${entryId}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      _id: entryId,
       ...newEntry,
     }),
     credentials: "include",
@@ -50,12 +50,9 @@ export async function updateEntryDB(entryId: string, newEntry: Omit<IEntry, '_id
 }
 
 export async function deleteEntryDB(entryId: string): Promise<boolean> {
-  const res = await fetchData<{ message: string, entry: IEntry }>("api/entries", {
+  const res = await fetchData<{ message: string, entry: IEntry }>(`api/entries/${entryId}`, {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      _id: entryId,
-    }),
     credentials: "include",
   });
 

@@ -14,8 +14,8 @@ router.use(validateRequest)
 
 router.get('/', getEntries);
 router.post('/', addEntry);
-router.put('/', updateEntry);
-router.delete('/', deleteEntry);
+router.put('/:id', updateEntry);
+router.delete('/:id', deleteEntry);
 router.patch('/:id', patchEntry);
 
 export default router;

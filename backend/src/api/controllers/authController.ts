@@ -7,6 +7,10 @@ export const signIn = async (req: Request, res: Response) => {
     return void res.status(400).json({ message: 'Invalid json body' });
   }
   try {
+    const currentRole = await getRoleByPin(req.cookies['pin']);
+    if (currentRole){
+      return void res.status(200).json({ message: 'User already logged in' });
+    }
     const role = await getRoleByPin(pin);
     if (!role) {
       return void res.status(401).json({ message: 'Incorrect pin' });

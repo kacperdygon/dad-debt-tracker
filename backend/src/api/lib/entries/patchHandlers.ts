@@ -3,8 +3,6 @@ import { getRoleByPin } from '@/api/lib/auth';
 import { Entry, IEntryDocument } from '@/api/models/entryModel';
 import { Types } from 'mongoose';
 
-type CallbackFunction = (req: Request, res: Response) => void;
-
 export const patchHandlers: Record<string, (req: Request, res: Response) => Promise<void>>  = {
 
   confirmEntry: async (req: Request, res: Response) => {
@@ -28,6 +26,10 @@ export const patchHandlers: Record<string, (req: Request, res: Response) => Prom
       return void res.status(404).json({
         message: 'Requested entry not found',
       })
+    }
+
+    if (entry.confirmed) {
+      return void res.status(400).json({ message: 'Entry is already confirmed' });
     }
 
     entry.confirmed = true;

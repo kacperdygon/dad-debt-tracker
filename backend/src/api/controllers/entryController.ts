@@ -52,7 +52,8 @@ export const addEntry = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const updateEntry = async (req: Request, res: Response) => {
-  const { _id, title, timestamp, balanceChange } = req.body;
+  const { title, timestamp, balanceChange } = req.body;
+  const _id = req.params.id;
 
   if (!_id || !title || !timestamp || !balanceChange) {
     return void res.status(400).json({ message: 'One or more fields missing' });
@@ -80,7 +81,7 @@ export const updateEntry = async (req: Request, res: Response) => {
 };
 
 export const deleteEntry = async (req: Request, res: Response) => {
-  const { _id } = req.body;
+  const _id = req.params.id;
 
   if (!_id) {
     return void res.status(400).json({ message: 'Missing id' });
@@ -95,7 +96,7 @@ export const deleteEntry = async (req: Request, res: Response) => {
       return void res.status(404).json({ message: "Entry with this id doesn't exist" });
     }
 
-    return void res.status(200).json({ message: 'Entry edited successfully' });
+    return void res.status(200).json({ message: 'Entry deleted successfully' });
   } catch (error) {
     console.error('MongoDB error:', error);
     return void res.status(500).json({ message: 'Server error' });
