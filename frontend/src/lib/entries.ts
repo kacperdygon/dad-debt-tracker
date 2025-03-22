@@ -58,3 +58,16 @@ export async function deleteEntryDB(entryId: string): Promise<boolean> {
 
   return res.ok;
 }
+
+export async function confirmEntryDB(entryId: string): Promise<boolean> {
+  const res = await fetchData<{ message: string, entry: IEntry }>(`api/entries/${entryId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      patchType: 'confirmEntry'
+    }),
+    credentials: "include",
+  });
+
+  return res.ok;
+}

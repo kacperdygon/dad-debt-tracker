@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { addEntryDB, updateEntryDB, getEntriesDB, type IEntry, deleteEntryDB } from '../lib/entries.ts';
+import { addEntryDB, updateEntryDB, getEntriesDB, type IEntry, deleteEntryDB, confirmEntryDB } from '../lib/entries.ts';
 import { computed, ref } from 'vue';
 
 export const useEntryStore = defineStore('entry', () => {
@@ -57,5 +57,20 @@ export const useEntryStore = defineStore('entry', () => {
     }
   }
 
-  return { entries, lastEntries, totalDebt, addEntry, editEntry: updateEntry, deleteEntry, fetchEntries };
+  async function confirmEntry(entryId: string) {
+    const result = await confirmEntryDB(entryId);
+    if (!result) {
+      throw new Error("Error patching entry");
+    }
+    const index = entries.value.findIndex((entry) => entry._id === entryId);
+    if (index !== -1) {
+      entries.value[index].confirmed = true;
+    }
+  }
+
+  async function rejectEntry(entryId: string) {
+
+  }
+
+  return { entries, lastEntries, totalDebt, addEntry, updateEntry, deleteEntry, confirmEntry, rejectEntry, fetchEntries };
 });

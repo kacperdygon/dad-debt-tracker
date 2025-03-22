@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, inject, onMounted, onUnmounted, ref } from 'vue';
-import type { IEntry } from '../lib/entries.ts';
-import { useEntryStore } from '../store/entries.ts';
+import { confirmEntryDB, type IEntry } from '@/lib/entries.ts';
+import { useEntryStore } from '@/store/entries.ts';
+import { getRole, signOut } from '@/lib/auth.ts';
 
 const entryStore = useEntryStore();
 const openEntryModal = inject<(entry: IEntry) => void | null>('openEntryModal');
@@ -12,6 +13,8 @@ const showDropdown = ref(false);
 const props = defineProps<{
   entry: IEntry;
 }>();
+
+const userRole = await getRole();
 
 function handleDelete() {
   toggleDropdown();
@@ -60,18 +63,28 @@ const closeDropdown = (event: Event) => {
   }
 };
 
+function confirmEntry() {
+  entryStore.confirmEntry(props.entry._id);
+}
+
+function rejectEntry() {
+  entryStore.rejectEntry(props.entry._id);
+}
+
 onMounted(() => document.addEventListener('click', closeDropdown));
 onUnmounted(() => document.removeEventListener('click', closeDropdown));
 </script>
 
 <template>
   <div class="entry-item">
-    <div class="header">
+    <div class="flex">
       <h6 class="title">
         {{ props.entry.title }}
+        <span v-if="!props.entry.confirmed" class="confirm-message">Not confirmed</span>
       </h6>
+
       <div class="dropdown">
-        <button class="button-plain" @click.prevent="toggleDropdown" ref="dropdownButtonRef">
+        <button class="button-plain dropdown-button" @click.prevent="toggleDropdown" ref="dropdownButtonRef">
           <i class="fas fa-ellipsis-v"></i>
         </button>
         <ul class="dropdown-list" ref="dropdownListRef" v-if="showDropdown">
@@ -81,21 +94,31 @@ onUnmounted(() => document.removeEventListener('click', closeDropdown));
       </div>
     </div>
     <p class="date-text">{{ formattedDate }}</p>
-    <h6 class="balance">{{ balanceText }} zł</h6>
+    <div class="flex">
+      <h6 class="balance">{{ balanceText }} zł</h6>
+      <div v-if="!props.entry.confirmed && userRole == 'dad'"  class="confirmation-buttons">
+        <button @click="rejectEntry" class="reject-button outlined-button">
+          Reject
+        </button>
+        <button @click="confirmEntry" class="confirm-button outlined-button">
+          Confirm
+        </button>
+      </div>
+    </div>
+
   </div>
 </template>
 
 <style scoped>
 * {
   margin: 0;
-  font-size: 1rem;
 }
 
 i {
   font-size: 1.125rem;
 }
 
-.header {
+.flex {
   display: flex;
   align-items: start;
   justify-content: space-between;
@@ -111,10 +134,6 @@ i {
 h6 {
   font-size: 1.25rem;
   font-weight: 300;
-}
-
-p {
-  font-size: 1rem;
 }
 
 .title {
@@ -138,7 +157,7 @@ p {
   top: 0.125rem;
 }
 
-button {
+.dropdown-button {
   position: absolute;
   height: 1rem;
   width: 1rem;
@@ -166,11 +185,29 @@ button {
 }
 
 @media screen and (max-width: 600px) {
-  button {
+  .dropdown-button {
     height: 2rem;
     width: 2rem;
     top: -0.375rem;
     right: -0.5rem;
   }
+}
+
+.confirm-message {
+  color: var(--warning);
+  font-size: 1rem;
+}
+
+.confirmation-buttons{
+  display:flex;
+  gap:0.5rem;
+}
+
+.reject-button {
+  color: var(--expense);
+}
+
+.confirm-button{
+  color: var(--income);
 }
 </style>

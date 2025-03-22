@@ -3,6 +3,7 @@ import type { IEntry } from '../lib/entries.ts';
 
 import { computed, ref } from 'vue';
 import { useEntryStore } from '../store/entries.ts';
+import { getRole } from '@/lib/auth.ts';
 
 interface AddEntryFormData {
   title: string;
@@ -23,7 +24,7 @@ const targetEntryId = ref<string | undefined>(undefined);
 
 const entryStore = useEntryStore();
 
-const onSubmit = (event: Event) => {
+const onSubmit = async (event: Event) => {
   event.preventDefault();
 
   if (formData.value.balanceChange === 0) {
@@ -38,10 +39,11 @@ const onSubmit = (event: Event) => {
     title: formData.value.title,
     timestamp: new Date(formData.value.timestamp),
     balanceChange: formData.value.balanceChange,
+    confirmed: await getRole() == 'dad',
   };
 
   if (targetEntryId.value) {
-    entryStore.editEntry(targetEntryId.value, newEntry);
+    entryStore.updateEntry(targetEntryId.value, newEntry);
   } else {
     entryStore.addEntry(newEntry);
   }

@@ -11,6 +11,7 @@
   --expense: #960000;
   --light-border: #dadce0;
   --text-font-size: 1rem;
+  --warning: #BD6500;
 }
 
 * {
@@ -52,4 +53,16 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.small-text {
+  font-size: 0.75rem;
+}
+
+.outlined-button {
+  all: unset;
+  cursor: pointer;
+  border: solid 2px;
+  padding: 0.5rem 0.75rem 0.5rem 0.75rem;
+  border-radius: 0.375rem;
 }
