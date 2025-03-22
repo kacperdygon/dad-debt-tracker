@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { getRoleByPin } from '../lib/auth';
 import { Entry, type IEntryDocument } from '../models/entryModel';
 import { Types } from 'mongoose';
+import { patchHandlers } from '@/api/lib/entries/patchHandlers';
 
 export const getEntries = async (req: Request, res: Response) => {
   const limit = parseInt(req.query.limit as string, 10);
@@ -37,7 +38,9 @@ export const addEntry = async (req: Request, res: Response): Promise<void> => {
       return void res.status(401).json({ message: 'Not authorized or signed in' });
     }
 
-    const newEntry = new Entry({ title, timestamp, balanceChange });
+    const confirmed = role == 'dad';
+
+    const newEntry = new Entry({ title, timestamp, balanceChange, confirmed });
     await newEntry.save();
 
     return void res.status(201).json({ message: 'Entry added successfully', entry: newEntry });
@@ -98,3 +101,17 @@ export const deleteEntry = async (req: Request, res: Response) => {
     return void res.status(500).json({ message: 'Server error' });
   }
 };
+
+export const patchEntry = async (req: Request, res: Response) => {
+  const requestBody = req.body;
+  const { patchType }  = requestBody;
+
+  const handler = patchHandlers[patchType];
+
+  if (!handler) {
+    return void res.status(404).json({ message: 'Requested patch type not found' });
+  }
+
+  return await handler(req, res);
+
+}
