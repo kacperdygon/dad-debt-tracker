@@ -31,7 +31,9 @@ export const useEntryStore = defineStore('entry', () => {
 
   const totalDebt = computed(() => {
     let totalDebt = 0;
-    for (const entry of entries.value) {
+    for (const entry of entries.value.filter(
+      (entry) => entry.status != 'rejected'
+    )) {
       totalDebt += entry.balanceChange;
     }
     return totalDebt;
