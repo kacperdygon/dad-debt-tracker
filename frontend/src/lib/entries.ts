@@ -5,7 +5,7 @@ export interface IEntry {
   title: string;
   timestamp: Date;
   balanceChange: number;
-  confirmed?: boolean;
+  status: string;
 }
 
 export async function getEntriesDB(): Promise<IEntry[]> {
@@ -21,7 +21,7 @@ export async function getEntriesDB(): Promise<IEntry[]> {
   return res.data?.entries as IEntry[];
 }
 
-export async function addEntryDB(newEntry: Omit<IEntry, '_id'>): Promise<IEntry | null> {
+export async function addEntryDB(newEntry: Omit<IEntry, '_id' | 'status'>): Promise<IEntry | null> {
   const res = await fetchData<{ message: string, entry: IEntry }>("api/entries", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -35,7 +35,7 @@ export async function addEntryDB(newEntry: Omit<IEntry, '_id'>): Promise<IEntry 
 
 }
 
-export async function updateEntryDB(entryId: string, newEntry: Omit<IEntry, '_id'>): Promise<IEntry | null> {
+export async function updateEntryDB(entryId: string, newEntry: Omit<IEntry, '_id' | 'status'>): Promise<IEntry | null> {
   const res = await fetchData<{ message: string, entry: IEntry }>(`api/entries/${entryId}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
@@ -59,12 +59,13 @@ export async function deleteEntryDB(entryId: string): Promise<boolean> {
   return res.ok;
 }
 
-export async function confirmEntryDB(entryId: string): Promise<boolean> {
+export async function changeEntryStatusDB(entryId: string, status: string): Promise<boolean> {
   const res = await fetchData<{ message: string, entry: IEntry }>(`api/entries/${entryId}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      patchType: 'confirmEntry'
+      patchType: 'changeStatus',
+      newStatus: status,
     }),
     credentials: "include",
   });

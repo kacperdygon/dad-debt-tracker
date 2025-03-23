@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { addEntryDB, updateEntryDB, getEntriesDB, type IEntry, deleteEntryDB, confirmEntryDB } from '../lib/entries.ts';
+import { addEntryDB, updateEntryDB, getEntriesDB, type IEntry, deleteEntryDB, changeEntryStatusDB } from '@/lib/entries.ts';
 import { computed, ref } from 'vue';
 
 export const useEntryStore = defineStore('entry', () => {
@@ -16,6 +16,16 @@ export const useEntryStore = defineStore('entry', () => {
   const lastEntries = computed(() => {
     return [...entries.value].sort(
       (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+    ).filter(
+      (entry) => entry.status != 'rejected'
+    );
+  });
+
+  const rejectedEntries = computed(() => {
+    return [...entries.value].sort(
+      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+    ).filter(
+      (entry) => entry.status == 'rejected'
     );
   });
 
@@ -27,15 +37,15 @@ export const useEntryStore = defineStore('entry', () => {
     return totalDebt;
   });
 
-  async function addEntry(newEntry: Omit<IEntry, '_id'>) {
+  async function addEntry(newEntry: Omit<IEntry, '_id' | 'status'>) {
     const addedEntry = await addEntryDB(newEntry);
     if (!addedEntry) {
       throw new Error("Error adding entry");
     }
-    entries.value.push({ ...newEntry, _id: addedEntry._id });
+    entries.value.push(addedEntry);
   }
 
-  async function updateEntry(entryId: string, newEntry: Omit<IEntry, '_id'>) {
+  async function updateEntry(entryId: string, newEntry: Omit<IEntry, '_id' | 'status'>) {
     const updatedEntry = await updateEntryDB(entryId, newEntry);
     if (!updatedEntry) {
       throw new Error("Error updating entry");
@@ -57,20 +67,16 @@ export const useEntryStore = defineStore('entry', () => {
     }
   }
 
-  async function confirmEntry(entryId: string) {
-    const result = await confirmEntryDB(entryId);
+  async function changeEntryStatus(entryId: string, newStatus: string) {
+    const result = await changeEntryStatusDB(entryId, newStatus);
     if (!result) {
       throw new Error("Error patching entry");
     }
     const index = entries.value.findIndex((entry) => entry._id === entryId);
     if (index !== -1) {
-      entries.value[index].confirmed = true;
+      entries.value[index].status = newStatus;
     }
   }
 
-  async function rejectEntry(entryId: string) {
-
-  }
-
-  return { entries, lastEntries, totalDebt, addEntry, updateEntry, deleteEntry, confirmEntry, rejectEntry, fetchEntries };
+  return { entries, lastEntries, totalDebt, addEntry, updateEntry, deleteEntry, changeEntryStatus, fetchEntries, rejectedEntries };
 });

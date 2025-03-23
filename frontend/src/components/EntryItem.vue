@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, inject, onMounted, onUnmounted, ref } from 'vue';
-import { confirmEntryDB, type IEntry } from '@/lib/entries.ts';
+import { type IEntry } from '@/lib/entries.ts';
 import { useEntryStore } from '@/store/entries.ts';
-import { getRole, signOut } from '@/lib/auth.ts';
+import { getRole } from '@/lib/auth.ts';
 
 const entryStore = useEntryStore();
 const openEntryModal = inject<(entry: IEntry) => void | null>('openEntryModal');
@@ -63,12 +63,8 @@ const closeDropdown = (event: Event) => {
   }
 };
 
-function confirmEntry() {
-  entryStore.confirmEntry(props.entry._id);
-}
-
-function rejectEntry() {
-  entryStore.rejectEntry(props.entry._id);
+function changeEntryStatus(newStatus: string) {
+  entryStore.changeEntryStatus(props.entry._id, newStatus);
 }
 
 onMounted(() => document.addEventListener('click', closeDropdown));
@@ -80,7 +76,11 @@ onUnmounted(() => document.removeEventListener('click', closeDropdown));
     <div class="flex">
       <h6 class="title">
         {{ props.entry.title }}
-        <span v-if="!props.entry.confirmed" class="confirm-message">Not confirmed</span>
+        <span v-if="props.entry.status != 'confirmed'"
+              class="confirm-message"
+              :class="props.entry.status == 'pending' ? 'pending-color' : 'rejected-color'">
+          {{props.entry.status == 'pending' ? 'Not confirmed' : 'Rejected'}}
+        </span>
       </h6>
 
       <div class="dropdown">
@@ -96,12 +96,17 @@ onUnmounted(() => document.removeEventListener('click', closeDropdown));
     <p class="date-text">{{ formattedDate }}</p>
     <div class="flex">
       <h6 class="balance">{{ balanceText }} zł</h6>
-      <div v-if="!props.entry.confirmed && userRole == 'dad'"  class="confirmation-buttons">
-        <button @click="rejectEntry" class="reject-button outlined-button">
+      <div v-if="props.entry.status == 'pending' && userRole == 'dad'"  class="confirmation-buttons">
+        <button @click="changeEntryStatus('rejected')" class="rejected-color outlined-button">
           Reject
         </button>
-        <button @click="confirmEntry" class="confirm-button outlined-button">
+        <button @click="changeEntryStatus('confirmed')" class="confirmed-color outlined-button">
           Confirm
+        </button>
+      </div>
+      <div v-if="props.entry.status == 'rejected' && userRole == 'dad'"  class="confirmation-buttons">
+        <button @click="changeEntryStatus('pending')" class="pending-color outlined-button">
+          Change to pending
         </button>
       </div>
     </div>
@@ -193,8 +198,7 @@ h6 {
   }
 }
 
-.confirm-message {
-  color: var(--warning);
+.status-message {
   font-size: 1rem;
 }
 
@@ -203,11 +207,19 @@ h6 {
   gap:0.5rem;
 }
 
-.reject-button {
+.confirm-message {
+  font-size:1rem;
+}
+
+.rejected-color {
   color: var(--expense);
 }
 
-.confirm-button{
+.pending-color {
+  color: var(--warning);
+}
+
+.confirmed-color{
   color: var(--income);
 }
 </style>

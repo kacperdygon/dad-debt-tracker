@@ -9,6 +9,7 @@ import HomeView from '../views/home/HomeView.vue';
 import EntriesView from '../views/entries/EntriesView.vue';
 import { isSignedIn } from '@/lib/auth';
 import AuthView from '../views/auth/AuthView.vue';
+import SettingsView from '@/views/settings/SettingsView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -28,11 +29,11 @@ const router = createRouter({
       name: 'auth',
       component: AuthView,
     },
-    // {
-    //   path: '/settings',
-    //   name: 'settings',
-    //   component: SettingsView,
-    // },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: SettingsView,
+    },
   ],
 });
 

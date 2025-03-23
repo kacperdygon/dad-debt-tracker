@@ -35,17 +35,16 @@ const onSubmit = async (event: Event) => {
   if (!dialogRef.value) throw new Error('Dialog ref not set');
   dialogRef.value.close();
 
-  const newEntry: Omit<IEntry, '_id'> = {
+  const newEntry: Omit<IEntry, '_id' | 'status'> = {
     title: formData.value.title,
     timestamp: new Date(formData.value.timestamp),
     balanceChange: formData.value.balanceChange,
-    confirmed: await getRole() == 'dad',
   };
 
   if (targetEntryId.value) {
-    entryStore.updateEntry(targetEntryId.value, newEntry);
+    await entryStore.updateEntry(targetEntryId.value, newEntry);
   } else {
-    entryStore.addEntry(newEntry);
+    await entryStore.addEntry(newEntry);
   }
 };
 

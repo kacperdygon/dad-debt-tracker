@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import EntryItem from '../../components/EntryItem.vue';
-import { inject } from 'vue';
-import { useEntryStore } from '../../store/entries.ts';
+import EntryItem from '@/components/EntryItem.vue';
+import { inject, ref } from 'vue';
+import { useEntryStore } from '@/store/entries.ts';
 import { storeToRefs } from 'pinia';
 
 const entriesStore = useEntryStore();
-const { lastEntries } = storeToRefs(entriesStore);
+let { lastEntries } = storeToRefs(entriesStore);
+let { rejectedEntries } = storeToRefs(entriesStore);
 
 const openEntryModal = inject<() => void | null>('openEntryModal');
 const handleOpenModal = () => {
@@ -14,15 +15,25 @@ const handleOpenModal = () => {
   }
   openEntryModal();
 };
+
+const showRejected = ref(false);
 </script>
 
 <template>
   <main>
     <section>
-      <h2>Entries</h2>
+      <header>
+        <h2>Entries</h2>
+        <label>
+          Show rejected
+          <input type="checkbox" v-model="showRejected" />
+        </label>
+
+      </header>
+
       <Suspense>
         <ul>
-          <EntryItem v-for="entry in lastEntries" :key="entry._id" :entry="entry" />
+          <EntryItem v-for="entry in showRejected ? rejectedEntries : lastEntries" :key="entry._id" :entry="entry" />
         </ul>
       </Suspense>
       <button @click="handleOpenModal" class="button-main">Add new entry</button>
@@ -46,7 +57,14 @@ button {
   transform: translate(-50%, 0%);
 }
 
-h2 {
-  margin-top: 0;
+h2{
+  margin:0;
+}
+
+header{
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
 }
 </style>
