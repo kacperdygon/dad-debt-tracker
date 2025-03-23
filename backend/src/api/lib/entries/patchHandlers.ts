@@ -1,11 +1,11 @@
 import type { Request, Response } from 'express';
 import { getRoleByPin } from '@/api/lib/auth';
-import { Entry, IEntryDocument } from '@/api/models/entryModel';
+import { Entry, EntryStatus, IEntryDocument } from '@/api/models/entryModel';
 import { Types } from 'mongoose';
 
 export const patchHandlers: Record<string, (req: Request, res: Response) => Promise<void>>  = {
 
-  confirmEntry: async (req: Request, res: Response) => {
+  changeStatus: async (req: Request, res: Response) => {
     const pin = req.cookies['pin'];
 
     if (await getRoleByPin(pin) != "dad"){
@@ -15,28 +15,34 @@ export const patchHandlers: Record<string, (req: Request, res: Response) => Prom
     }
 
     const _id = req.params.id;
-
     if (!Types.ObjectId.isValid(_id)) {
       return void res.status(400).json({ message: 'Invalid id parameter' });
     }
 
-    const entry: IEntryDocument | null = await Entry.findById(_id);
+    const { newStatus } = req.body;
+    if (!newStatus) {
+      return void res.status(400).json({ message: 'New status field is missing' });
+    }
+    if (!Object.values(EntryStatus).includes(newStatus)) {
+      return void res.status(400).json({ message: 'Invalid status field' });
+    }
 
+    const entry: IEntryDocument | null = await Entry.findById(_id);
     if (!entry) {
       return void res.status(404).json({
         message: 'Requested entry not found',
       })
     }
 
-    if (entry.confirmed) {
-      return void res.status(400).json({ message: 'Entry is already confirmed' });
+    if (entry.status == newStatus) {
+      return void res.status(400).json({ message: 'Status is already changed' });
     }
 
-    entry.confirmed = true;
+    entry.status = newStatus;
     await entry.save();
 
     return void res.status(200).json({
-      message: 'Entry confirmed successfully',
+      message: 'Status changed successfully',
     })
   }
 

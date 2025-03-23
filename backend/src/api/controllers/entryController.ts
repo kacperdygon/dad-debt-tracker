@@ -38,9 +38,9 @@ export const addEntry = async (req: Request, res: Response): Promise<void> => {
       return void res.status(401).json({ message: 'Not authorized or signed in' });
     }
 
-    const confirmed = role == 'dad';
+    const status = role == 'dad' ? "confirmed" : "pending";
 
-    const newEntry = new Entry({ title, timestamp, balanceChange, confirmed });
+    const newEntry = new Entry({ title, timestamp, balanceChange, status });
     await newEntry.save();
 
     return void res.status(201).json({ message: 'Entry added successfully', entry: newEntry });
