@@ -1,16 +1,11 @@
 import { model, Schema, Document } from 'mongoose';
+import { EntryStatus } from 'shared/dist';
 
 export interface IEntryDocument extends Document {
   title: string;
   timestamp: Date;
   balanceChange: number;
   status: EntryStatus;
-}
-
-export enum EntryStatus {
-  CONFIRMED = 'confirmed',
-  PENDING = 'pending',
-  REJECTED = 'rejected',
 }
 
 const entrySchema = new Schema({

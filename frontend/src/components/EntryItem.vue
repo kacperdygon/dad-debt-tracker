@@ -3,6 +3,7 @@ import { computed, inject, onMounted, onUnmounted, ref } from 'vue';
 import { type IEntry } from '@/lib/entries.ts';
 import { useEntryStore } from '@/store/entries.ts';
 import { getRole } from '@/lib/auth.ts';
+import type { EntryStatus } from 'shared/dist';
 
 const entryStore = useEntryStore();
 const openEntryModal = inject<(entry: IEntry) => void | null>('openEntryModal');
@@ -63,8 +64,8 @@ const closeDropdown = (event: Event) => {
   }
 };
 
-function changeEntryStatus(newStatus: string) {
-  entryStore.changeEntryStatus(props.entry._id, newStatus);
+function changeEntryStatus(newStatus: EntryStatus | string) {
+  entryStore.changeEntryStatus(props.entry._id, newStatus as EntryStatus);
 }
 
 onMounted(() => document.addEventListener('click', closeDropdown));

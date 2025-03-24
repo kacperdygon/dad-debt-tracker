@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { addEntryDB, updateEntryDB, getEntriesDB, type IEntry, deleteEntryDB, changeEntryStatusDB } from '@/lib/entries.ts';
 import { computed, ref } from 'vue';
+import type { EntryStatus } from 'shared/dist';
 
 export const useEntryStore = defineStore('entry', () => {
   const entries = ref<IEntry[]>([]);
@@ -69,7 +70,7 @@ export const useEntryStore = defineStore('entry', () => {
     }
   }
 
-  async function changeEntryStatus(entryId: string, newStatus: string) {
+  async function changeEntryStatus(entryId: string, newStatus: EntryStatus) {
     const result = await changeEntryStatusDB(entryId, newStatus);
     if (!result) {
       throw new Error("Error patching entry");

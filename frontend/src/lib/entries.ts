@@ -1,4 +1,5 @@
 import { fetchData } from './database';
+import type { EntryStatus } from 'shared/dist';
 
 export interface IEntry {
   _id: string;
@@ -59,7 +60,7 @@ export async function deleteEntryDB(entryId: string): Promise<boolean> {
   return res.ok;
 }
 
-export async function changeEntryStatusDB(entryId: string, status: string): Promise<boolean> {
+export async function changeEntryStatusDB(entryId: string, status: EntryStatus): Promise<boolean> {
   const res = await fetchData<{ message: string, entry: IEntry }>(`api/entries/${entryId}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
