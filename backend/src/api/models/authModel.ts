@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const { Schema, model } = mongoose;
 
-const authSchema = new Schema({
+export const authSchema = new Schema({
   pin: String,
   role: String,
 });

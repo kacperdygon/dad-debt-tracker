@@ -1,14 +1,6 @@
 import { fetchData } from './database';
 import type { EntryStatus } from 'shared/dist';
 
-export interface IEntry {
-  _id: string;
-  title: string;
-  timestamp: Date;
-  balanceChange: number;
-  status: string;
-}
-
 export async function getEntriesDB(): Promise<IEntry[]> {
   const res = await fetchData<{ message: string, entries: IEntry[] }>("api/entries", {
     method: "GET",
