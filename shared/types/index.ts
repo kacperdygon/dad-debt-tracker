@@ -24,6 +24,16 @@ export interface IAction {
   }
 }
 
+// Populated response
+export type IActionResponse = Omit<IAction, 'authId'> & { auth: IAuth}
+
+export interface IAuth {
+  _id: string;
+  pin: string,
+  role: string,
+}
+
+
 // Add entry - no target needed, new value needed, old value not needed
 // Remove entry - target needed, new value not needed, old value needed
 // Update entry - target needed, new value needed, old value needed

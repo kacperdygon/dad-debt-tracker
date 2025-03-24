@@ -5,8 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "nodemon": "nodemon --exec \"npm run dev\"",
-    "dev": "npx tsx src/server.ts",
+    "dev": "nodemon --exec npx tsx src/server.ts",
     "build": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
     "production": "node dist/server.js"
   },

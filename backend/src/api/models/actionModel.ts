@@ -1,9 +1,10 @@
 import { ActionType, IAction } from 'shared/dist';
 import { model, Schema, Document } from 'mongoose';
+import { IAuthDocument } from '@/api/models/authModel';
 
 export interface IActionDocument extends Document {
   timestamp: Date;
-  authId: Schema.Types.ObjectId;
+  authId: Schema.Types.ObjectId | IAuthDocument;
   actionType: ActionType;
   targetId: string;
   changes: {

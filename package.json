@@ -10,7 +10,7 @@
     "frontend-build-only": "cd frontend && npm run build-only",
     "type-check": "cd frontend && npm run type-check",
     "lint": "eslint . --fix",
-    "server": "cd backend && npm run nodemon",
+    "server": "cd backend && npm run dev",
     "server-build": "cd backend && npm run build",
     "server-prod": "cd backend && npm run production",
     "format": "prettier --write frontend/src/ && prettier --write backend/src/"
