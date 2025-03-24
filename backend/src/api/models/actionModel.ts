@@ -1,7 +1,16 @@
 import { ActionType, IAction } from 'shared/dist';
 import { model, Schema, Document } from 'mongoose';
 
-export interface IActionDocument extends Omit<IAction, '_id'>, Document {}
+export interface IActionDocument extends Document {
+  timestamp: Date;
+  authId: Schema.Types.ObjectId;
+  actionType: ActionType;
+  targetId: string;
+  changes: {
+    oldValue?: any,
+    newValue?: any,
+  }
+}
 
 const changesSchema = new Schema({
   oldValue: Schema.Types.Mixed,

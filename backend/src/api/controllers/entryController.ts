@@ -1,8 +1,11 @@
 import type { Request, Response } from 'express';
-import { getRoleByPin } from '../lib/auth';
+import { getUserByPin } from '../lib/auth';
 import { Entry, type IEntryDocument } from '../models/entryModel';
-import { Types } from 'mongoose';
+import { ObjectId, Types } from 'mongoose';
 import { patchHandlers } from '@/api/lib/entries/patchHandlers';
+import { ActionType, IAction } from 'shared/dist';
+import { IActionDocument } from '@/api/models/actionModel';
+import { addAction } from '@/api/lib/actions';
 
 export const getEntries = async (req: Request, res: Response) => {
   const limit = parseInt(req.query.limit as string, 10);
@@ -30,20 +33,37 @@ export const addEntry = async (req: Request, res: Response): Promise<void> => {
     return void res.status(400).json({ message: 'One or more fields missing' });
   }
 
+  const pin = req.cookies['pin'];
+
   try {
 
-    const role = await getRoleByPin(req.cookies['pin']);
+    const user = await getUserByPin(pin);
 
-    if (!role) {
+    if (!user?.role) {
       return void res.status(401).json({ message: 'Not authorized or signed in' });
     }
 
-    const status = role == 'dad' ? "confirmed" : "pending";
+    const status = user.role == 'dad' ? "confirmed" : "pending";
 
     const newEntry = new Entry({ title, timestamp, balanceChange, status });
+
+    const action: Omit<IAction, '_id'> = {
+      timestamp: new Date(),
+      authId: user._id as string,
+      actionType: ActionType.AddEntry,
+      targetId: newEntry._id as string,
+      changes: {
+        newValue: { title, timestamp, balanceChange }
+      }
+    }
+    const addActionResult = await addAction(action);
+    if (!addActionResult.ok) {
+      return void res.status(400).json({ message: 'Error logging action: ' + addActionResult.message });
+    }
+
     await newEntry.save();
 
-    return void res.status(201).json({ message: 'Entry added successfully', entry: newEntry });
+    return void res.status(201).json({ message: 'Entry added successfully', entry: newEntry, user: user });
 
   } catch (error) {
     console.error('MongoDB error:', error);
@@ -63,14 +83,34 @@ export const updateEntry = async (req: Request, res: Response) => {
   }
 
   try {
+
+    const pin = req.cookies['pin'];
+    const user = await getUserByPin(pin);
+    if (!user) {
+      return void res.status(401).json({ message: 'Not authorized or signed in' });
+    }
+
     const entry: IEntryDocument | null = await Entry.findById(_id);
     if (!entry) {
       return void res.status(404).json({ message: 'Requested entry not found' });
     }
 
-    entry.title = title;
-    entry.timestamp = timestamp;
-    entry.balanceChange = balanceChange;
+    const action: Omit<IAction, '_id'> = {
+      timestamp: new Date(),
+      authId: user._id as string,
+      actionType: ActionType.UpdateEntry,
+      targetId: entry._id as string,
+      changes: {
+        oldValue: { title: entry.title, timestamp: entry.timestamp, balanceChange: entry.balanceChange },
+        newValue: { title, timestamp, balanceChange }
+      }
+    }
+    const addActionResult = await addAction(action);
+    if (!addActionResult.ok) {
+      return void res.status(400).json({ message: 'Error logging action: ' + addActionResult.message });
+    }
+
+    Object.assign(entry, {title, timestamp, balanceChange});
     await entry.save();
 
     return void res.status(200).json({ message: 'Entry edited successfully', entry: entry });
@@ -91,9 +131,29 @@ export const deleteEntry = async (req: Request, res: Response) => {
   }
 
   try {
-    const result = await Entry.findByIdAndDelete(_id);
-    if (!result) {
+    const pin = req.cookies['pin'];
+    const user = await getUserByPin(pin);
+    if (!user) {
+      return void res.status(401).json({ message: 'Not authorized or signed in' });
+    }
+
+    const entry = await Entry.findByIdAndDelete(_id);
+    if (!entry) {
       return void res.status(404).json({ message: "Entry with this id doesn't exist" });
+    }
+
+    const action: Omit<IAction, '_id'> = {
+      timestamp: new Date(),
+      authId: user._id as string,
+      actionType: ActionType.RemoveEntry,
+      targetId: entry._id as string,
+      changes: {
+        oldValue: { title: entry.title, timestamp: entry.timestamp, balanceChange: entry.balanceChange, status: entry.status },
+      }
+    }
+    const addActionResult = await addAction(action);
+    if (!addActionResult.ok) {
+      return void res.status(400).json({ message: 'Error logging action: ' + addActionResult.message });
     }
 
     return void res.status(200).json({ message: 'Entry deleted successfully' });

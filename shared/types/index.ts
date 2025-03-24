@@ -15,11 +15,9 @@ export interface IEntry {
 export interface IAction {
   _id: string;
   timestamp: Date;
-  userPin: string;
+  authId: string;
   actionType: ActionType;
-  target?: {
-    _id: string;
-  }
+  targetId?: string;
   changes: {
     oldValue?: any,
     newValue?: any,

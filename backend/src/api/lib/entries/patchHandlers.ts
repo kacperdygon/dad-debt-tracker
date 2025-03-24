@@ -1,14 +1,17 @@
 import type { Request, Response } from 'express';
-import { getRoleByPin } from '@/api/lib/auth';
-import { Entry, EntryStatus, IEntryDocument } from '@/api/models/entryModel';
+import { getRoleByPin, getUserByPin } from '@/api/lib/auth';
+import { Entry, IEntryDocument } from '@/api/models/entryModel';
 import { Types } from 'mongoose';
+import { ActionType, EntryStatus, IAction } from 'shared/dist';
+import { addAction } from '@/api/lib/actions';
 
 export const patchHandlers: Record<string, (req: Request, res: Response) => Promise<void>>  = {
 
   changeStatus: async (req: Request, res: Response) => {
     const pin = req.cookies['pin'];
 
-    if (await getRoleByPin(pin) != "dad"){
+    const user = await getUserByPin(pin);
+    if (user?.role != "dad"){
       return void res.status(401).json({
         message: 'No permission to perform this action',
       })
@@ -36,6 +39,21 @@ export const patchHandlers: Record<string, (req: Request, res: Response) => Prom
 
     if (entry.status == newStatus) {
       return void res.status(400).json({ message: 'Status is already changed' });
+    }
+
+    const action: Omit<IAction, '_id'> = {
+      timestamp: new Date(),
+      authId: user._id as string,
+      actionType: ActionType.ChangeEntryStatus,
+      targetId: entry._id as string,
+      changes: {
+        oldValue: { status: entry.status },
+        newValue: { status: newStatus },
+      }
+    }
+    const addActionResult = await addAction(action);
+    if (!addActionResult.ok) {
+      return void res.status(400).json({ message: 'Error logging action: ' + addActionResult.message });
     }
 
     entry.status = newStatus;
