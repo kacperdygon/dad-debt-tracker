@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
-import { addEntryDB, updateEntryDB, getEntriesDB, type IEntry, deleteEntryDB, changeEntryStatusDB } from '@/lib/entries.ts';
+import { addEntryDB, updateEntryDB, getEntriesDB, type IEntry, deleteEntryDB, changeEntryStatusDB, EntryStatus } from '@/lib/entries.ts';
 import { computed, ref } from 'vue';
-import type { EntryStatus } from 'shared/dist';
 
 export const useEntryStore = defineStore('entry', () => {
   const entries = ref<IEntry[]>([]);
@@ -15,17 +14,13 @@ export const useEntryStore = defineStore('entry', () => {
   }
 
   const lastEntries = computed(() => {
-    return [...entries.value].sort(
-      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
-    ).filter(
+    return [...entries.value].filter(
       (entry) => entry.status != 'rejected'
     );
   });
 
   const rejectedEntries = computed(() => {
-    return [...entries.value].sort(
-      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
-    ).filter(
+    return [...entries.value].filter(
       (entry) => entry.status == 'rejected'
     );
   });

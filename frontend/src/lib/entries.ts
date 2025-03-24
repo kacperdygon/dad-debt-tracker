@@ -1,5 +1,18 @@
 import { fetchData } from './database';
-import type { EntryStatus } from 'shared/dist';
+
+export enum EntryStatus {
+  CONFIRMED = 'confirmed',
+  PENDING = 'pending',
+  REJECTED = 'rejected',
+}
+
+export interface IEntry {
+  _id: string;
+  title: string;
+  timestamp: Date;
+  balanceChange: number;
+  status: string;
+}
 
 export async function getEntriesDB(): Promise<IEntry[]> {
   const res = await fetchData<{ message: string, entries: IEntry[] }>("api/entries", {
