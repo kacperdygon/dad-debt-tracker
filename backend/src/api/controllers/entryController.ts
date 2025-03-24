@@ -1,11 +1,10 @@
 import type { Request, Response } from 'express';
-import { getUserByPin } from '../lib/auth';
 import { Entry, type IEntryDocument } from '../models/entryModel';
-import { ObjectId, Types } from 'mongoose';
+import { Types } from 'mongoose';
 import { patchHandlers } from '@/api/lib/entries/patchHandlers';
 import { ActionType, IAction } from 'shared/dist';
-import { IActionDocument } from '@/api/models/actionModel';
 import { addAction } from '@/api/lib/actions';
+import { IAuthDocument } from '@/api/models/authModel';
 
 export const getEntries = async (req: Request, res: Response) => {
   const limit = parseInt(req.query.limit as string, 10);
@@ -33,15 +32,9 @@ export const addEntry = async (req: Request, res: Response): Promise<void> => {
     return void res.status(400).json({ message: 'One or more fields missing' });
   }
 
-  const pin = req.cookies['pin'];
+  const user: IAuthDocument = req.auth;
 
   try {
-
-    const user = await getUserByPin(pin);
-
-    if (!user?.role) {
-      return void res.status(401).json({ message: 'Not authorized or signed in' });
-    }
 
     const status = user.role == 'dad' ? "confirmed" : "pending";
 
@@ -82,13 +75,9 @@ export const updateEntry = async (req: Request, res: Response) => {
     return void res.status(400).json({ message: 'Invalid id parameter' });
   }
 
-  try {
+  const user: IAuthDocument = req.auth;
 
-    const pin = req.cookies['pin'];
-    const user = await getUserByPin(pin);
-    if (!user) {
-      return void res.status(401).json({ message: 'Not authorized or signed in' });
-    }
+  try {
 
     const entry: IEntryDocument | null = await Entry.findById(_id);
     if (!entry) {
@@ -130,12 +119,9 @@ export const deleteEntry = async (req: Request, res: Response) => {
     return void res.status(400).json({ message: 'Invalid id parameter' });
   }
 
+  const user: IAuthDocument = req.auth;
+
   try {
-    const pin = req.cookies['pin'];
-    const user = await getUserByPin(pin);
-    if (!user) {
-      return void res.status(401).json({ message: 'Not authorized or signed in' });
-    }
 
     const entry = await Entry.findByIdAndDelete(_id);
     if (!entry) {

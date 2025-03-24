@@ -1,16 +1,15 @@
 import type { Request, Response } from 'express';
-import { getRoleByPin, getUserByPin } from '@/api/lib/auth';
 import { Entry, IEntryDocument } from '@/api/models/entryModel';
 import { Types } from 'mongoose';
 import { ActionType, EntryStatus, IAction } from 'shared/dist';
 import { addAction } from '@/api/lib/actions';
+import { IAuthDocument } from '@/api/models/authModel';
 
 export const patchHandlers: Record<string, (req: Request, res: Response) => Promise<void>>  = {
 
   changeStatus: async (req: Request, res: Response) => {
-    const pin = req.cookies['pin'];
 
-    const user = await getUserByPin(pin);
+    const user: IAuthDocument = req.auth;
     if (user?.role != "dad"){
       return void res.status(401).json({
         message: 'No permission to perform this action',

@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
-import { getRoleByPin } from '../lib/auth';
+import { getRoleByPin, getUserByPin } from '@/api/lib/auth';
 
 export const signIn = async (req: Request, res: Response) => {
   const { pin } = req.body;
@@ -62,9 +62,10 @@ export const validateRequest = async (req: Request, res: Response, next: NextFun
   if (!pin) {
     return void res.status(401).json({ message: 'Not logged in' });
   }
-  const result = !!await getRoleByPin(pin);
-  if (!result) {
+  const result = await getUserByPin(pin);
+  if (!result || !result.role) {
     return void res.status(401).json({ message: 'Incorrect pin' });
   }
+  req.auth = result;
   next();
 }
