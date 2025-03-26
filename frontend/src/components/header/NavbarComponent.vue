@@ -41,6 +41,9 @@ watch(route, () => {
           <RouterLink to="/entries">Entries</RouterLink>
         </li>
         <li>
+          <RouterLink to="/logs">Logs</RouterLink>
+        </li>
+        <li>
           <RouterLink to="/settings">Settings</RouterLink>
         </li>
       </ul>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import EntryModal from './components/EntryModal.vue';
+import EntryModal from './components/entries/EntryModal.vue';
 import HeaderComponent from './components/header/HeaderComponent.vue';
 import { ref, provide, onMounted } from 'vue';
 import { RouterView } from 'vue-router';

@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import EntryItem from '../../../components/EntryItem.vue';
+import EntryItem from '@/components/entries/EntryItem.vue';
 import { inject } from 'vue';
-import { useEntryStore } from '../../../store/entries.ts';
+import { useEntryStore } from '@/store/entries.ts';
 import { storeToRefs } from 'pinia';
+import EntryList from '@/components/entries/EntryList.vue';
 
 const entriesStore = useEntryStore();
 const { lastEntries } = storeToRefs(entriesStore);
@@ -19,11 +20,7 @@ const handleOpenModal = () => {
 <template>
   <section>
     <h3>Last entries</h3>
-    <Suspense>
-      <ul>
-        <EntryItem v-for="entry in lastEntries.slice(0, 3)" :key="entry._id" :entry="entry" />
-      </ul>
-    </Suspense>
+    <EntryList :entries="lastEntries.slice(0, 3)" />
     <button @click="handleOpenModal" class="button-main">Add new entry</button>
   </section>
 </template>

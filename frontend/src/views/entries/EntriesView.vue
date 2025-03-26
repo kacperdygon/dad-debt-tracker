@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import EntryItem from '@/components/EntryItem.vue';
 import { inject, ref } from 'vue';
 import { useEntryStore } from '@/store/entries.ts';
 import { storeToRefs } from 'pinia';
+import EntryList from '@/components/entries/EntryList.vue';
 
 const entriesStore = useEntryStore();
 let { lastEntries } = storeToRefs(entriesStore);
@@ -31,11 +31,7 @@ const showRejected = ref(false);
 
       </header>
 
-      <Suspense>
-        <ul>
-          <EntryItem v-for="entry in showRejected ? rejectedEntries : lastEntries" :key="entry._id" :entry="entry" />
-        </ul>
-      </Suspense>
+      <EntryList :entries="showRejected ? rejectedEntries : lastEntries" />
       <button @click="handleOpenModal" class="button-main">Add new entry</button>
     </section>
   </main>
