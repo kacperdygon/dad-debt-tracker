@@ -90,6 +90,7 @@ onUnmounted(() => document.removeEventListener('click', closeDropdown));
         </button>
         <ul class="dropdown-list" ref="dropdownListRef" v-if="showDropdown">
           <li @click="handleEdit">Edit</li>
+          <li v-if="props.entry.status == 'rejected' && userRole == 'dad'" @click="changeEntryStatus('pending')" class="pending-color">Change to pending</li>
           <li @click="handleDelete" style="color: var(--expense)">Delete</li>
         </ul>
       </div>
@@ -103,11 +104,6 @@ onUnmounted(() => document.removeEventListener('click', closeDropdown));
         </button>
         <button @click="changeEntryStatus('confirmed')" class="confirmed-color outlined-button">
           Confirm
-        </button>
-      </div>
-      <div v-if="props.entry.status == 'rejected' && userRole == 'dad'"  class="confirmation-buttons">
-        <button @click="changeEntryStatus('pending')" class="pending-color outlined-button">
-          Change to pending
         </button>
       </div>
     </div>
@@ -179,6 +175,7 @@ h6 {
   top: 140%;
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
   padding: 0.5rem 0 0.5rem 0;
+  text-wrap:nowrap;
 }
 
 .dropdown-list li {
