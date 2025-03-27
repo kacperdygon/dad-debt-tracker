@@ -12,10 +12,7 @@ const entryStore = useEntryStore();
 const authStore = useAuthStore();
 onMounted( () => {
   fetchDataIfSignedIn();
-  console.log('sigma2');
   if (!entryModalRef.value) throw new Error('Entry modal ref not set');
-  console.log(entryModalRef.value);
-  console.log('sigma');
   provide('openEntryModal', entryModalRef.value?.openModal);
 });
 

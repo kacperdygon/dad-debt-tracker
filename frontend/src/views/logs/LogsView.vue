@@ -2,9 +2,15 @@
 
 import { useActionStore } from '@/store/actions.ts';
 import LogList from '@/views/logs/components/LogList.vue';
+import { computed, onMounted } from 'vue';
 
 const actionStore = useActionStore();
-const actions = actionStore.actions;
+
+const actions = computed(() => actionStore.actions);
+
+onMounted(() => {
+  actionStore.fetchActions();
+});
 
 </script>
 
@@ -13,11 +19,8 @@ const actions = actionStore.actions;
     <section>
       <header>
         <h2>Logs</h2>
-
       </header>
-
       <LogList :actions="actions" />
-
     </section>
   </main>
 </template>

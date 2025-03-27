@@ -5,7 +5,7 @@ import { IAuthDocument } from '@/api/models/authModel';
 export async function getActions (req: Request, res: Response, next: NextFunction): Promise<void> {
   const limit = parseInt(req.query.limit as string, 10);
   const query = Action.find().sort({ timestamp: -1 });
-  query.populate<{ auth: IAuthDocument }>('authId');
+  query.populate<{ auth: IAuthDocument }>('authId', '_id role');
   query.lean();
   if (!isNaN(limit)) {
     query.limit(limit);

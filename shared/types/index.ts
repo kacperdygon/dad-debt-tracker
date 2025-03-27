@@ -25,7 +25,12 @@ export interface IAction {
 }
 
 // Populated response
-export type IActionResponse = Omit<IAction, 'authId'> & { auth: IAuth}
+export interface IActionResponse extends Omit<IAction, 'authId'> {
+  authId: {
+    _id: string;
+    role: string;
+  }
+}
 
 export interface IAuth {
   _id: string;
