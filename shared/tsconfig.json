@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
+    "module": "ESNext", // 👈 Change this from "CommonJS"
+    "moduleResolution": "Node",
+    "target": "ESNext",
     "declaration": true,
     "outDir": "dist",
-    "module": "CommonJS",
-    "target": "ES6"
+    "skipLibCheck": true
   }
 }
