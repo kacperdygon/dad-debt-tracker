@@ -5,7 +5,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "esModuleInterop": true,
-    "target": "ES6",
+    "target": "ESNext",
     "strict": true,
     "allowJs": true,
     "noEmit": false,

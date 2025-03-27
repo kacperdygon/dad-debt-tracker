@@ -1,7 +1,8 @@
-interface FetchResponse<T> {
-  data: T | null;
+export interface FetchResponse<T = unknown> {
+  message: string;
   status: number;
   ok: boolean;
+  data: T | null;
 }
 
 export async function fetchData<T = unknown>(url: string, options: RequestInit = {}): Promise<FetchResponse<T>> {
@@ -15,13 +16,14 @@ export async function fetchData<T = unknown>(url: string, options: RequestInit =
     const status = res.status;
     const ok = res.ok;
 
-    if (!res.ok){
-      return { data: null, status: status, ok: ok }
+    const body = await res.json();
+
+    return {
+      message: body.message,
+      status: res.status,
+      ok: res.ok,
+      data: body.data,
     }
-
-    const data = await res.json() as T;
-
-    return { data: data, status: status, ok: ok };
 
   } catch (error) {
     throw new Error("Fetch error: " + error);

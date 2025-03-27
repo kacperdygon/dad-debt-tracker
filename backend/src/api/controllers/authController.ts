@@ -21,7 +21,9 @@ export const signIn = async (req: Request, res: Response) => {
       secure: true,
       sameSite: 'none'
     });
-    return void res.status(200).json({ message: `Logged in as ${role}`, role: role });
+    return void res.status(200).json({ message: `Logged in as ${role}`,  data: {
+        role: role
+    } });
   } catch (error) {
     console.error('MongoDB error:', error);
     return void res.status(500).json({ message: 'Server error' });
@@ -38,9 +40,11 @@ export const verifySession = async (req: Request, res: Response) => {
   try {
     const role = await getRoleByPin(pin);
     if (!role) {
-      return void res.status(401).json({ message: 'Invalid pin', role: null });
+      return void res.status(401).json({ message: 'Invalid pin' });
     } else {
-      return void res.status(200).json({ message: `Valid pin`, role: role });
+      return void res.status(200).json({ message: `Valid pin`,  data: {
+          role: role
+        }});
     }
   } catch (error) {
     console.error('MongoDB error:', error);

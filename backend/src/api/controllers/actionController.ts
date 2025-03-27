@@ -12,7 +12,9 @@ export async function getActions (req: Request, res: Response, next: NextFunctio
   }
   try {
     const actions: IActionDocument[] = await query;
-    return void res.status(200).json({ message: 'Returned actions', actions: actions });
+    return void res.status(200).json({ message: 'Returned actions', data: {
+      actions: actions
+      } });
   } catch (error) {
     console.error('MongoDB error:', error);
     return void res.status(500).json({ message: 'Server error' });

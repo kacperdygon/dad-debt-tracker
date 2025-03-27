@@ -18,7 +18,9 @@ export const getEntries = async (req: Request, res: Response) => {
   }
   try {
     const entries: IEntryDocument[] = await query;
-    return void res.status(200).json({ message: 'Returned entries', entries: entries });
+    return void res.status(200).json({ message: 'Returned entries',  data: {
+        entries: entries
+    } });
   } catch (error) {
     console.error('MongoDB error:', error);
     return void res.status(500).json({ message: 'Server error' });
@@ -56,7 +58,9 @@ export const addEntry = async (req: Request, res: Response): Promise<void> => {
 
     await newEntry.save();
 
-    return void res.status(201).json({ message: 'Entry added successfully', entry: newEntry, user: user });
+    return void res.status(201).json({ message: 'Entry added successfully',  data: {
+        entry: newEntry
+    } });
 
   } catch (error) {
     console.error('MongoDB error:', error);
@@ -102,7 +106,9 @@ export const updateEntry = async (req: Request, res: Response) => {
     Object.assign(entry, {title, timestamp, balanceChange});
     await entry.save();
 
-    return void res.status(200).json({ message: 'Entry edited successfully', entry: entry });
+    return void res.status(200).json({ message: 'Entry edited successfully',  data: {
+        entry: entry
+      }});
   } catch (error) {
     console.error('MongoDB error:', error);
     return void res.status(500).json({ message: 'Server error' });
