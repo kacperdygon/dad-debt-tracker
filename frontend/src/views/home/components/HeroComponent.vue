@@ -3,14 +3,12 @@ import { useEntryStore } from '@/store/entries.ts';
 import { storeToRefs } from 'pinia';
 
 const entriesStore = useEntryStore();
-
-const { totalDebt } = storeToRefs(entriesStore);
 </script>
 
 <template>
   <section>
     <h3>Your dad owes you</h3>
-    <h2>{{ totalDebt.toFixed(2) }} zł</h2>
+    <h2>{{ entriesStore.totalDebt.toFixed(2) }} zł</h2>
   </section>
 </template>
 

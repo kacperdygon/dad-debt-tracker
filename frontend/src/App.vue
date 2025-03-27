@@ -4,16 +4,29 @@ import HeaderComponent from './components/header/HeaderComponent.vue';
 import { ref, provide, onMounted } from 'vue';
 import { RouterView } from 'vue-router';
 import { useEntryStore } from './store/entries.ts';
+import { useAuthStore } from '@/store/auth.ts';
 
 const entryModalRef = ref<typeof EntryModal | null>(null);
 
 const entryStore = useEntryStore();
-onMounted(() => {
-
-  entryStore.fetchEntries();
+const authStore = useAuthStore();
+onMounted( () => {
+  fetchDataIfSignedIn();
+  console.log('sigma2');
   if (!entryModalRef.value) throw new Error('Entry modal ref not set');
-  provide('openEntryModal', entryModalRef.value.openModal);
+  console.log(entryModalRef.value);
+  console.log('sigma');
+  provide('openEntryModal', entryModalRef.value?.openModal);
 });
+
+async function fetchDataIfSignedIn () {
+  if (await authStore.isSignedIn()) {
+    await entryStore.fetchEntries();
+  }
+}
+
+
+
 </script>
 
 <template>

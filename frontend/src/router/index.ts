@@ -7,9 +7,9 @@ import {
 } from 'vue-router';
 import HomeView from '../views/home/HomeView.vue';
 import EntriesView from '../views/entries/EntriesView.vue';
-import { isSignedIn } from '@/lib/auth';
 import AuthView from '../views/auth/AuthView.vue';
 import SettingsView from '@/views/settings/SettingsView.vue';
+import { useAuthStore } from '@/store/auth.ts';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,7 +38,8 @@ const router = createRouter({
 });
 
 router.beforeEach(async ( to: RouteLocationNormalized, from: RouteLocationNormalizedLoaded, next: NavigationGuardNext) => {
-  if (await isSignedIn()) {
+  const authStore = useAuthStore();
+  if (await authStore.isSignedIn()) {
     next();
   } else {
     if (to.path == '/auth') {

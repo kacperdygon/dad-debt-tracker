@@ -5,8 +5,8 @@ export interface IAuth{
   role: string,
 }
 
-export async function signIn(pin: string): Promise<FetchResponse> {
-  return await fetchData<IAuth>("api/auth/sign-in", {
+export async function signInDB(pin: string): Promise<FetchResponse<{role: string}>> {
+  return await fetchData<{role: string}>("api/auth/sign-in", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -16,29 +16,20 @@ export async function signIn(pin: string): Promise<FetchResponse> {
   });
 }
 
-export async function signOut(): Promise<FetchResponse> {
-  return await fetchData<IAuth>("api/auth/sign-out", {
+export async function signOutDB(): Promise<FetchResponse> {
+  return await fetchData("api/auth/sign-out", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
   });
 }
 
-export async function isSignedIn(): Promise<boolean> {
-  const res = await fetchData<IAuth>("api/auth/verify-session", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-  });
-  return res.ok;
-}
-
-export async function getRole(): Promise<string | undefined> {
+export async function getRole(): Promise<string | null> {
   const res = await fetchData<IAuth>("api/auth/verify-session", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
   })
 
-  return res.data?.role || undefined;
+  return res.data?.role || null;
 }
