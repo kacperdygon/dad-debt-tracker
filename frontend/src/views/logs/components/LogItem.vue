@@ -1,17 +1,72 @@
 <script setup lang="ts">
 
-import type { IActionResponse } from 'shared/dist';
+import {ActionType, type IActionResponse} from 'shared/dist';
+import {constructLogMessage} from "@/views/logs/components/logMessageHelpers.ts";
+import {onMounted, ref} from "vue";
 
 const props = defineProps<{
   action: IActionResponse;
 }>()
+
+const logMessage = constructLogMessage(props.action);
+
+const formattedDate = new Date(props.action.timestamp).toLocaleString('pl-PL', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false
+}).replace(',', '');
+
+const mappedArray = ref<{
+  key: string;
+  newValue: string;
+  oldValue: string;
+}[]>([])
+
+onMounted(() => {
+  if (props.action.changes.newValue && props.action.changes.oldValue){
+    for (let key of Object.keys(props.action.changes.newValue)) {
+      mappedArray.value.push({
+        key: key,
+        newValue: props.action.changes.newValue[key],
+        oldValue: props.action.changes.oldValue[key]
+      });
+    }
+  }
+})
+
+//trzeba cos zrbic by timestamp w value byl jako data
+//i jeszcze ze mozna rozwinac te zmiany
 
 </script>
 
 <template>
 
 <div class="log-item">
-  {{props.action.authId}}
+  <header>
+
+    <span class="timestamp">{{formattedDate}}</span>
+    <h4>{{logMessage}}</h4>
+  </header>
+
+  <section class="changes">
+    <h5>
+      Changes:
+    </h5>
+    <ul v-if="action.actionType != ActionType.UpdateEntry ">
+      <li v-for="[key, value] of
+      action.changes.oldValue ? Object.entries(action.changes.oldValue) : Object.entries(action.changes.newValue)
+      ">{{
+          `${key}: ${value}`}}</li>
+    </ul>
+    <ul v-else>
+      <li v-for="{key, newValue, oldValue} in mappedArray">{{
+          `${key}: ${oldValue} -> ${newValue}`}}</li>
+    </ul>
+  </section>
+
 
 </div>
 
@@ -23,6 +78,35 @@ const props = defineProps<{
   padding: 1.25rem;
   box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.2);
   border-radius: 0.25rem;
+}
+
+header{
+  gap: 0.25rem;
+  display:flex;
+  flex-direction:column;
+}
+
+h4{
+  all: unset;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+h5{
+
+  all: unset;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.timestamp{
+  color: var(--text-gray)
+}
+
+ul{
+  list-style: none;
+  padding-left: 0.75rem;
 }
 
 </style>
