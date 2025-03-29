@@ -43,9 +43,10 @@ export async function addEntryDB(newEntry: Omit<IEntry, '_id' | 'status'>): Prom
 
 export async function updateEntryDB(entryId: string, newEntry: Omit<IEntry, '_id' | 'status'>): Promise<IEntry | null> {
   const res = await fetchData<{ message: string, entry: IEntry }>(`api/entries/${entryId}`, {
-    method: "PUT",
+    method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
+      patchType: 'updateData',
       ...newEntry,
     }),
     credentials: "include",

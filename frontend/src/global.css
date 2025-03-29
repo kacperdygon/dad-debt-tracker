@@ -66,3 +66,20 @@ h1 {
   padding: 0.5rem 0.75rem 0.5rem 0.75rem;
   border-radius: 0.375rem;
 }
+
+.primary-color {
+  color: var(--primary-color);
+}
+
+
+.red-color {
+  color: var(--expense);
+}
+
+.green-color {
+  color: var(--income);
+}
+
+.orange-color {
+  color: var(--warning);
+}

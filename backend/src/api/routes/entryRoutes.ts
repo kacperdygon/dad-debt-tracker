@@ -2,7 +2,6 @@ import { Router } from 'express';
 import {
   addEntry,
   deleteEntry,
-  updateEntry,
   getEntries,
   patchEntry
 } from '../controllers/entryController';
@@ -14,7 +13,6 @@ router.use(validateRequest)
 
 router.get('/', getEntries);
 router.post('/', addEntry);
-router.put('/:id', updateEntry);
 router.delete('/:id', deleteEntry);
 router.patch('/:id', patchEntry);
 
