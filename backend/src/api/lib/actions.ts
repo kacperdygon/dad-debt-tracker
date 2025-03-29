@@ -49,3 +49,17 @@ export async function addAction(action: Omit<IAction, '_id'>): Promise<{ ok: boo
     return { ok: false, message: 'Error when saving action: ' + error };
   }
 }
+
+export function formatDates(obj: Record<string, any>): Record<string, any> {
+  if (!obj || typeof obj !== 'object') return obj;
+  for (const key in obj) {
+    if (obj[key] instanceof Date) {
+      obj[key] = obj[key].toLocaleDateString();
+    }
+    if (typeof obj[key] === 'object') {
+      obj[key] = formatDates(obj[key]);
+    }
+  }
+
+  return obj;
+}

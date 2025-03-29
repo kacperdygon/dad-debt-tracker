@@ -48,7 +48,7 @@ export const addEntry = async (req: Request, res: Response): Promise<void> => {
       actionType: ActionType.AddEntry,
       targetId: newEntry._id as string,
       changes: {
-        newValue: { title, timestamp, balanceChange }
+        newValue: { title, timestamp: new Date(timestamp), balanceChange }
       }
     }
     const addActionResult = await addAction(action);
@@ -95,7 +95,7 @@ export const updateEntry = async (req: Request, res: Response) => {
       targetId: entry._id as string,
       changes: {
         oldValue: { title: entry.title, timestamp: entry.timestamp, balanceChange: entry.balanceChange },
-        newValue: { title, timestamp, balanceChange }
+        newValue: { title: title, timestamp: new Date(timestamp), balanceChange: balanceChange }
       }
     }
     const addActionResult = await addAction(action);
@@ -140,7 +140,7 @@ export const deleteEntry = async (req: Request, res: Response) => {
       actionType: ActionType.RemoveEntry,
       targetId: entry._id as string,
       changes: {
-        oldValue: { title: entry.title, timestamp: entry.timestamp, balanceChange: entry.balanceChange, status: entry.status },
+        oldValue: { title: entry.title, timestamp: new Date(entry.timestamp), balanceChange: entry.balanceChange, status: entry.status },
       }
     }
     const addActionResult = await addAction(action);

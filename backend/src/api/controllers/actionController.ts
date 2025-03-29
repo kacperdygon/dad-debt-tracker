@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import { Action, IActionDocument } from '@/api/models/actionModel';
 import { IAuthDocument } from '@/api/models/authModel';
+import { formatDates } from '@/api/lib/actions';
 
 export async function getActions (req: Request, res: Response, next: NextFunction): Promise<void> {
   const limit = parseInt(req.query.limit as string, 10);
@@ -12,6 +13,12 @@ export async function getActions (req: Request, res: Response, next: NextFunctio
   }
   try {
     const actions: IActionDocument[] = await query;
+
+    for (const action of actions) {
+      formatDates(action.changes.oldValue);
+      formatDates(action.changes.newValue);
+    }
+
     return void res.status(200).json({ message: 'Returned actions', data: {
       actions: actions
       } });

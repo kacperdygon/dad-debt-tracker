@@ -1,8 +1,8 @@
 <script setup lang="ts">
 
-import {ActionType, type IActionResponse} from 'shared/dist';
-import {constructLogMessage} from "@/views/logs/components/logMessageHelpers.ts";
-import {onMounted, ref} from "vue";
+import { ActionType, type IActionResponse } from 'shared/dist';
+import { constructLogMessage } from '@/views/logs/logMessageHelpers.ts';
+import { computed, onMounted, ref } from 'vue';
 
 const props = defineProps<{
   action: IActionResponse;
@@ -37,6 +37,12 @@ onMounted(() => {
   }
 })
 
+const valuesText = computed(() => {
+  if (props.action.actionType == ActionType.AddEntry) return 'New values: ';
+  else if (props.action.actionType == ActionType.RemoveEntry) return 'Removed: ';
+  else return 'Changes';
+})
+
 //trzeba cos zrbic by timestamp w value byl jako data
 //i jeszcze ze mozna rozwinac te zmiany
 
@@ -53,9 +59,9 @@ onMounted(() => {
 
   <section class="changes">
     <h5>
-      Changes:
+      {{valuesText}}
     </h5>
-    <ul v-if="action.actionType != ActionType.UpdateEntry ">
+    <ul v-if="action.actionType != ActionType.UpdateEntry && action.actionType != ActionType.ChangeEntryStatus ">
       <li v-for="[key, value] of
       action.changes.oldValue ? Object.entries(action.changes.oldValue) : Object.entries(action.changes.newValue)
       ">{{
@@ -83,7 +89,8 @@ onMounted(() => {
 header{
   gap: 0.25rem;
   display:flex;
-  flex-direction:column;
+  flex-direction: row-reverse;
+  justify-content: space-between;
 }
 
 h4{
@@ -101,7 +108,8 @@ h5{
 }
 
 .timestamp{
-  color: var(--text-gray)
+  color: var(--text-gray);
+  //align-self:end;
 }
 
 ul{

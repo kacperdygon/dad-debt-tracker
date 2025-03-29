@@ -28,4 +28,3 @@ export function constructLogMessage(action: IActionResponse): string {
     return logMessage;
 
 }
-
