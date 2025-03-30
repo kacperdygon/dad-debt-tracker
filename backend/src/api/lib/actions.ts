@@ -4,6 +4,8 @@ import { Action } from '@/api/models/actionModel';
 export function validateAction(action: Omit<IAction, '_id' | 'timestamp' | 'userPin'>): { result: boolean; message: string } {
   const actionType = action.actionType;
 
+  console.log(action.targetId, action.changes);
+
   const validations: Record<ActionType, () => { result: boolean; message: string }> = {
     [ActionType.UpdateEntry]: () => {
       if (!action.targetId || !action.changes.newValue || !action.changes.oldValue) {

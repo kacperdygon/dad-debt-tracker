@@ -4,6 +4,7 @@ import { Types } from 'mongoose';
 import { ActionType, EntryStatus, IAction } from 'shared/dist';
 import { addAction } from '@/api/lib/actions';
 import { IAuthDocument } from '@/api/models/authModel';
+import { getDifferences } from '@/api/lib/entries/helpers';
 
 export const patchHandlers: Record<string, (req: Request, res: Response) => Promise<void>>  = {
 
@@ -65,7 +66,7 @@ export const patchHandlers: Record<string, (req: Request, res: Response) => Prom
   },
 
   updateData: async (req: Request, res: Response) => {
-    
+
       const { title, timestamp, balanceChange } = req.body;
       const _id = req.params.id;
 
@@ -85,15 +86,16 @@ export const patchHandlers: Record<string, (req: Request, res: Response) => Prom
           return void res.status(404).json({ message: 'Requested entry not found' });
         }
 
+        const oldValue: Record<string, any> = { title: entry.title, timestamp: entry.timestamp, balanceChange: entry.balanceChange };
+        const newValue: Record<string, any> = { title: title, timestamp: new Date(timestamp), balanceChange: balanceChange };
+        const differences = getDifferences(oldValue, newValue);
+
         const action: Omit<IAction, '_id'> = {
           timestamp: new Date(),
           authId: user._id as string,
           actionType: ActionType.UpdateEntry,
           targetId: entry._id as string,
-          changes: {
-            oldValue: { title: entry.title, timestamp: entry.timestamp, balanceChange: entry.balanceChange },
-            newValue: { title: title, timestamp: new Date(timestamp), balanceChange: balanceChange }
-          }
+          changes: differences
         }
         const addActionResult = await addAction(action);
         if (!addActionResult.ok) {
