@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import EntryItem from '@/components/entries/EntryItem.vue';
 import { inject } from 'vue';
 import { useEntryStore } from '@/store/entries.ts';
 import { storeToRefs } from 'pinia';

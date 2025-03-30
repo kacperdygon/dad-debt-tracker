@@ -1,4 +1,4 @@
-import { ActionType, IAction } from 'shared/dist';
+import { ActionType } from 'shared/dist';
 import { model, Schema, Document } from 'mongoose';
 import { IAuthDocument } from '@/api/models/authModel';
 
@@ -8,8 +8,8 @@ export interface IActionDocument extends Document {
   actionType: ActionType;
   targetId: string;
   changes: {
-    oldValue?: any,
-    newValue?: any,
+    oldValue?: Record<string, never>,
+    newValue?: Record<string, never>,
   }
 }
 

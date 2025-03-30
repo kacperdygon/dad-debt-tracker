@@ -4,8 +4,6 @@ import { Action } from '@/api/models/actionModel';
 export function validateAction(action: Omit<IAction, '_id' | 'timestamp' | 'userPin'>): { result: boolean; message: string } {
   const actionType = action.actionType;
 
-  console.log(action.targetId, action.changes);
-
   const validations: Record<ActionType, () => { result: boolean; message: string }> = {
     [ActionType.UpdateEntry]: () => {
       if (!action.targetId || !action.changes.newValue || !action.changes.oldValue) {
@@ -52,7 +50,7 @@ export async function addAction(action: Omit<IAction, '_id'>): Promise<{ ok: boo
   }
 }
 
-export function formatDates(obj: Record<string, any>): Record<string, any> {
+export function formatDates(obj: Record<string, unknown>): Record<string, Date | unknown> {
   if (!obj || typeof obj !== 'object') return obj;
   for (const key in obj) {
     if (obj[key] instanceof Date) {

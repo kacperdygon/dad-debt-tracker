@@ -13,8 +13,6 @@ export async function fetchData<T = unknown>(url: string, options: RequestInit =
   try {
 
     const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/${url}`, options);
-    const status = res.status;
-    const ok = res.ok;
 
     const body = await res.json();
 

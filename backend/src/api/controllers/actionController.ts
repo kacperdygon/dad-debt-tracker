@@ -1,9 +1,9 @@
-import type { NextFunction, Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { Action, IActionDocument } from '@/api/models/actionModel';
 import { IAuthDocument } from '@/api/models/authModel';
 import { formatDates } from '@/api/lib/actions';
 
-export async function getActions (req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function getActions (req: Request, res: Response): Promise<void> {
   const limit = parseInt(req.query.limit as string, 10);
   const query = Action.find().sort({ timestamp: -1 });
   query.populate<{ auth: IAuthDocument }>('authId', '_id role');

@@ -28,8 +28,8 @@ const mappedArray = ref<{
 }[]>([])
 
 onMounted(() => {
-  if (props.action.changes.newValue && props.action.changes.oldValue){
-    for (let key of Object.keys(props.action.changes.newValue)) {
+  if (props.action.changes.newValue && props.action.changes.oldValue) {
+    for (const key of Object.keys(props.action.changes.newValue)) {
       mappedArray.value.push({
         key: key,
         newValue: props.action.changes.newValue[key],
@@ -79,11 +79,12 @@ function switchExpanded(){
     <ul v-if="action.actionType != ActionType.UpdateEntry && action.actionType != ActionType.ChangeEntryStatus ">
       <li v-for="[key, value] of
       action.changes.oldValue ? Object.entries(action.changes.oldValue) : Object.entries(action.changes.newValue)
-      ">{{
+      "
+          :key='key'>{{
           `${key}: ${value}`}}</li>
     </ul>
     <ul v-else>
-      <li v-for="{key, newValue, oldValue} in mappedArray">{{
+      <li v-for="{key, newValue, oldValue} in mappedArray" :key='key'>{{
           `${key}: ${oldValue} > ${newValue}`}}</li>
     </ul>
   </section>

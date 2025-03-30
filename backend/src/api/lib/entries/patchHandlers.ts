@@ -86,8 +86,10 @@ export const patchHandlers: Record<string, (req: Request, res: Response) => Prom
           return void res.status(404).json({ message: 'Requested entry not found' });
         }
 
-        const oldValue: Record<string, any> = { title: entry.title, timestamp: entry.timestamp, balanceChange: entry.balanceChange };
-        const newValue: Record<string, any> = { title: title, timestamp: new Date(timestamp), balanceChange: balanceChange };
+        // !!!! dates never equal because they don't reference the same thing
+
+        const oldValue: Record<string, unknown> = { title: entry.title, timestamp: entry.timestamp, balanceChange: entry.balanceChange };
+        const newValue: Record<string, unknown> = { title: title, timestamp: new Date(timestamp), balanceChange: balanceChange };
         const differences = getDifferences(oldValue, newValue);
 
         const action: Omit<IAction, '_id'> = {

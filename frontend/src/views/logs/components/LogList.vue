@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import EntryItem from '@/components/entries/EntryItem.vue';
-import type { IEntry } from '@/lib/entries.ts';
 import type { IActionResponse } from 'shared/dist';
 import LogItem from '@/views/logs/components/LogItem.vue';
 

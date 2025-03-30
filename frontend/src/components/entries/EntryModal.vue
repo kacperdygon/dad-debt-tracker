@@ -3,7 +3,6 @@ import type { IEntry } from '../../lib/entries.ts';
 
 import { computed, ref } from 'vue';
 import { useEntryStore } from '../../store/entries.ts';
-import { getRole } from '@/lib/auth.ts';
 
 interface AddEntryFormData {
   title: string;

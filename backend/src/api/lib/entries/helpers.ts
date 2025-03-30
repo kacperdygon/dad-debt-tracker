@@ -1,9 +1,7 @@
-export function getDifferences(oldValue: Record<string, any>, newValue: Record<string, any>): {
-  oldValue: Record<string, any>,
-  newValue: Record<string, any>
+export function getDifferences(oldValue: Record<string, unknown>, newValue: Record<string, unknown>): {
+  oldValue: Record<string, unknown>,
+  newValue: Record<string, unknown>
 }{
-  const differences: Record<string, { oldValue: Record<string, any>; newValue: Record<string, any> }> = {};
-
   for (const key in newValue) {
     if (oldValue[key] === newValue[key]) {
       oldValue[key] = undefined;

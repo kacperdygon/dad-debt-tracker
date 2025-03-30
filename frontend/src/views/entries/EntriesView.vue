@@ -5,8 +5,8 @@ import { storeToRefs } from 'pinia';
 import EntryList from '@/components/entries/EntryList.vue';
 
 const entriesStore = useEntryStore();
-let { lastEntries } = storeToRefs(entriesStore);
-let { rejectedEntries } = storeToRefs(entriesStore);
+const { lastEntries } = storeToRefs(entriesStore);
+const { rejectedEntries } = storeToRefs(entriesStore);
 
 const openEntryModal = inject<() => void | null>('openEntryModal');
 const handleOpenModal = () => {
