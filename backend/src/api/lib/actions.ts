@@ -4,9 +4,11 @@ import { Action } from '@/api/models/actionModel';
 export function validateAction(action: Omit<IAction, '_id' | 'timestamp' | 'userPin'>): { result: boolean; message: string } {
   const actionType = action.actionType;
 
+  //helper function for development
+
   const validations: Record<ActionType, () => { result: boolean; message: string }> = {
     [ActionType.UpdateEntry]: () => {
-      if (!action.targetId || !action.changes.newValue || !action.changes.oldValue) {
+      if (!action.targetId || !action.changes || !action.changes.newValue || !action.changes.oldValue) {
         return { result: false, message: 'Missing one field or more on update entry action' };
       }
       return { result: true, message: 'Action validated successfully' };
@@ -50,14 +52,14 @@ export async function addAction(action: Omit<IAction, '_id'>): Promise<{ ok: boo
   }
 }
 
-export function formatDates(obj: Record<string, unknown>): Record<string, Date | unknown> {
+export function formatDates(obj: Record<string, unknown> | undefined): Record<string, Date | unknown> | undefined {
   if (!obj || typeof obj !== 'object') return obj;
   for (const key in obj) {
     if (obj[key] instanceof Date) {
       obj[key] = obj[key].toLocaleDateString();
     }
-    if (typeof obj[key] === 'object') {
-      obj[key] = formatDates(obj[key]);
+    if (typeof obj[key] === 'object' && obj[key] !== null) {
+      obj[key] = formatDates(obj[key] as Record<string, unknown>);
     }
   }
 

@@ -26,6 +26,11 @@ const router = createRouter({
       component: EntriesView,
     },
     {
+      path: '/entries/:id',
+      name: 'jump-to-entry',
+      component: EntriesView,
+    },
+    {
       path: '/auth',
       name: 'auth',
       component: AuthView,

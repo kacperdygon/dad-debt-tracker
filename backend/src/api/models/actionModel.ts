@@ -8,8 +8,8 @@ export interface IActionDocument extends Document {
   actionType: ActionType;
   targetId: string;
   changes: {
-    oldValue?: Record<string, never>,
-    newValue?: Record<string, never>,
+    oldValue?: Record<string, unknown>,
+    newValue?: Record<string, unknown>,
   }
 }
 

@@ -4,8 +4,8 @@ export function getDifferences(oldValue: Record<string, unknown>, newValue: Reco
 }{
   for (const key in newValue) {
     if (oldValue[key] === newValue[key]) {
-      oldValue[key] = undefined;
-      newValue[key] = undefined;
+      delete oldValue[key];
+      delete newValue[key];
     }
   }
 

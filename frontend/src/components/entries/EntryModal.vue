@@ -2,7 +2,7 @@
 import type { IEntry } from '../../lib/entries.ts';
 
 import { computed, ref } from 'vue';
-import { useEntryStore } from '../../store/entries.ts';
+import { useEntryStore } from '../../store/entries';
 
 interface AddEntryFormData {
   title: string;
@@ -15,6 +15,8 @@ const DEFAULT_FORM_DATA: AddEntryFormData = {
   timestamp: new Date().toLocaleDateString('en-CA'),
   balanceChange: 0,
 };
+
+let startingFormData: AddEntryFormData;
 
 const formData = ref(DEFAULT_FORM_DATA);
 const errorMessage = ref('');
@@ -31,8 +33,25 @@ const onSubmit = async (event: Event) => {
     return;
   }
 
+  if (targetEntryId.value){
+
+  }
+
+  //validate if there are changes
+  if (targetEntryId.value) {
+    if (formData.value.title == startingFormData.title &&
+    formData.value.timestamp == startingFormData.timestamp &&
+    formData.value.balanceChange == startingFormData.balanceChange
+  ) {
+    errorMessage.value = 'No changes in entry';
+    return;
+  }
+  }
+  
+
   if (!dialogRef.value) throw new Error('Dialog ref not set');
   dialogRef.value.close();
+  errorMessage.value = '';
 
   const newEntry: Omit<IEntry, '_id' | 'status'> = {
     title: formData.value.title,
@@ -45,6 +64,7 @@ const onSubmit = async (event: Event) => {
   } else {
     await entryStore.addEntry(newEntry);
   }
+
 };
 
 const gridTemplate = computed(() => {
@@ -76,6 +96,8 @@ const openModal = (entry?: IEntry) => {
   } else {
     formData.value = JSON.parse(JSON.stringify(DEFAULT_FORM_DATA));
   }
+
+  startingFormData = JSON.parse(JSON.stringify(formData.value));
 
   targetEntryId.value = entry?._id;
   dialogRef.value.showModal();

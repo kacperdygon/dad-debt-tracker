@@ -12,8 +12,5 @@
     "server-prod": "cd backend && npm run production",
     "format": "prettier --write frontend/src/ && prettier --write backend/src/",
     "install-all": "cd frontend && npm install && cd ../backend && npm install && cd ../shared && npm install && npm run build"
-  },
-  "dependencies": {
-    "eslint": "^9.23.0"
   }
 }

@@ -3,8 +3,8 @@ import EntryModal from './components/entries/EntryModal.vue';
 import HeaderComponent from './components/header/HeaderComponent.vue';
 import { ref, provide, onMounted } from 'vue';
 import { RouterView } from 'vue-router';
-import { useEntryStore } from './store/entries.ts';
-import { useAuthStore } from '@/store/auth.ts';
+import { useEntryStore } from '@/store/entries';
+import { useAuthStore } from '@/store/auth';
 
 const entryModalRef = ref<typeof EntryModal | null>(null);
 

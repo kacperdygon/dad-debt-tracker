@@ -92,7 +92,7 @@ function switchExpanded(){
     <button class="button-plain" @click="switchExpanded">
       <i class="fa-solid fa-chevron-down" :class="{'fa-rotate-180': isExpanded}"></i>
       &nbsp;{{ isExpanded ? 'Collapse' : 'Expand' }}</button>
-    <RouterLink :to="{name: 'entries', params: {id: action.targetId}}" v-if="action.actionType != ActionType.RemoveEntry" class="primary-color">Jump to entry</RouterLink>
+    <RouterLink :to="{name: 'jump-to-entry', params: {id: action.targetId}}" v-if="action.actionType != ActionType.RemoveEntry" class="primary-color">Jump to entry</RouterLink>
 
   </section>
 

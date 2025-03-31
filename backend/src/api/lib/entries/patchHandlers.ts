@@ -88,9 +88,16 @@ export const patchHandlers: Record<string, (req: Request, res: Response) => Prom
 
         // !!!! dates never equal because they don't reference the same thing
 
-        const oldValue: Record<string, unknown> = { title: entry.title, timestamp: entry.timestamp, balanceChange: entry.balanceChange };
-        const newValue: Record<string, unknown> = { title: title, timestamp: new Date(timestamp), balanceChange: balanceChange };
+        //temporary fix
+        const sameDates = new Date(timestamp).getTime() == entry.timestamp.getTime();
+
+        const oldValue: Record<string, unknown> = { title: entry.title, timestamp: !sameDates ? entry.timestamp : undefined, balanceChange: entry.balanceChange };
+        const newValue: Record<string, unknown> = { title: title, timestamp: !sameDates ? new Date(timestamp) : undefined, balanceChange: balanceChange };
         const differences = getDifferences(oldValue, newValue);
+
+        if (Object.keys(differences.newValue).length === 0){
+          return void res.status(400).json({message: 'No changes made'});
+        }
 
         const action: Omit<IAction, '_id'> = {
           timestamp: new Date(),
