@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import { Entry, type IEntryDocument } from '../../models/entryModel';
 import { Types } from 'mongoose';
-import { patchHandlers } from '@/api/lib/entries/patchHandlers';
+import { patchHandlers } from '@/api/controllers/entries/patchHandlers';
 import { ActionType, IAction } from 'shared/dist';
 import { addAction } from '@/api/lib/actions';
 import { IAuthDocument } from '@/api/models/authModel';
@@ -38,7 +38,7 @@ export const addEntry = async (req: Request, res: Response): Promise<void> => {
 
   const user: IAuthDocument = req.auth;
 
-  parsedTimestamp.setHours(0, 0, 0, 0);
+  parsedTimestamp.setUTCHours(0, 0, 0, 0);
 
   try {
 

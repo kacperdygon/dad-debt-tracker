@@ -5,10 +5,6 @@ import { getBalanceByDate } from '@/api/lib/entries/chartData';
 export const getChartData = async (req: Request, res: Response) => {
   const periodString = req.query.period;
 
-
-  Object.values(ChartDataPeriod).forEach(value => console.log(value));
-  console.log(periodString);
-
   if (!Object.values(ChartDataPeriod).includes(periodString as ChartDataPeriod)){
     return void res.status(400).json(
       { message: 'Invalid period param' }

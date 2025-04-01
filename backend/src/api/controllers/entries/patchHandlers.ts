@@ -81,7 +81,7 @@ export const patchHandlers: Record<string, (req: Request, res: Response) => Prom
 
       const user: IAuthDocument = req.auth;
 
-      parsedTimestamp.setHours(0, 0, 0, 0);
+      parsedTimestamp.setUTCHours(0, 0, 0, 0);
 
       try {
 
