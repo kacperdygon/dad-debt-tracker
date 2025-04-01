@@ -26,8 +26,8 @@ export interface IAction {
   actionType: ActionType;
   targetId?: string;
   changes: {
-    oldValue?: any,
-    newValue?: any,
+    oldValue?: any;
+    newValue?: any;
   }
 }
 
@@ -41,8 +41,13 @@ export interface IActionResponse extends Omit<IAction, 'authId'> {
 
 export interface IAuth {
   _id: string;
-  pin: string,
-  role: string,
+  pin: string;
+  role: string;
+}
+
+export interface BalanceByDate {
+  _id: Date
+  summedBalance: number
 }
 
 
