@@ -29,18 +29,22 @@ export const getEntries = async (req: Request, res: Response) => {
 
 export const addEntry = async (req: Request, res: Response): Promise<void> => {
   const { title, timestamp, balanceChange } = req.body;
+  
+  const parsedTimestamp = new Date(timestamp);
 
-  if (!title || !timestamp || !balanceChange) {
-    return void res.status(400).json({ message: 'One or more fields missing' });
+  if (!title || Number.isNaN(parsedTimestamp.getTime()) || Number.isNaN(balanceChange)) {
+    return void res.status(400).json({ message: 'Invalid request' });
   }
 
   const user: IAuthDocument = req.auth;
+
+  parsedTimestamp.setHours(0, 0, 0, 0);
 
   try {
 
     const status = user.role == 'dad' ? "confirmed" : "pending";
 
-    const newEntry = new Entry({ title, timestamp, balanceChange, status });
+    const newEntry = new Entry({ title, timestamp: parsedTimestamp, balanceChange, status });
 
     const action: Omit<IAction, '_id'> = {
       timestamp: new Date(),

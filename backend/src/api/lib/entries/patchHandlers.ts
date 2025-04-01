@@ -70,14 +70,18 @@ export const patchHandlers: Record<string, (req: Request, res: Response) => Prom
       const { title, timestamp, balanceChange } = req.body;
       const _id = req.params.id;
 
-      if (!_id || !title || !timestamp || !balanceChange) {
-        return void res.status(400).json({ message: 'One or more fields missing' });
+      const parsedTimestamp = new Date(timestamp);
+
+      if (!_id || !title || Number.isNaN(parsedTimestamp) || Number.isNaN(balanceChange)) {
+        return void res.status(400).json({ message: 'Invalid request' });
       }
       if (!Types.ObjectId.isValid(_id)) {
         return void res.status(400).json({ message: 'Invalid id parameter' });
       }
 
       const user: IAuthDocument = req.auth;
+
+      parsedTimestamp.setHours(0, 0, 0, 0);
 
       try {
 
@@ -92,7 +96,7 @@ export const patchHandlers: Record<string, (req: Request, res: Response) => Prom
         const sameDates = new Date(timestamp).getTime() == entry.timestamp.getTime();
 
         const oldValue: Record<string, unknown> = { title: entry.title, timestamp: !sameDates ? entry.timestamp : undefined, balanceChange: entry.balanceChange, status: entry.status };
-        const newValue: Record<string, unknown> = { title: title, timestamp: !sameDates ? new Date(timestamp) : undefined, balanceChange: balanceChange, status: user.role == 'dad' ? 'confirmed' : 'pending' };
+        const newValue: Record<string, unknown> = { title: title, timestamp: !sameDates ? parsedTimestamp : undefined, balanceChange: balanceChange, status: user.role == 'dad' ? 'confirmed' : 'pending' };
         const differences = getDifferences(oldValue, newValue);
 
         if (Object.keys(differences.newValue).length === 0){
