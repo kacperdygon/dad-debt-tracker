@@ -91,8 +91,8 @@ export const patchHandlers: Record<string, (req: Request, res: Response) => Prom
         //temporary fix
         const sameDates = new Date(timestamp).getTime() == entry.timestamp.getTime();
 
-        const oldValue: Record<string, unknown> = { title: entry.title, timestamp: !sameDates ? entry.timestamp : undefined, balanceChange: entry.balanceChange };
-        const newValue: Record<string, unknown> = { title: title, timestamp: !sameDates ? new Date(timestamp) : undefined, balanceChange: balanceChange };
+        const oldValue: Record<string, unknown> = { title: entry.title, timestamp: !sameDates ? entry.timestamp : undefined, balanceChange: entry.balanceChange, status: entry.status };
+        const newValue: Record<string, unknown> = { title: title, timestamp: !sameDates ? new Date(timestamp) : undefined, balanceChange: balanceChange, status: user.role == 'dad' ? 'confirmed' : 'pending' };
         const differences = getDifferences(oldValue, newValue);
 
         if (Object.keys(differences.newValue).length === 0){

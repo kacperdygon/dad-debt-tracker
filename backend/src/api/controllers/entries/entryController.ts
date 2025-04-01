@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { Entry, type IEntryDocument } from '../models/entryModel';
+import { Entry, type IEntryDocument } from '../../models/entryModel';
 import { Types } from 'mongoose';
 import { patchHandlers } from '@/api/lib/entries/patchHandlers';
 import { ActionType, IAction } from 'shared/dist';
