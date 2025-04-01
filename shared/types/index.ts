@@ -5,10 +5,10 @@ export enum EntryStatus {
 }
 
 export enum ChartDataPeriod {
-  LAST_MONTH = "last month",
-    LAST_3_MONTHS = "last 3 months",
-    LAST_6_MONTHS = "last 6 months",
-    LAST_YEAR = "last year"
+  LAST_MONTH = "last-month",
+    LAST_3_MONTHS = "last-3-months",
+    LAST_6_MONTHS = "last-6-months",
+    LAST_YEAR = "last-year"
 }
 
 export interface IEntry {

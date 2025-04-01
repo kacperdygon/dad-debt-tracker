@@ -7,8 +7,7 @@ export async function getBalanceByDate(startDate: Date, endDate: Date): Promise<
     const result = await Entry.aggregate([
         { $match: { timestamp: { $gte: startDate, $lte: endDate }}},
         { $group: { _id: '$timestamp', summedBalance: {$sum: '$balanceChange'}}},
-        { $sort: { _id: -1}}
-
+        { $sort: { _id: 1}}
     ]);
 
     return result;
