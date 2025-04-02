@@ -39,6 +39,7 @@ async function LoadChart(){
             data: chartData.value.data,
             borderWidth: 1,
             pointRadius: 0,
+            pointHitRadius: 5,
             stepped: true,
           }]
         },
@@ -63,7 +64,7 @@ async function LoadChart(){
           plugins: {
             legend: {
               display: false
-            }
+            },
           }
         }
       });

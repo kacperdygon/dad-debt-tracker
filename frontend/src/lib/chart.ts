@@ -16,6 +16,7 @@ export async function getChartData(period: ChartDataPeriod): Promise<{data: {x: 
   if (res.data) {
 
     const result = res.data.balanceByDate.map((value) => {
+
       return {
         x: new Date(value._id).toISOString().split('T')[0],
         y: value.summedBalance
@@ -24,6 +25,7 @@ export async function getChartData(period: ChartDataPeriod): Promise<{data: {x: 
 
     const startDate = new Date();
     const endDate = new Date();
+    startDate.setDate(startDate.getDate() + 1);
     endDate.setMonth(endDate.getMonth() - 1);
 
     return {

@@ -18,7 +18,7 @@ export async function getBalanceByDate(startDate: Date, endDate: Date): Promise<
 
     ]);
 
-    const previousSum = await Entry.aggregate([
+    const previousSumResult = await Entry.aggregate([
         { $match: { timestamp: { $lt: startDate } } },
         {
             $group: {
@@ -30,12 +30,14 @@ export async function getBalanceByDate(startDate: Date, endDate: Date): Promise<
     ])
 
 
-
-    let cumulativeBalance = 0;
+    const previousSum = previousSumResult[0] ? previousSumResult[0].summedBalance : 0
+    let cumulativeBalance = previousSum;
     const mappedResult = result.map((value) => {
         cumulativeBalance += value.dailySummedBalance;
         return { _id: value._id, summedBalance: cumulativeBalance };
     })
 
-    return [{_id: startDate, summedBalance: previousSum[0] ? previousSum[0].summedBalance : 0 }, ...mappedResult];
+    startDate.setUTCHours(0, 0, 0, 0);
+
+    return [{_id: startDate, summedBalance: previousSum }, ...mappedResult];
 }
