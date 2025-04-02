@@ -39,7 +39,7 @@ export const getChartData = async (req: Request, res: Response) => {
   try {
     const balanceByDate = await getBalanceByDate(startDate, endDate);
     return void res.status(200).json({ message: 'Returned entries',  data: {
-        balanceByDate: balanceByDate
+        balanceByDate: balanceByDate,
     } });
   } catch (error) {
     console.error('MongoDB error:', error);

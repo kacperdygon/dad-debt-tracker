@@ -1,34 +1,9 @@
 import { Entry } from '@/api/models/entryModel';
+import { BalanceByDate } from 'shared/dist';
 
-export async function getBalanceByDate(startDate: Date, endDate: Date): Promise<{
-    _id: Date,
-    summedBalance: number;
-}[]>{
-    // return Entry.aggregate([
-    //     { $match: { timestamp: { $gte: startDate, $lte: endDate } } },
-    //     { $sort: { timestamp: 1 } },
-    //     { $setWindowFields: {
-    //             sortBy: { timestamp: 1 },
-    //             output: {
-    //                 cumulativeBalance: {
-    //                     $sum: "$balanceChange",
-    //                     window: {
-    //                         documents: [ "unbounded", "current" ]
-    //                     }
-    //                 }
-    //             }
-    //     }
-    //     },
-    //     {
-    //         $group: {
-    //             _id: "$timestamp",
-    //             summedBalance: { $last: "$cumulativeBalance" },
-    //             dailySummedBalance: { $sum: "$balanceChange"}
-    //         }
-    //     },
-    //     { $sort: { _id: 1 } },
-
-    // ]);
+export async function getBalanceByDate(startDate: Date, endDate: Date): Promise<
+    BalanceByDate[]
+>{
 
     const result = await Entry.aggregate([
         { $match: { timestamp: { $gte: startDate, $lte: endDate } } },
@@ -43,11 +18,24 @@ export async function getBalanceByDate(startDate: Date, endDate: Date): Promise<
 
     ]);
 
+    const previousSum = await Entry.aggregate([
+        { $match: { timestamp: { $lt: startDate } } },
+        {
+            $group: {
+                _id: 0,
+                summedBalance: { $sum: "$balanceChange"}
+            }
+        },
+        { $sort: { _id: 1 } },
+    ])
+
+
+
     let cumulativeBalance = 0;
     const mappedResult = result.map((value) => {
         cumulativeBalance += value.dailySummedBalance;
         return { _id: value._id, summedBalance: cumulativeBalance };
     })
 
-    return mappedResult;
+    return [{_id: startDate, summedBalance: previousSum[0] ? previousSum[0].summedBalance : 0 }, ...mappedResult];
 }
