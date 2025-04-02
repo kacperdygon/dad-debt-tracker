@@ -16,22 +16,16 @@ export async function getChartData(period: ChartDataPeriod): Promise<{labels: st
   const labels: string[] = [];
   const data: number[] = [];
 
-  let balanceSum = 0;
-
-  console.log(res.data);
-
   if (res.data) {
     res.data.balanceByDate.map((value) => {
       const parsedDate = new Date(value._id);
-      const label = parsedDate.toLocaleString('pl-PL', {day: 'numeric', month: 'short'});
+      const label = parsedDate.toLocaleString('en-US', {day: 'numeric', month: 'short'});
       labels.push(label);
-
-      //counting total change
-
-      data.push(value.summedBalance + balanceSum);
-      balanceSum += value.summedBalance;
+      data.push(value.summedBalance);
     })
   }
+
+  
 
   console.log(labels);
   console.log(data);
