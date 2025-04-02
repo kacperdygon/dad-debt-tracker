@@ -1,9 +1,9 @@
 import { fetchData } from '@/lib/database';
 import { type BalanceByDate, ChartDataPeriod } from 'shared/dist';
 
-export async function getChartData(period: ChartDataPeriod): Promise<{labels: string[], data: number[]}> {
+export async function getChartData(period: ChartDataPeriod): Promise<{labels: string[], data: number[]} | null> {
 
-  const res = await fetchData<{ balanceByDate: BalanceByDate[] }>(`api/entries/chart-data?period=${period}`, {
+  const res = await fetchData<{ previousSum: number, balanceByDate: BalanceByDate[] }>(`api/entries/chart-data?period=${period}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -13,26 +13,43 @@ export async function getChartData(period: ChartDataPeriod): Promise<{labels: st
     throw new Error(`Error fetching chart data for ${period}`);
   }
 
-  const labels: string[] = [];
-  const data: number[] = [];
-
   if (res.data) {
-    res.data.balanceByDate.map((value) => {
-      const parsedDate = new Date(value._id);
-      const label = parsedDate.toLocaleString('en-US', {day: 'numeric', month: 'short'});
-      labels.push(label);
-      data.push(value.summedBalance);
+    const parsedBalanceByDate = res.data.balanceByDate.map<BalanceByDate>((value) => {
+      return {
+        _id: new Date(value._id),
+        summedBalance: value.summedBalance,
+      };
     })
+
+    return mapBalanceByDate(period, parsedBalanceByDate, res.data.previousSum);
   }
 
-  
+  return null;
 
-  console.log(labels);
-  console.log(data);
+}
 
-  return {
-    labels: labels,
-    data: data
+function mapBalanceByDate(period: ChartDataPeriod, balanceByDate: BalanceByDate[], previousSum: number ): {labels: string[], data: number[]} {
+  const iteratedDate: Date = new Date();
+  iteratedDate.setMonth(iteratedDate.getMonth() - 1);
+  iteratedDate.setUTCHours(0, 0, 0, 0);
+  let balanceByDateIndex = 0;
+  let pushedBalance = previousSum;
+  const chartDataObject: {labels: string[], data: number[]} = {
+    labels: [],
+    data: []
+  };
+  for(let i = 0; iteratedDate.getTime() <= balanceByDate[balanceByDate.length - 1]._id.getTime(); i++){
+    if (iteratedDate.getTime() == balanceByDate[balanceByDateIndex]._id.getTime()) {
+      pushedBalance = balanceByDate[balanceByDateIndex].summedBalance;
+      balanceByDateIndex++;
+    }
+
+    chartDataObject.labels.push(iteratedDate.toLocaleString('en-US', {day: 'numeric', month: 'short'}));
+    chartDataObject.data.push(pushedBalance);
+
+    iteratedDate.setDate(iteratedDate.getDate() + 1);
   }
+
+  return chartDataObject;
 
 }

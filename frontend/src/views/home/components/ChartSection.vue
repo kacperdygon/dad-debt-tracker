@@ -33,9 +33,12 @@ async function LoadChart(){
             label: 'Balance',
             data: chartData.value.data,
             borderWidth: 1,
+            pointRadius: 0,
+            stepped: true,
           }]
         },
         options: {
+
           plugins: {
             legend: {
               display: false
