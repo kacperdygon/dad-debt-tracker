@@ -1,26 +1,21 @@
 <script setup lang="ts">
-import { inject } from 'vue';
-import { useEntryStore } from '@/store/entries.ts';
-import { storeToRefs } from 'pinia';
+import { useEntryStore } from '@/store/entries';
 import EntryList from '@/components/entries/EntryList.vue';
+import { onMounted } from 'vue';
+import { storeToRefs } from 'pinia';
 
 const entriesStore = useEntryStore();
-const { lastEntries } = storeToRefs(entriesStore);
+const lastEntries = storeToRefs(entriesStore).lastEntries;
 
-const openEntryModal = inject<() => void | null>('openEntryModal');
-const handleOpenModal = () => {
-  if (!openEntryModal) {
-    throw new Error('Open entry modal not passed');
-  }
-  openEntryModal();
-};
+onMounted(() => {
+  console.log(lastEntries);
+})
 </script>
 
 <template>
   <section>
     <h3>Last entries</h3>
-    <EntryList :entries="lastEntries.slice(0, 3)" />
-    <button @click="handleOpenModal" class="button-main">Add new entry</button>
+    <EntryList :entries="lastEntries" />
   </section>
 </template>
 

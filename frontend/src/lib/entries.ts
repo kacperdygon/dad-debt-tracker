@@ -1,4 +1,4 @@
-import { fetchData } from './database';
+import { fetchData, type FetchResponse } from './database';
 
 export enum EntryStatus {
   CONFIRMED = 'confirmed',
@@ -24,6 +24,20 @@ export async function getEntriesDB(): Promise<IEntry[]> {
   if (!res.ok) {
     return [];
   }
+  return res.data?.entries as IEntry[];
+}
+
+export async function getRejectedEntriesDB(): Promise<IEntry[]> {
+  const res = await fetchData<{ message: string, entries: IEntry[] }>("api/entries?rejected=true", {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    return [];
+  }
+  console.log('sigieamekn');
   return res.data?.entries as IEntry[];
 }
 
@@ -66,8 +80,8 @@ export async function deleteEntryDB(entryId: string): Promise<boolean> {
   return res.ok;
 }
 
-export async function changeEntryStatusDB(entryId: string, status: EntryStatus): Promise<boolean> {
-  const res = await fetchData<{ message: string, entry: IEntry }>(`api/entries/${entryId}`, {
+export async function changeEntryStatusDB(entryId: string, status: EntryStatus): Promise<FetchResponse<{ entry: IEntry }>> {
+  const res = await fetchData<{ entry: IEntry }>(`api/entries/${entryId}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -77,5 +91,5 @@ export async function changeEntryStatusDB(entryId: string, status: EntryStatus):
     credentials: "include",
   });
 
-  return res.ok;
+  return res;
 }

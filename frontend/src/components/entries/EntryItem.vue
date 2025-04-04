@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, inject, onMounted, onUnmounted, ref } from 'vue';
-import { type IEntry } from '@/lib/entries.ts';
-import { useEntryStore } from '@/store/entries.ts';
-import { getRole } from '@/lib/auth.ts';
-import type { EntryStatus } from 'shared/dist';
+import { type IEntry } from '@/lib/entries';
+import { useEntryStore } from '@/store/entries';
+import { getRole } from '@/lib/auth';
+import { EntryStatus } from 'shared/dist';
 
 const entryStore = useEntryStore();
 const openEntryModal = inject<(entry: IEntry) => void | null>('openEntryModal');
@@ -15,7 +15,7 @@ const props = defineProps<{
   entry: IEntry;
 }>();
 
-const userRole = await getRole();
+const userRole = ref<string | null>(null)
 
 function handleDelete() {
   toggleDropdown();
@@ -65,10 +65,20 @@ const closeDropdown = (event: Event) => {
 };
 
 function changeEntryStatus(newStatus: EntryStatus | string) {
-  entryStore.changeEntryStatus(props.entry._id, newStatus as EntryStatus);
+  if (props.entry.status == EntryStatus.REJECTED)
+  entryStore.changeRejectedStatus(props.entry._id, newStatus as EntryStatus);
+  else
+  entryStore.changeNotRejectedStatus(props.entry._id, newStatus as EntryStatus)
 }
 
-onMounted(() => document.addEventListener('click', closeDropdown));
+async function loadRole(){
+  userRole.value = await getRole();
+}
+
+onMounted(() => {
+  document.addEventListener('click', closeDropdown);
+  loadRole();
+});
 onUnmounted(() => document.removeEventListener('click', closeDropdown));
 </script>
 
