@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { inject, ref } from 'vue';
-import { useEntryStore } from '@/store/entries.ts';
-import { storeToRefs } from 'pinia';
+import { inject, ref, watch } from 'vue';
+import { useEntryStore } from '@/store/entries';
 import EntryList from '@/components/entries/EntryList.vue';
+import { storeToRefs } from 'pinia';
 
 const entriesStore = useEntryStore();
-const { lastEntries } = storeToRefs(entriesStore);
-const { rejectedEntries } = storeToRefs(entriesStore);
+const {lastEntries, lastRejectedEntries} = storeToRefs(entriesStore);
 
 const openEntryModal = inject<() => void | null>('openEntryModal');
 const handleOpenModal = () => {
@@ -17,6 +16,15 @@ const handleOpenModal = () => {
 };
 
 const showRejected = ref(false);
+watch(showRejected, (newValue) => {
+  console.log(lastRejectedEntries.value.length);
+  console.log(newValue);
+  if (lastRejectedEntries.value.length === 0 && newValue) {
+    console.log('sigma');
+    entriesStore.fetchRejectedEntries();
+  }
+}) 
+
 </script>
 
 <template>
@@ -31,7 +39,7 @@ const showRejected = ref(false);
 
       </header>
 
-      <EntryList :entries="showRejected ? rejectedEntries : lastEntries" />
+      <EntryList :entries="showRejected ? lastRejectedEntries : lastEntries" />
       <button @click="handleOpenModal" class="button-main">Add new entry</button>
     </section>
   </main>

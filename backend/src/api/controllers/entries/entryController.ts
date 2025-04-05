@@ -2,14 +2,20 @@ import type { Request, Response } from 'express';
 import { Entry, type IEntryDocument } from '../../models/entryModel';
 import { Types } from 'mongoose';
 import { patchHandlers } from '@/api/controllers/entries/patchHandlers';
-import { ActionType, IAction } from 'shared/dist';
+import { ActionType, EntryStatus, IAction } from 'shared/dist';
 import { addAction } from '@/api/lib/actions';
 import { IAuthDocument } from '@/api/models/authModel';
 
 export const getEntries = async (req: Request, res: Response) => {
   const limit = parseInt(req.query.limit as string, 10);
   const orderBy = req.query.orderBy;
-  const query = Entry.find().sort({ timestamp: -1 });
+  let query;
+  if (req.query.rejected === 'true'){
+    query = Entry.find({ status: EntryStatus.REJECTED })
+  } else {
+    query = Entry.find({ status: {$ne: EntryStatus.REJECTED} })
+  }
+  query.sort({ timestamp: -1 });
   if (orderBy == 'oldest') {
     query.sort({ timestamp: 1 });
   }
