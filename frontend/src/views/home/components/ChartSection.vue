@@ -11,8 +11,9 @@ const props = defineProps<{
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 const chartData = ref<
-  { data: {x: string, y: number}[],
-    dates: { startDate: string, endDate: string } }
+  {data: {x: string, y: number}[],
+    dates: {startDate: string, endDate: string},
+    options: {maxChartValue: number, minChartValue: number}}
   | null
 >(null);
 
@@ -30,6 +31,8 @@ async function LoadChart(){
   }
 
   await loadChartData();
+  console.log(chartData.value?.options.maxChartValue);
+  console.log(chartData.value?.options.minChartValue);
     if (chartData.value) {
       new Chart(canvasRef.value, {
         type: 'line',
@@ -59,6 +62,10 @@ async function LoadChart(){
               },
               min: chartData.value.dates.endDate,
               max: chartData.value.dates.startDate,
+            },
+            y: {
+              suggestedMax: chartData.value.options.maxChartValue,
+              suggestedMin: chartData.value.options.minChartValue,
             }
           },
           plugins: {

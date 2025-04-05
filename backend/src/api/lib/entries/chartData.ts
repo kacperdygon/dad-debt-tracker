@@ -1,7 +1,7 @@
 import { Entry } from '@/api/models/entryModel';
 import { BalanceByDate } from 'shared/dist';
 
-export async function getBalanceByDate(startDate: Date, endDate: Date): Promise<
+export async function getChartBalanceByDate(startDate: Date, endDate: Date): Promise<
     BalanceByDate[]
 >{
 

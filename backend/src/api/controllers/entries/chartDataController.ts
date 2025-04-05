@@ -1,6 +1,6 @@
 import type {Request, Response} from 'express'
 import {ChartDataPeriod} from 'shared/dist'
-import { getBalanceByDate } from '@/api/lib/entries/chartData';
+import { getChartBalanceByDate } from '@/api/lib/entries/chartData';
 
 export const getChartData = async (req: Request, res: Response) => {
   const periodString = req.query.period;
@@ -37,9 +37,14 @@ export const getChartData = async (req: Request, res: Response) => {
   startDate.setMonth(startDate.getMonth() - subtractedMonthsCount);
 
   try {
-    const balanceByDate = await getBalanceByDate(startDate, endDate);
+    const balanceByDate = await getChartBalanceByDate(startDate, endDate);
+    const values = balanceByDate.map(item => item.summedBalance)
+    const maxValue = Math.max(...values);
+    const minValue = Math.min(...values);
     return void res.status(200).json({ message: 'Returned entries',  data: {
         balanceByDate: balanceByDate,
+        maxValue: maxValue,
+        minValue: minValue,
     } });
   } catch (error) {
     console.error('MongoDB error:', error);
