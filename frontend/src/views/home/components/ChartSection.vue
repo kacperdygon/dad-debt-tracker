@@ -22,6 +22,7 @@ onMounted(() => {
 });
 
 async function loadChartData(){
+  console.log(props.period);
   chartData.value = await getChartData(props.period);
 }
 
@@ -54,7 +55,7 @@ async function LoadChart(){
 
               type: 'time',
               time: {
-                unit: 'day',
+                unit: props.period == ChartDataPeriod.LAST_YEAR ? 'month' : 'day',
               },
               ticks: {
                 stepSize: 1,
