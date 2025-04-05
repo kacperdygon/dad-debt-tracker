@@ -131,3 +131,29 @@ export const patchEntry = async (req: Request, res: Response) => {
   return await handler(req, res);
 
 }
+
+export const getTotalDebt = async (req: Request, res: Response) => {
+  try {
+    const result = await Entry.aggregate([
+      {
+        $match: { status: {$ne: EntryStatus.REJECTED} }
+      },
+      {
+        $group: {
+          _id: null,
+          summedDebt: { $sum: "$balanceChange"}
+        }
+      },
+      { $sort: { _id: 1 } },
+    ])
+
+    return void res.status(200).json({ message: 'Returned total debt', data: {
+      totalDebt: result[0]?.summedDebt ?? 0
+      } });
+  } catch (error) {
+    console.error('MongoDB error:', error);
+    return void res.status(500).json({ message: 'Server error' });
+  }
+
+
+}

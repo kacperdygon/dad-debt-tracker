@@ -1,15 +1,10 @@
 <script setup lang="ts">
 import { useEntryStore } from '@/store/entries';
 import EntryList from '@/components/entries/EntryList.vue';
-import { onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 
 const entriesStore = useEntryStore();
 const lastEntries = storeToRefs(entriesStore).lastEntries;
-
-onMounted(() => {
-  console.log(lastEntries);
-})
 </script>
 
 <template>

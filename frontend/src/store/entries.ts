@@ -1,19 +1,43 @@
 import { defineStore } from 'pinia';
-import { addEntryDB, updateEntryDB, getEntriesDB, type IEntry, deleteEntryDB, changeEntryStatusDB, EntryStatus, getRejectedEntriesDB } from '@/lib/entries';
+import {
+  addEntryDB,
+  updateEntryDB,
+  getEntriesDB,
+  type IEntry,
+  deleteEntryDB,
+  changeEntryStatusDB,
+  EntryStatus,
+  getRejectedEntriesDB,
+  getTotalDebtDB
+} from '@/lib/entries';
 import { computed, ref } from 'vue';
 
 export const useEntryStore = defineStore('entry', () => {
   const entries = ref<IEntry[]>([]);
   const rejectedEntries = ref<IEntry[]>([]);
 
+  const totalDebt = ref<number>(0);
+
   
   async function fetchEntries(page: number = 1) {
     try {
       entries.value = await getEntriesDB();
-      console.log(entries);
+
     } catch (error) {
       console.error('Error fetching entries:', error);
     }
+  }
+
+  async function fetchTotalDebt(){
+    try {
+      const res = await getTotalDebtDB();
+      if (res.ok){
+        totalDebt.value = res.data?.totalDebt ?? 0;
+      }
+    } catch (error) {
+      console.error('Error fetching total debt:', error);
+    }
+
   }
 
   async function fetchRejectedEntries(page: number = 1) {
@@ -74,6 +98,7 @@ export const useEntryStore = defineStore('entry', () => {
         const item = entries.value.splice(index, 1)[0];
         item.status = newStatus;
         rejectedEntries.value.push(item);
+
         } else {
           entries.value[index].status = newStatus;
         }
@@ -94,5 +119,5 @@ export const useEntryStore = defineStore('entry', () => {
     }
   }
 
-  return {lastEntries, lastRejectedEntries, addEntry, updateEntry, deleteEntry, changeNotRejectedStatus, changeRejectedStatus, fetchEntries, fetchRejectedEntries };
+  return {lastEntries, lastRejectedEntries, addEntry, updateEntry, deleteEntry, changeNotRejectedStatus, changeRejectedStatus, fetchEntries, fetchRejectedEntries, totalDebt, fetchTotalDebt };
 });

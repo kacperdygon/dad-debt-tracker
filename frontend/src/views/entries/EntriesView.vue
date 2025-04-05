@@ -17,10 +17,7 @@ const handleOpenModal = () => {
 
 const showRejected = ref(false);
 watch(showRejected, (newValue) => {
-  console.log(lastRejectedEntries.value.length);
-  console.log(newValue);
   if (lastRejectedEntries.value.length === 0 && newValue) {
-    console.log('sigma');
     entriesStore.fetchRejectedEntries();
   }
 }) 

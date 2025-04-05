@@ -1,12 +1,12 @@
 import { Entry } from '@/api/models/entryModel';
-import { BalanceByDate } from 'shared/dist';
+import { BalanceByDate, EntryStatus } from 'shared/dist';
 
 export async function getChartBalanceByDate(startDate: Date, endDate: Date): Promise<
     BalanceByDate[]
 >{
 
     const result = await Entry.aggregate([
-        { $match: { timestamp: { $gte: startDate, $lte: endDate } } },
+        { $match: { timestamp: { $gte: startDate, $lte: endDate }, status: { $ne: EntryStatus.REJECTED } } },
         { $sort: { timestamp: 1 } },
         {
             $group: {
@@ -19,7 +19,7 @@ export async function getChartBalanceByDate(startDate: Date, endDate: Date): Pro
     ]);
 
     const previousSumResult = await Entry.aggregate([
-        { $match: { timestamp: { $lt: startDate } } },
+        { $match: { timestamp: { $lt: startDate }, status: { $ne: EntryStatus.REJECTED } } },
         {
             $group: {
                 _id: 0,

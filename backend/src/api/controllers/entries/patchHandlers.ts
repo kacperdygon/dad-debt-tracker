@@ -51,7 +51,7 @@ export const patchHandlers: Record<string, (req: Request, res: Response) => Prom
         newValue: { status: newStatus },
       }
     }
-    console.log(newStatus);
+
     const addActionResult = await addAction(action);
     if (!addActionResult.ok) {
       return void res.status(400).json({ message: 'Error logging action: ' + addActionResult.message });

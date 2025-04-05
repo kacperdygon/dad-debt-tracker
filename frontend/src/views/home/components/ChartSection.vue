@@ -22,7 +22,6 @@ onMounted(() => {
 });
 
 async function loadChartData(){
-  console.log(props.period);
   chartData.value = await getChartData(props.period);
 }
 
@@ -32,8 +31,6 @@ async function LoadChart(){
   }
 
   await loadChartData();
-  console.log(chartData.value?.options.maxChartValue);
-  console.log(chartData.value?.options.minChartValue);
     if (chartData.value) {
       new Chart(canvasRef.value, {
         type: 'line',

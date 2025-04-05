@@ -37,7 +37,6 @@ export async function getRejectedEntriesDB(): Promise<IEntry[]> {
   if (!res.ok) {
     return [];
   }
-  console.log('sigieamekn');
   return res.data?.entries as IEntry[];
 }
 
@@ -81,7 +80,7 @@ export async function deleteEntryDB(entryId: string): Promise<boolean> {
 }
 
 export async function changeEntryStatusDB(entryId: string, status: EntryStatus): Promise<FetchResponse<{ entry: IEntry }>> {
-  const res = await fetchData<{ entry: IEntry }>(`api/entries/${entryId}`, {
+  return await fetchData<{ entry: IEntry }>(`api/entries/${entryId}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -90,6 +89,12 @@ export async function changeEntryStatusDB(entryId: string, status: EntryStatus):
     }),
     credentials: "include",
   });
+}
 
-  return res;
+export async function getTotalDebtDB(): Promise<FetchResponse<{ totalDebt: number }>> {
+  return await fetchData<{ totalDebt: number }>(`api/entries/total-debt`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+  });
 }

@@ -7,8 +7,6 @@ export async function getChartData(period: ChartDataPeriod): Promise<{
   options: { maxChartValue: number, minChartValue: number };
 }| null> {
 
-  console.log('getChartData', period);
-
   const res = await fetchData<{
     minValue: number,
     maxValue: number,
@@ -37,10 +35,10 @@ export async function getChartData(period: ChartDataPeriod): Promise<{
 
     const startDate = new Date();
     const endDate = new Date();
-    startDate.setDate(startDate.getDate());
     endDate.setMonth(endDate.getMonth() - getMonthsForPeriod(period));
+    startDate.setDate(startDate.getDate() + 1);
 
-    // put this in so chart won't stop in the middle
+    // put this in so chart won't stop in the middle, not sure if I should keep it
     const lastItem = Object.assign({}, result[result.length - 1]);
     const nextDay = new Date(startDate);
     nextDay.setDate(startDate.getDate() + 1);
