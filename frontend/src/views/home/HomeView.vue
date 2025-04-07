@@ -8,7 +8,7 @@ import { ChartDataPeriod } from 'shared/dist';
 <template>
   <main>
     <HeroComponent />
-    <ChartSection :period="ChartDataPeriod.LAST_MONTH" />
+    <ChartSection :period="ChartDataPeriod.LAST_3_MONTHS" />
     <LastEntries />
   </main>
 </template>

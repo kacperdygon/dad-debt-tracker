@@ -36,7 +36,7 @@ watch(showRejected, (newValue) => {
 
       </header>
 
-      <EntryList :entries="showRejected ? lastRejectedEntries : lastEntries" />
+      <EntryList :entries="showRejected ? lastRejectedEntries : lastEntries" type="full"/>
       <button @click="handleOpenModal" class="button-main">Add new entry</button>
     </section>
   </main>

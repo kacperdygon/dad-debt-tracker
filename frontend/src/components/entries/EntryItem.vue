@@ -88,8 +88,8 @@ onUnmounted(() => document.removeEventListener('click', closeDropdown));
       <h6 class="title">
         {{ props.entry.title }}
         <span v-if="props.entry.status != 'confirmed'"
-              class="confirm-message"
-              :class="props.entry.status == 'pending' ? 'pending-color' : 'rejected-color'">
+              class="font-1rem"
+              :class="props.entry.status == 'pending' ? 'orange-color' : 'red-color'">
           {{props.entry.status == 'pending' ? 'Not confirmed' : 'Rejected'}}
         </span>
       </h6>
@@ -105,14 +105,14 @@ onUnmounted(() => document.removeEventListener('click', closeDropdown));
         </ul>
       </div>
     </div>
-    <p class="date-text">{{ formattedDate }}</p>
+    <span class="date-text inline-block secondary-text-color">{{ formattedDate }}</span>
     <div class="flex">
       <h6 class="balance">{{ balanceText }} zł</h6>
       <div v-if="props.entry.status == 'pending' && userRole == 'dad'"  class="confirmation-buttons">
-        <button @click="changeEntryStatus('rejected')" class="rejected-color outlined-button">
+        <button @click="changeEntryStatus('rejected')" class="red-color outlined-button">
           Reject
         </button>
-        <button @click="changeEntryStatus('confirmed')" class="confirmed-color outlined-button">
+        <button @click="changeEntryStatus('confirmed')" class="green-color outlined-button">
           Confirm
         </button>
       </div>
@@ -122,9 +122,6 @@ onUnmounted(() => document.removeEventListener('click', closeDropdown));
 </template>
 
 <style scoped>
-* {
-  margin: 0;
-}
 
 i {
   font-size: 1.125rem;
@@ -154,8 +151,7 @@ h6 {
 }
 
 .date-text {
-  margin-bottom: 0.75rem;
-  color: var(--secondary-text-color);
+  padding-bottom: 0.75rem;
 }
 
 .balance {
@@ -206,28 +202,8 @@ h6 {
   }
 }
 
-.status-message {
-  font-size: 1rem;
-}
-
 .confirmation-buttons{
   display:flex;
   gap:0.5rem;
-}
-
-.confirm-message {
-  font-size:1rem;
-}
-
-.rejected-color {
-  color: var(--expense);
-}
-
-.pending-color {
-  color: var(--warning);
-}
-
-.confirmed-color{
-  color: var(--income);
 }
 </style>

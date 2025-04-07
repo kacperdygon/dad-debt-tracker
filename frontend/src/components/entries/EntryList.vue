@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import EntryItem from '@/components/entries/EntryItem.vue';
 import type { IEntry } from '@/lib/entries.ts';
+import SmallEntryItem from '@/components/entries/SmallEntryItem.vue'
 
 const props = defineProps<{
   entries: IEntry[],
+  type: 'full' | 'partial',
 }>()
 
 </script>
@@ -12,8 +14,11 @@ const props = defineProps<{
   <div>
     <span v-if="!entries.length" class="entry-placeholder">No entries to show here</span>
     <Suspense>
-      <ul>
+      <ul v-if="props.type == 'full'">
         <EntryItem v-for="entry in props.entries" :key="entry._id" :entry="entry" />
+      </ul>
+      <ul v-else>
+        <SmallEntryItem v-for="entry in props.entries" :key="entry._id" :entry="entry"></SmallEntryItem>
       </ul>
     </Suspense>
   </div>

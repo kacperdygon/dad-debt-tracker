@@ -1,3 +1,5 @@
+@import './entry.css';
+
 :root {
   --text-normal: #333333;
   --text-gray: #696969;
@@ -71,6 +73,10 @@ h1 {
   color: var(--primary-color);
 }
 
+.secondary-text-color {
+  color: var(--secondary-text-color)
+}
+
 
 .red-color {
   color: var(--expense);
@@ -82,4 +88,16 @@ h1 {
 
 .orange-color {
   color: var(--warning);
+}
+
+.inline-block{
+  display:inline-block;
+}
+
+.font-1rem{
+  font-size:1rem;
+}
+
+.font-125rem{
+  font-size: 1.25rem;
 }
