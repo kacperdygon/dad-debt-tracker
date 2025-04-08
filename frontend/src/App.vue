@@ -5,6 +5,7 @@ import { ref, provide, onMounted } from 'vue';
 import { RouterView } from 'vue-router';
 import { useEntryStore } from '@/store/entries';
 import { useAuthStore } from '@/store/auth';
+import FooterComponent from './components/footer/FooterComponent.vue';
 
 const entryModalRef = ref<typeof EntryModal | null>(null);
 
@@ -31,6 +32,7 @@ async function fetchDataIfSignedIn () {
   <div class="margin-div">
     <RouterView />
   </div>
+  <FooterComponent />
 
   <EntryModal ref="entryModalRef" />
 </template>
