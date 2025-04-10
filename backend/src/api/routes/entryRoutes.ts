@@ -4,7 +4,9 @@ import {
   deleteEntry,
   getEntries,
   getTotalDebt,
-  patchEntry
+  patchEntry,
+  getUnconfirmedEntriesCount,
+  getEntryPageCount
 } from '@/api/controllers/entries/entryController';
 import { validateRequest } from '@/api/controllers/authController';
 import { getChartData } from '@/api/controllers/entries/chartDataController';
@@ -20,5 +22,7 @@ router.patch('/:id', patchEntry);
 
 router.get('/chart-data', getChartData);
 router.get('/total-debt', getTotalDebt);
+router.get('/unconfirmed-count', getUnconfirmedEntriesCount);
+router.get('/page-count', getEntryPageCount);
 
 export default router;

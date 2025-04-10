@@ -5,25 +5,27 @@ import { patchHandlers } from '@/api/controllers/entries/patchHandlers';
 import { ActionType, EntryStatus, IAction } from 'shared/dist';
 import { addAction } from '@/api/lib/actions';
 import { IAuthDocument } from '@/api/models/authModel';
+import config from '@/api/lib/config';
 
 export const getEntries = async (req: Request, res: Response) => {
-  const limit = parseInt(req.query.limit as string, 10);
-  const orderBy = req.query.orderBy;
+  const page = parseInt(req.query.page as string, 10);
+  const limit = config.pageLimit;
   let query;
   if (req.query.rejected === 'true'){
     query = Entry.find({ status: EntryStatus.REJECTED })
   } else {
     query = Entry.find({ status: {$ne: EntryStatus.REJECTED} })
   }
-  query.sort({ timestamp: -1 });
-  if (orderBy == 'oldest') {
-    query.sort({ timestamp: 1 });
-  }
-  if (!isNaN(limit)) {
-    query.limit(limit);
-  }
+  query.sort({ timestamp: -1, _id: 1 });
+  query.skip((page - 1) * limit)
+  query.limit(limit);
   try {
-    const entries: IEntryDocument[] = await query;
+    const entries: IEntryDocument[] = await query.exec();
+    if (entries.length === 0) {
+      return void res.status(200).json({ message: 'No entries on this page', data: {
+        entries: []
+      }})
+    }
     return void res.status(200).json({ message: 'Returned entries',  data: {
         entries: entries
     } });
@@ -151,9 +153,43 @@ export const getTotalDebt = async (req: Request, res: Response) => {
       totalDebt: result[0]?.summedDebt ?? 0
       } });
   } catch (error) {
-    console.error('MongoDB error:', error);
+    console.error('Server error:', error);
     return void res.status(500).json({ message: 'Server error' });
   }
 
 
+}
+
+export async function getUnconfirmedEntriesCount(req: Request, res: Response){
+  try {
+    const result = await Entry.countDocuments({status: EntryStatus.PENDING});
+
+    return void res.status(200).json({ message: 'Returned unconfirmed entry count', data: {
+        unconfirmedEntryCount: result
+      } });
+  } catch (error) {
+    console.error('MongoDB error:', error);
+    return void res.status(500).json({ message: 'Server error' });
+  }
+}
+
+export async function getEntryPageCount(req: Request, res: Response){
+  
+  try {
+    let result;
+    if (req.query.rejected === 'true'){
+      result = await Entry.countDocuments({ status: EntryStatus.REJECTED })
+    } else {
+      result = await Entry.countDocuments({ status: {$ne: EntryStatus.REJECTED} })
+    }
+
+    result = Math.ceil(result / config.pageLimit);
+
+    return void res.status(200).json({ message: 'Returned page count', data: {
+        pageCount: result
+      } });
+  } catch (error) {
+    console.error('MongoDB error:', error);
+    return void res.status(500).json({ message: 'Server error' });
+  }
 }

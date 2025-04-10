@@ -8,21 +8,31 @@ import {
   changeEntryStatusDB,
   EntryStatus,
   getRejectedEntriesDB,
-  getTotalDebtDB
+  getTotalDebtDB,
+  getUnconfirmedEntryCountDB,
+  getEntryPageCountDB
 } from '@/lib/entries';
-import { computed, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 
 export const useEntryStore = defineStore('entry', () => {
   const entries = ref<IEntry[]>([]);
   const rejectedEntries = ref<IEntry[]>([]);
 
+  const pageCount = reactive({
+    entries: 0,
+    rejectedEntries: 0
+  })
+
   const totalDebt = ref<number>(0);
 
-  
+  const unconfirmedEntryCount = ref<number>(0);
+
   async function fetchEntries(page: number = 1) {
     try {
-      entries.value = await getEntriesDB();
-
+      if (entries.value.length === 0){
+        pageCount.entries = (await getEntryPageCountDB(false)).data?.pageCount || 0;
+      }
+      entries.value.push(...(await getEntriesDB(page)));
     } catch (error) {
       console.error('Error fetching entries:', error);
     }
@@ -37,14 +47,29 @@ export const useEntryStore = defineStore('entry', () => {
     } catch (error) {
       console.error('Error fetching total debt:', error);
     }
+  }
 
+  async function unloadEntries(){
+    entries.value.length = 0;
+    rejectedEntries.value.length = 0;
+    fetchRejectedEntries();
+    fetchEntries();
   }
 
   async function fetchRejectedEntries(page: number = 1) {
     try {
-      rejectedEntries.value = await getRejectedEntriesDB();
+      rejectedEntries.value = await getRejectedEntriesDB(page);
+      pageCount.rejectedEntries = (await getEntryPageCountDB(true)).data?.pageCount || 0
     } catch (error) {
       console.error('Error fetching entries:', error);
+    }
+  }
+
+  async function fetchUnconfirmedEntryCount(){
+    try{
+      unconfirmedEntryCount.value = (await getUnconfirmedEntryCountDB()).data?.unconfirmedEntryCount || 0;
+    } catch (error) {
+      console.error('Error fetching unconfirmed count: ' + error);
     }
   }
 
@@ -119,5 +144,5 @@ export const useEntryStore = defineStore('entry', () => {
     }
   }
 
-  return {lastEntries, lastRejectedEntries, addEntry, updateEntry, deleteEntry, changeNotRejectedStatus, changeRejectedStatus, fetchEntries, fetchRejectedEntries, totalDebt, fetchTotalDebt };
+  return {lastEntries, unconfirmedEntryCount, unloadEntries, pageCount, fetchUnconfirmedEntryCount, lastRejectedEntries, addEntry, updateEntry, deleteEntry, changeNotRejectedStatus, changeRejectedStatus, fetchEntries, fetchRejectedEntries, totalDebt, fetchTotalDebt };
 });

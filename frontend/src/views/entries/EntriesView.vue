@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, ref, watch } from 'vue';
+import { computed, inject, onUnmounted, reactive, ref, watch } from 'vue';
 import { useEntryStore } from '@/store/entries';
 import EntryList from '@/components/entries/EntryList.vue';
 import { storeToRefs } from 'pinia';
@@ -16,11 +16,37 @@ const handleOpenModal = () => {
 };
 
 const showRejected = ref(false);
+
+const page = reactive({
+  entries: 1,
+  rejectedEntries: 1
+})
+function handleLoadMore(){
+  if(showRejected.value){
+    page.rejectedEntries++;
+    entriesStore.fetchRejectedEntries(page.rejectedEntries);
+  } else {
+    page.entries++;
+    entriesStore.fetchEntries(page.entries);
+  }
+}
+
 watch(showRejected, (newValue) => {
   if (lastRejectedEntries.value.length === 0 && newValue) {
     entriesStore.fetchRejectedEntries();
   }
 }) 
+
+const showLoadMoreButton = computed(() => {
+  if (showRejected.value) 
+  return page.rejectedEntries < storeToRefs(entriesStore).pageCount.value.rejectedEntries;
+  else 
+  return page.entries < storeToRefs(entriesStore).pageCount.value.entries
+})
+
+onUnmounted(() => {
+  entriesStore.unloadEntries();
+});
 
 </script>
 
@@ -37,6 +63,7 @@ watch(showRejected, (newValue) => {
       </header>
 
       <EntryList :entries="showRejected ? lastRejectedEntries : lastEntries" type="full"/>
+      <button v-show="showLoadMoreButton" class="button-plain secondary-text-color" @click="handleLoadMore">Load more</button>
       <button @click="handleOpenModal" class="button-main">Add new entry</button>
     </section>
   </main>
@@ -46,18 +73,6 @@ watch(showRejected, (newValue) => {
 ul {
   padding-left: 0;
 }
-
-ul > * {
-  margin: 0 0 1rem;
-}
-
-button {
-  align-self: center;
-  position: relative;
-  left: 50%;
-  transform: translate(-50%, 0%);
-}
-
 h2{
   margin:0;
 }
@@ -67,5 +82,13 @@ header{
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.25rem;
+  width:100%;
+}
+
+section{
+  display:flex;
+  flex-direction:column;
+  align-items: center;
+  gap:1rem;
 }
 </style>

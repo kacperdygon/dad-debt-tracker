@@ -1,18 +1,26 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import type { IActionResponse } from 'shared/dist';
-import { getActionsDB } from '@/lib/actions.ts';
+import { getActionPageCountDB, getActionsDB } from '@/lib/actions';
 
 export const useActionStore = defineStore('action', () => {
   const actions = ref<IActionResponse[]>([]);
+  const pageCount = ref(0);
 
-  async function fetchActions() {
+  async function fetchActions(page: number) {
     try {
-      actions.value = await getActionsDB();
+      if (actions.value.length === 0){
+        pageCount.value = (await getActionPageCountDB()).data?.actionPageCount || 0;
+      }
+      actions.value.push(...(await getActionsDB(page)));
     } catch (error) {
       console.error('Error fetching entries:', error);
     }
   }
 
-  return { actions, fetchActions };
+  async function unloadActions(){
+    actions.value.length = 0;
+  }
+
+  return { actions, fetchActions, pageCount, unloadActions };
 });

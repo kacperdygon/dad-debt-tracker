@@ -14,8 +14,8 @@ export interface IEntry {
   status: string;
 }
 
-export async function getEntriesDB(): Promise<IEntry[]> {
-  const res = await fetchData<{ message: string, entries: IEntry[] }>("api/entries", {
+export async function getEntriesDB(page: number = 1): Promise<IEntry[]> {
+  const res = await fetchData<{ message: string, entries: IEntry[] }>(`api/entries?page=${page}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -27,8 +27,8 @@ export async function getEntriesDB(): Promise<IEntry[]> {
   return res.data?.entries as IEntry[];
 }
 
-export async function getRejectedEntriesDB(): Promise<IEntry[]> {
-  const res = await fetchData<{ message: string, entries: IEntry[] }>("api/entries?rejected=true", {
+export async function getRejectedEntriesDB(page: number = 1): Promise<IEntry[]> {
+  const res = await fetchData<{ message: string, entries: IEntry[] }>(`api/entries?rejected=true&page=${page}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -97,4 +97,21 @@ export async function getTotalDebtDB(): Promise<FetchResponse<{ totalDebt: numbe
     headers: { "Content-Type": "application/json" },
     credentials: "include",
   });
+}
+
+export async function getUnconfirmedEntryCountDB(): Promise<FetchResponse<{ unconfirmedEntryCount: number }>> {
+  return await fetchData<{ unconfirmedEntryCount: number }>(`api/entries/unconfirmed-count`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+  });
+}
+
+export async function getEntryPageCountDB(rejected: boolean): Promise<FetchResponse<{ pageCount: number }>>{
+  const result = await fetchData<{ pageCount: number }>(`api/entries/page-count${rejected ? '/?rejected=true' : ''}`  , {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+  });
+  return result;
 }

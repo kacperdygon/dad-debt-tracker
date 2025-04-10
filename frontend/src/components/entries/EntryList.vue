@@ -25,12 +25,20 @@ const props = defineProps<{
 </template>
 
 <style scoped>
+div{
+  width:100%;
+}
+
 ul {
+  margin:0;
   padding-left: 0;
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
 }
 
 ul > * {
-  margin: 0 0 1rem;
+  box-sizing: border-box;
 }
 
 .entry-placeholder {
@@ -42,4 +50,5 @@ ul > * {
   justify-content: center;
   color:var(--text-gray)
 }
+
 </style>
