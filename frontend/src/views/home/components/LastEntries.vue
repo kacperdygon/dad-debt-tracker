@@ -33,7 +33,7 @@ onMounted(() => {
   <section>
     <h3>Last entries <span v-if="unconfirmedEntryCount !== 0" class="font-1rem orange-color">{{ unconfirmedEntryCount }} not confirmed</span></h3>
     <EntryList :entries="last3Entries" type="partial" />
-    <button @click="handleOpenModal" class="button-main">Add new entry</button>
+    <button @click="handleOpenModal" class="button-main font-125rem padding-075rem">Add new entry</button>
   </section>
 </template>
 

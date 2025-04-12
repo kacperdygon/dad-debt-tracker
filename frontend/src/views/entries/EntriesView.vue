@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, inject, onUnmounted, reactive, ref, watch } from 'vue';
+import {  inject, onUnmounted, ref, watch } from 'vue';
 import { useEntryStore } from '@/store/entries';
 import EntryList from '@/components/entries/EntryList.vue';
 import { storeToRefs } from 'pinia';
+import PaginationButtonsComponent from '@/components/pagination/PaginationButtonsComponent.vue';
 
 const entriesStore = useEntryStore();
-const {lastEntries, lastRejectedEntries} = storeToRefs(entriesStore);
+const {lastEntries, lastRejectedEntries, pageCount} = storeToRefs(entriesStore);
 
 const openEntryModal = inject<() => void | null>('openEntryModal');
 const handleOpenModal = () => {
@@ -16,37 +17,21 @@ const handleOpenModal = () => {
 };
 
 const showRejected = ref(false);
-
-const page = reactive({
-  entries: 1,
-  rejectedEntries: 1
-})
-function handleLoadMore(){
-  if(showRejected.value){
-    page.rejectedEntries++;
-    entriesStore.fetchRejectedEntries(page.rejectedEntries);
-  } else {
-    page.entries++;
-    entriesStore.fetchEntries(page.entries);
-  }
-}
+const selectedPage = ref(1);
 
 watch(showRejected, (newValue) => {
   if (lastRejectedEntries.value.length === 0 && newValue) {
     entriesStore.fetchRejectedEntries();
   }
-}) 
-
-const showLoadMoreButton = computed(() => {
-  if (showRejected.value) 
-  return page.rejectedEntries < storeToRefs(entriesStore).pageCount.value.rejectedEntries;
-  else 
-  return page.entries < storeToRefs(entriesStore).pageCount.value.entries
 })
 
 onUnmounted(() => {
   entriesStore.unloadEntries();
 });
+
+watch(selectedPage, (newValue) => {
+  entriesStore.fetchEntries(newValue);
+})
 
 </script>
 
@@ -62,9 +47,17 @@ onUnmounted(() => {
 
       </header>
 
+      <PaginationButtonsComponent
+        v-show="lastEntries.length > 5"
+        :total-pages="showRejected ? pageCount.rejectedEntries : pageCount.entries"
+        v-model="selectedPage" />
+
       <EntryList :entries="showRejected ? lastRejectedEntries : lastEntries" type="full"/>
-      <button v-show="showLoadMoreButton" class="button-plain secondary-text-color" @click="handleLoadMore">Load more</button>
-      <button @click="handleOpenModal" class="button-main">Add new entry</button>
+      <button @click="handleOpenModal" class="button-main font-125rem padding-075rem">Add new entry</button>
+
+      <PaginationButtonsComponent
+        :total-pages="showRejected ? pageCount.rejectedEntries : pageCount.entries"
+        v-model="selectedPage" />
     </section>
   </main>
 </template>
@@ -81,7 +74,6 @@ header{
   display:flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.25rem;
   width:100%;
 }
 

@@ -42,11 +42,9 @@ h1 {
 .button-main {
   background-color: var(--primary-color);
   color: var(--background-color);
-  font-size: 1.25rem;
-  padding: 0.75rem;
   border-radius: 0.375rem;
-  border: 0;
   cursor: pointer;
+  border: none;
 }
 
 .button-plain {
@@ -100,4 +98,16 @@ h1 {
 
 .font-125rem{
   font-size: 1.25rem;
+}
+
+.padding-075rem{
+  padding: 0.75rem;
+}
+
+.secondary-button{
+  border: solid 1px var(--secondary-text-color);
+  background-color: transparent;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  box-sizing: border-box;
 }

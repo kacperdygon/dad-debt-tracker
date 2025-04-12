@@ -138,7 +138,7 @@ defineExpose({
       <input
         type="submit"
         :value="targetEntryId ? 'Edit entry' : 'Add entry'"
-        class="button-main"
+        class="button-main padding-075rem"
       />
     </form>
   </dialog>

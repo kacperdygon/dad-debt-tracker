@@ -36,7 +36,7 @@ async function handleSubmit() {
         required
       />
       <span v-show="showErrorMessage">Wrong PIN</span>
-      <input type="submit" class="button-main" value="Log in" />
+      <input type="submit" class="button-main padding-075rem" value="Log in" />
     </form>
   </main>
 </template>

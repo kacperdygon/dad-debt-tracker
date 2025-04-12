@@ -32,6 +32,7 @@ export const useEntryStore = defineStore('entry', () => {
       if (entries.value.length === 0){
         pageCount.entries = (await getEntryPageCountDB(false)).data?.pageCount || 0;
       }
+      entries.value.length = 0;
       entries.value.push(...(await getEntriesDB(page)));
     } catch (error) {
       console.error('Error fetching entries:', error);
@@ -52,14 +53,16 @@ export const useEntryStore = defineStore('entry', () => {
   async function unloadEntries(){
     entries.value.length = 0;
     rejectedEntries.value.length = 0;
-    fetchRejectedEntries();
-    fetchEntries();
+    await fetchEntries();
   }
 
   async function fetchRejectedEntries(page: number = 1) {
     try {
-      rejectedEntries.value = await getRejectedEntriesDB(page);
-      pageCount.rejectedEntries = (await getEntryPageCountDB(true)).data?.pageCount || 0
+      if (rejectedEntries.value.length === 0){
+        pageCount.rejectedEntries = (await getEntryPageCountDB(true)).data?.pageCount || 0;
+      }
+      rejectedEntries.value.length = 0;
+      rejectedEntries.value.push(...(await getRejectedEntriesDB(page)));
     } catch (error) {
       console.error('Error fetching entries:', error);
     }
