@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import { Entry, IEntryDocument } from '@/api/models/entryModel';
 import { Types } from 'mongoose';
-import { ActionType, EntryStatus, IAction } from 'shared/dist';
+import { ActionType, EntryStatus, IAction } from 'shared';
 import { addAction } from '@/api/lib/actions';
 import { IAuthDocument } from '@/api/models/authModel';
 import { getDifferences } from '@/api/lib/entries/helpers';

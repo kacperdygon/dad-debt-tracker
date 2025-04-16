@@ -1,5 +1,5 @@
 import { fetchData } from '@/lib/database';
-import { type BalanceByDate, ChartDataPeriod } from 'shared/dist';
+import { type BalanceByDate, ChartDataPeriod } from 'shared';
 
 export async function getChartData(period: ChartDataPeriod): Promise<{
   data: {x: string, y: number}[],
@@ -77,4 +77,5 @@ function getMonthsForPeriod(period: ChartDataPeriod): number {
     case ChartDataPeriod.LAST_YEAR:
       return 12;
   }
+  return 1;
 }

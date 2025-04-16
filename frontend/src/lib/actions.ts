@@ -1,4 +1,4 @@
-import type { IActionResponse } from 'shared/dist';
+import type { IActionResponse } from 'shared';
 import { fetchData, type FetchResponse } from '@/lib/database';
 
 export async function getActionsDB(page: number = 1): Promise<IActionResponse[]> {

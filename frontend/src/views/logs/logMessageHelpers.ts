@@ -1,4 +1,4 @@
-import {ActionType, type IActionResponse} from "shared/dist";
+import {ActionType, type IActionResponse} from "shared";
 
 export function constructLogMessage(action: IActionResponse): string {
     let logMessage = '';

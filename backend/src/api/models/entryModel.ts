@@ -1,5 +1,5 @@
 import { model, Schema, Document } from 'mongoose';
-import { EntryStatus } from 'shared/dist';
+import { EntryStatus } from 'shared';
 
 export interface IEntryDocument extends Document {
   title: string;

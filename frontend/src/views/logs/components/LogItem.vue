@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { ActionType, type IActionResponse } from 'shared/dist';
+import { ActionType, type IActionResponse } from 'shared';
 import { constructLogMessage } from '@/views/logs/logMessageHelpers';
 import { computed, onMounted, ref } from 'vue';
 import { getEntryPosition } from '@/lib/entries';
@@ -62,15 +62,16 @@ function switchExpanded(){
 
 const router = useRouter();
 
-async function handleJumpTo(id: string){
+async function handleJumpTo(id: string | undefined){
+  if (!id) return;
   const response = await getEntryPosition(id);
   if (response.ok) {
   
     await router.push({path: '/entries',
     query: {
-      page: response.data.page,
-      positionOnPage: response.data.positionOnPage,
-      rejected: String(response.data.rejected)
+      page: response.data?.page,
+      positionOnPage: response.data?.positionOnPage,
+      rejected: String(response.data?.rejected)
     }
   })
   } else {

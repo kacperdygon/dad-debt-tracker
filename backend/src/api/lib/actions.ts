@@ -1,4 +1,4 @@
-import { ActionType, IAction } from 'shared/dist';
+import { ActionType, IAction } from 'shared';
 import { Action } from '@/api/models/actionModel';
 
 export function validateAction(action: Omit<IAction, '_id' | 'timestamp' | 'userPin'>): { result: boolean; message: string } {

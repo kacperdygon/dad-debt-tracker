@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IActionResponse } from 'shared/dist';
+import type { IActionResponse } from 'shared';
 import LogItem from '@/views/logs/components/LogItem.vue';
 
 const props = defineProps<{

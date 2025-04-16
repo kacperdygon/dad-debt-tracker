@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import type { IActionResponse } from 'shared/dist';
+import type { IActionResponse } from 'shared';
 import { getActionPageCountDB, getActionsDB } from '@/lib/actions';
 
 export const useActionStore = defineStore('action', () => {

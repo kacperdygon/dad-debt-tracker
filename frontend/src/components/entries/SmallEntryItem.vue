@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IEntry } from 'shared/dist';
+import type { IEntry } from 'shared';
 import { computed } from 'vue';
 
 const props = defineProps<{

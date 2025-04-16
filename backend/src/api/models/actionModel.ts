@@ -1,4 +1,4 @@
-import { ActionType } from 'shared/dist';
+import { ActionType } from 'shared';
 import { model, Schema, Document } from 'mongoose';
 import { IAuthDocument } from '@/api/models/authModel';
 

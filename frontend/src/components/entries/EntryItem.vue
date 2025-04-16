@@ -3,7 +3,7 @@ import { computed, inject, onMounted, onUnmounted, ref } from 'vue';
 import { type IEntry } from '@/lib/entries';
 import { useEntryStore } from '@/store/entries';
 import { getRole } from '@/lib/auth';
-import { EntryStatus } from 'shared/dist';
+import { EntryStatus } from 'shared';
 
 const entryStore = useEntryStore();
 const openEntryModal = inject<(entry: IEntry) => void | null>('openEntryModal');

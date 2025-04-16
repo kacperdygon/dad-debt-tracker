@@ -1,5 +1,5 @@
 import type {Request, Response} from 'express'
-import {ChartDataPeriod} from 'shared/dist'
+import {ChartDataPeriod} from 'shared'
 import { getChartBalanceByDate } from '@/api/lib/entries/chartData';
 
 export const getChartData = async (req: Request, res: Response) => {

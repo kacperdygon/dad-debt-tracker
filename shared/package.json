@@ -1,7 +1,8 @@
 {
   "name": "shared",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
     "build": "tsc"
@@ -12,5 +13,8 @@
   "description": "",
   "dependencies": {
     "typescript": "^5.8.2"
+  },
+  "exports": {
+    ".": "./dist/index.js"
   }
 }

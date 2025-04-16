@@ -3,7 +3,7 @@ import Chart from 'chart.js/auto';
 import 'chartjs-adapter-date-fns';
 import { onMounted, ref } from 'vue';
 import { getChartData } from '@/lib/chart';
-import { ChartDataPeriod } from 'shared/dist';
+import { ChartDataPeriod } from 'shared';
 
 const props = defineProps<{
   period: ChartDataPeriod

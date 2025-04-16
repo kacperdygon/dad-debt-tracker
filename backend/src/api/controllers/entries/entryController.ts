@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 import { Entry, type IEntryDocument } from '../../models/entryModel';
 import { Types } from 'mongoose';
 import { patchHandlers } from '@/api/controllers/entries/patchHandlers';
-import { ActionType, EntryStatus, IAction } from 'shared/dist';
+import { ActionType, EntryStatus, IAction } from 'shared';
 import { addAction } from '@/api/lib/actions';
 import { IAuthDocument } from '@/api/models/authModel';
 import config from '@/api/lib/config';
