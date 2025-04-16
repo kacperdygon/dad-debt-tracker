@@ -2,7 +2,8 @@ import type { Request, Response } from 'express';
 import { Action, IActionDocument } from '@/api/models/actionModel';
 import { IAuthDocument } from '@/api/models/authModel';
 import { formatDates } from '@/api/lib/actions';
-import config from '@/api/lib/config'
+import config from '@/api/lib/config';
+import { Entry } from '../models/entryModel';
 
 export async function getActions (req: Request, res: Response): Promise<void> {
   const page = parseInt(req.query.page as string, 10);
@@ -20,8 +21,14 @@ export async function getActions (req: Request, res: Response): Promise<void> {
       formatDates(action.changes.newValue);
     }
 
+    const mappedActions = await Promise.all(
+      actions.map(async (action) => {
+      const targetExists = await Entry.exists({_id: action.targetId});
+      return {...action, targetExists: targetExists ? true : false}
+    }))
+
     return void res.status(200).json({ message: 'Returned actions', data: {
-      actions: actions
+      actions: mappedActions
       } });
   } catch (error) {
     console.error('MongoDB error:', error);

@@ -36,7 +36,8 @@ export interface IActionResponse extends Omit<IAction, 'authId'> {
   authId: {
     _id: string;
     role: string;
-  }
+  };
+  targetExists: boolean;
 }
 
 export interface IAuth {

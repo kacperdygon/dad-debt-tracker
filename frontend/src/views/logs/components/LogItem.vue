@@ -80,9 +80,6 @@ async function handleJumpTo(id: string){
   
 }
 
-//trzeba cos zrbic by timestamp w value byl jako data
-//i jeszcze ze mozna rozwinac te zmiany
-
 </script>
 
 <template>
@@ -115,7 +112,7 @@ async function handleJumpTo(id: string){
       <i class="fa-solid fa-chevron-down" :class="{'fa-rotate-180': isExpanded}"></i>
       &nbsp;{{ isExpanded ? 'Collapse' : 'Expand' }}</button>
     <button 
-      v-if="action.actionType != ActionType.RemoveEntry" 
+      v-if="action.targetExists" 
       class="primary-color button-plain"
       @click="handleJumpTo(action.targetId)"
       >

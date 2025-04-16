@@ -55,7 +55,6 @@ export const useEntryStore = defineStore('entry', () => {
   function setLastPage(rejected: boolean, page: number){
     lastPage.rejected = rejected;
     lastPage.page = page;
-    console.log(rejected, page);
   }
 
   async function fetchTotalDebt(){
