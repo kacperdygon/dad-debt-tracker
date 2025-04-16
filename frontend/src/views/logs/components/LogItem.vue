@@ -1,8 +1,10 @@
 <script setup lang="ts">
 
 import { ActionType, type IActionResponse } from 'shared/dist';
-import { constructLogMessage } from '@/views/logs/logMessageHelpers.ts';
+import { constructLogMessage } from '@/views/logs/logMessageHelpers';
 import { computed, onMounted, ref } from 'vue';
+import { getEntryPosition } from '@/lib/entries';
+import { useRouter } from 'vue-router';
 
 const props = defineProps<{
   action: IActionResponse;
@@ -58,6 +60,26 @@ function switchExpanded(){
   isExpanded.value = !isExpanded.value;
 }
 
+const router = useRouter();
+
+async function handleJumpTo(id: string){
+  const response = await getEntryPosition(id);
+  if (response.ok) {
+  
+    await router.push({path: '/entries',
+    query: {
+      page: response.data.page,
+      positionOnPage: response.data.positionOnPage,
+      rejected: String(response.data.rejected)
+    }
+  })
+  } else {
+    throw new Error('Error: ' + response.message)
+  }
+
+  
+}
+
 //trzeba cos zrbic by timestamp w value byl jako data
 //i jeszcze ze mozna rozwinac te zmiany
 
@@ -92,7 +114,13 @@ function switchExpanded(){
     <button class="button-plain" @click="switchExpanded">
       <i class="fa-solid fa-chevron-down" :class="{'fa-rotate-180': isExpanded}"></i>
       &nbsp;{{ isExpanded ? 'Collapse' : 'Expand' }}</button>
-    <RouterLink :to="{name: 'jump-to-entry', params: {id: action.targetId}}" v-if="action.actionType != ActionType.RemoveEntry" class="primary-color">Jump to entry</RouterLink>
+    <button 
+      v-if="action.actionType != ActionType.RemoveEntry" 
+      class="primary-color button-plain"
+      @click="handleJumpTo(action.targetId)"
+      >
+      Jump to entry
+    </button>
 
   </section>
 

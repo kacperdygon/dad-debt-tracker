@@ -2,11 +2,27 @@
 import EntryItem from '@/components/entries/EntryItem.vue';
 import type { IEntry } from '@/lib/entries.ts';
 import SmallEntryItem from '@/components/entries/SmallEntryItem.vue'
+import { ref } from 'vue';
 
 const props = defineProps<{
   entries: IEntry[],
   type: 'full' | 'partial',
-}>()
+}>();
+
+const entryListUlRef = ref<HTMLDivElement | null>(null);
+
+function jumpTo(position: number){
+  if (props.entries.length == 0) return;
+  if (!entryListUlRef.value){
+    throw new Error('Entry list ul ref value not set');
+  }
+  const liElements = entryListUlRef.value.querySelectorAll('li');
+  liElements[position].scrollIntoView();
+}
+
+defineExpose({
+  jumpTo
+})
 
 </script>
 
@@ -14,11 +30,15 @@ const props = defineProps<{
   <div>
     <span v-if="!entries.length" class="entry-placeholder">No entries to show here</span>
     <Suspense>
-      <ul v-if="props.type == 'full'">
-        <EntryItem v-for="entry in props.entries" :key="entry._id" :entry="entry" />
+      <ul v-if="props.type == 'full'" ref="entryListUlRef">
+        <li v-for="entry in props.entries" :key="entry._id" >
+          <EntryItem :entry="entry" />
+        </li>
       </ul>
-      <ul v-else>
-        <SmallEntryItem v-for="entry in props.entries" :key="entry._id" :entry="entry"></SmallEntryItem>
+      <ul v-else ref="entryListUlRef">
+        <li v-for="entry in props.entries" :key="entry._id" >
+          <SmallEntryItem :entry="entry" />
+        </li>
       </ul>
     </Suspense>
   </div>
@@ -35,6 +55,7 @@ ul {
   display:flex;
   flex-direction:column;
   gap:1rem;
+  list-style: none;
 }
 
 ul > * {
@@ -49,6 +70,10 @@ ul > * {
   align-items: center;
   justify-content: center;
   color:var(--text-gray)
+}
+
+li {
+  box-sizing: border-box;
 }
 
 </style>

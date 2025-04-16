@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
 import type { FetchResponse } from '@/lib/database.ts';
-import { getRole, signInDB, signOutDB } from '@/lib/auth.ts';
+import { getRole, signInDB, signOutDB } from '@/lib/auth';
 
 export const useAuthStore = defineStore('auth', () => {
   const role = ref<string | null>(null);

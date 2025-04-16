@@ -6,7 +6,8 @@ import {
   getTotalDebt,
   patchEntry,
   getUnconfirmedEntriesCount,
-  getEntryPageCount
+  getEntryPageCount,
+  getEntryPosition
 } from '@/api/controllers/entries/entryController';
 import { validateRequest } from '@/api/controllers/authController';
 import { getChartData } from '@/api/controllers/entries/chartDataController';
@@ -24,5 +25,6 @@ router.get('/chart-data', getChartData);
 router.get('/total-debt', getTotalDebt);
 router.get('/unconfirmed-count', getUnconfirmedEntriesCount);
 router.get('/page-count', getEntryPageCount);
+router.get('/position/:id', getEntryPosition)
 
 export default router;

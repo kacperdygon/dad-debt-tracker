@@ -1,19 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useEntryStore } from '@/store/entries.ts';
-import { useAuthStore } from '@/store/auth.ts';
+import { useAuthStore } from '@/store/auth';
 
 const input = ref('');
 const showErrorMessage = ref(false);
 const router = useRouter();
-const entriesStore = useEntryStore();
 const authStore = useAuthStore();
 
 async function handleSubmit() {
   const res = await authStore.signIn(input.value);
   if (res.ok) {
-    await entriesStore.fetchEntries();
     await router.push('/');
   } else {
     showErrorMessage.value = true;

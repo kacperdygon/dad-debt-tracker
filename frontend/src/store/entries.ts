@@ -12,7 +12,7 @@ import {
   getUnconfirmedEntryCountDB,
   getEntryPageCountDB
 } from '@/lib/entries';
-import { computed, reactive, ref } from 'vue';
+import { reactive, ref } from 'vue';
 
 export const useEntryStore = defineStore('entry', () => {
   const entries = ref<IEntry[]>([]);
@@ -21,6 +21,10 @@ export const useEntryStore = defineStore('entry', () => {
   const pageCount = reactive({
     entries: 0,
     rejectedEntries: 0
+  })
+  const lastPage = reactive({
+    page: 1,
+    rejected: false
   })
 
   const totalDebt = ref<number>(0);
@@ -32,11 +36,26 @@ export const useEntryStore = defineStore('entry', () => {
       if (entries.value.length === 0){
         pageCount.entries = (await getEntryPageCountDB(false)).data?.pageCount || 0;
       }
+      const loadedEntries = await getEntriesDB(page);
       entries.value.length = 0;
-      entries.value.push(...(await getEntriesDB(page)));
+      entries.value.push(...loadedEntries);
     } catch (error) {
       console.error('Error fetching entries:', error);
     }
+  }
+
+  async function reloadLastPage(){
+    if (lastPage.rejected) {
+     fetchRejectedEntries(lastPage.page); 
+    } else {
+      fetchEntries(lastPage.page)
+    }
+  }
+
+  function setLastPage(rejected: boolean, page: number){
+    lastPage.rejected = rejected;
+    lastPage.page = page;
+    console.log(rejected, page);
   }
 
   async function fetchTotalDebt(){
@@ -61,8 +80,9 @@ export const useEntryStore = defineStore('entry', () => {
       if (rejectedEntries.value.length === 0){
         pageCount.rejectedEntries = (await getEntryPageCountDB(true)).data?.pageCount || 0;
       }
+      const loadedEntries = await getRejectedEntriesDB(page);
       rejectedEntries.value.length = 0;
-      rejectedEntries.value.push(...(await getRejectedEntriesDB(page)));
+      rejectedEntries.value.push(...loadedEntries);
     } catch (error) {
       console.error('Error fetching entries:', error);
     }
@@ -76,20 +96,12 @@ export const useEntryStore = defineStore('entry', () => {
     }
   }
 
-  const lastEntries = computed(() => {
-    return entries.value;
-  })
-
-  const lastRejectedEntries = computed(() => {
-    return rejectedEntries.value;
-  })
-
   async function addEntry(newEntry: Omit<IEntry, '_id' | 'status'>) {
     const addedEntry = await addEntryDB(newEntry);
     if (!addedEntry) {
       throw new Error("Error adding entry");
     }
-    entries.value.push(addedEntry);
+    reloadLastPage();
   }
 
   async function updateEntry(entryId: string, newEntry: Omit<IEntry, '_id' | 'status'>) {
@@ -97,10 +109,7 @@ export const useEntryStore = defineStore('entry', () => {
     if (!updatedEntry) {
       throw new Error("Error updating entry");
     }
-    const index = entries.value.findIndex((entry) => entry._id === entryId);
-    if (index !== -1) {
-      Object.assign(entries.value[index], newEntry);
-    }
+    reloadLastPage();
   }
 
   async function deleteEntry(entryId: string) {
@@ -108,10 +117,7 @@ export const useEntryStore = defineStore('entry', () => {
     if (!result) {
       throw new Error("Error deleting entry");
     }
-    const index = entries.value.findIndex((entry) => entry._id === entryId);
-    if (index !== -1) {
-      entries.value.splice(index, 1);
-    }
+    reloadLastPage();
   }
 
   async function changeNotRejectedStatus(entryId: string, newStatus: EntryStatus) {
@@ -119,18 +125,7 @@ export const useEntryStore = defineStore('entry', () => {
     if (!result.ok) {
       throw new Error("Error patching entry");
     }
-
-      const index = entries.value.findIndex((entry) => entry._id === entryId);
-      if (index !== -1) {
-        if (newStatus == EntryStatus.REJECTED){
-        const item = entries.value.splice(index, 1)[0];
-        item.status = newStatus;
-        rejectedEntries.value.push(item);
-
-        } else {
-          entries.value[index].status = newStatus;
-        }
-      }
+      reloadLastPage();
   }
 
   async function changeRejectedStatus(entryId: string, newStatus: EntryStatus) {
@@ -139,13 +134,8 @@ export const useEntryStore = defineStore('entry', () => {
       throw new Error("Error patching entry");
     }
 
-    const index = rejectedEntries.value.findIndex((entry) => entry._id === entryId);
-    if (index !== -1){
-      const item = rejectedEntries.value.splice(index, 1)[0];
-      item.status = newStatus;
-      entries.value.push(item);
-    }
+    reloadLastPage();
   }
 
-  return {lastEntries, unconfirmedEntryCount, unloadEntries, pageCount, fetchUnconfirmedEntryCount, lastRejectedEntries, addEntry, updateEntry, deleteEntry, changeNotRejectedStatus, changeRejectedStatus, fetchEntries, fetchRejectedEntries, totalDebt, fetchTotalDebt };
+  return {entries, unconfirmedEntryCount, unloadEntries, pageCount, fetchUnconfirmedEntryCount, rejectedEntries, addEntry, updateEntry, deleteEntry, changeNotRejectedStatus, changeRejectedStatus, fetchEntries, fetchRejectedEntries, totalDebt, fetchTotalDebt, setLastPage };
 });

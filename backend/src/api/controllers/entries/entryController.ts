@@ -193,3 +193,44 @@ export async function getEntryPageCount(req: Request, res: Response){
     return void res.status(500).json({ message: 'Server error' });
   }
 }
+
+export async function getEntryPosition(req: Request, res: Response){
+
+  const _id = req.params.id;
+
+  if (!_id) {
+    return void res.status(400).json({ message: 'Missing id' });
+  }
+  if (!Types.ObjectId.isValid(_id)) {
+    return void res.status(400).json({ message: 'Invalid id parameter' });
+  }
+   
+  try {
+
+    const entry = await Entry.findById(_id);
+    if (!entry) {
+      return void res.status(404).json({ message: "Entry with this id doesn't exist" });
+    }
+
+    const entries = await Entry.find({
+      status: entry.status == EntryStatus.REJECTED ? EntryStatus.REJECTED : { $ne: EntryStatus.REJECTED } 
+    }).sort({timestamp: -1,  _id: 1});
+
+    const index = entries.findIndex(entry => (entry._id as Types.ObjectId).toString() == _id);
+
+    const entryPosition = index;
+    const page = Math.ceil((entryPosition + 1) / config.pageLimit);
+    const positionOnPage = entryPosition % config.pageLimit;
+    const rejected = entry.status == EntryStatus.REJECTED;
+
+    return void res.status(200).json({ message: "Returned entry position", data:{
+      page: page,
+      positionOnPage: positionOnPage,
+      rejected: rejected
+    }});
+
+  } catch (error) {
+    console.error('MongoDB error:', error);
+    return void res.status(500).json({ message: 'Server error' });
+  }
+}

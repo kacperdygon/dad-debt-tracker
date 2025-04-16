@@ -115,3 +115,20 @@ export async function getEntryPageCountDB(rejected: boolean): Promise<FetchRespo
   });
   return result;
 }
+
+export async function getEntryPosition(id: string): Promise<FetchResponse<{
+  page: number,
+  positionOnPage: number,
+  rejected: boolean
+}>>{
+  const result = await fetchData<{
+    page: number,
+    positionOnPage: number,
+    rejected: boolean
+  }>(`api/entries/position/${id}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+  })
+  return result;
+}

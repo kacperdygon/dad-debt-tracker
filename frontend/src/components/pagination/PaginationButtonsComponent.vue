@@ -53,7 +53,8 @@ function handleEnter(event: Event){
   if (isNaN(newValue) || newValue < 1 || newValue > props.totalPages){
     return;
   }
-  model.value = newValue;
+  handlePageChange(newValue);
+  (event.target as HTMLInputElement).value = '';
 }
 
 function handlePageButtonClick(event: Event, number: number |  null , index: number){
@@ -64,10 +65,14 @@ function handlePageButtonClick(event: Event, number: number |  null , index: num
   }
   showInputIndex.value = index;
   nextTick(() => {
-    ((event.target as HTMLButtonElement).firstElementChild as HTMLInputElement).focus();
-  })
-
+    const input = (event.target as HTMLButtonElement).firstElementChild as HTMLInputElement;
+    input.focus();
+    input.addEventListener('blur', () => {
+      showInputIndex.value = null;
+    }, { once: true })
+  });
 }
+
 
 </script>
 

@@ -5,15 +5,11 @@ import { storeToRefs } from 'pinia';
 import { computed, inject, onMounted } from 'vue';
 
 const entriesStore = useEntryStore();
-const lastEntries = storeToRefs(entriesStore).lastEntries;
+const lastEntries = storeToRefs(entriesStore).entries;
 const unconfirmedEntryCount = storeToRefs(entriesStore).unconfirmedEntryCount;
 
 const last3Entries = computed(() => { 
-  const lastEntriesArr = lastEntries.value.slice();
-  // sort to get latest and then get first 3
-  return lastEntriesArr.sort((a, b) => { 
-    return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-  }).slice(0, 3);
+  return lastEntries.value.slice(0, 3);
 });
 
 const openEntryModal = inject<() => void | null>('openEntryModal');
