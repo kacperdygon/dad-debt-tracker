@@ -1,3 +1,4 @@
+import { type EntryFetchOptions } from 'shared';
 import { fetchData, type FetchResponse } from './database';
 
 export enum EntryStatus {
@@ -14,21 +15,25 @@ export interface IEntry {
   status: string;
 }
 
-export async function getEntriesDB(page: number = 1): Promise<IEntry[]> {
-  const res = await fetchData<{ message: string, entries: IEntry[] }>(`api/entries?page=${page}`, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-  });
+export async function getEntriesDB(page: number = 1, options?: EntryFetchOptions): Promise<IEntry[]> {
 
-  if (!res.ok) {
-    return [];
-  }
-  return res.data?.entries as IEntry[];
-}
+  const params = new URLSearchParams({
+    page: page.toString(),
+    rejected: options ? String(options.showRejected) : String(false),
+    sortBy: options ? options.sortBy : 'DATE_DESC',
+    filterBySon: options ? String(options.filter.author.son) : String(true),
+    filterByDad: options ? String(options.filter.author.dad) : String(true),
+    filterByConfirmed: options ? String(options.filter.status?.confirmed) : String(true),
+    filterByPending: options ? String(options.filter.status?.pending) : String(true),
+    filterByPositive: options ? String(options.filter.sign.positive) : String(true),
+    filterByNegative: options ? String(options.filter.sign.negative) : String(true)
+});
 
-export async function getRejectedEntriesDB(page: number = 1): Promise<IEntry[]> {
-  const res = await fetchData<{ message: string, entries: IEntry[] }>(`api/entries?rejected=true&page=${page}`, {
+console.log(`api/entries?${params}`);
+
+
+
+  const res = await fetchData<{ message: string, entries: IEntry[] }>(`api/entries?${params}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",

@@ -7,12 +7,12 @@ import {
   deleteEntryDB,
   changeEntryStatusDB,
   EntryStatus,
-  getRejectedEntriesDB,
   getTotalDebtDB,
   getUnconfirmedEntryCountDB,
   getEntryPageCountDB
 } from '@/lib/entries';
 import { reactive, ref } from 'vue';
+import type { EntryFetchOptions } from 'shared';
 
 export const useEntryStore = defineStore('entry', () => {
   const entries = ref<IEntry[]>([]);
@@ -31,14 +31,17 @@ export const useEntryStore = defineStore('entry', () => {
 
   const unconfirmedEntryCount = ref<number>(0);
 
-  async function fetchEntries(page: number = 1) {
+  async function fetchEntries(page: number = 1, rejected: boolean = false, options?: EntryFetchOptions) {
     try {
-      if (entries.value.length === 0){
         pageCount.entries = (await getEntryPageCountDB(false)).data?.pageCount || 0;
-      }
-      const loadedEntries = await getEntriesDB(page);
-      entries.value.length = 0;
-      entries.value.push(...loadedEntries);
+        const loadedEntries = await getEntriesDB(page, options);
+        if (!rejected) {
+          entries.value.length = 0;
+          entries.value.push(...loadedEntries);
+        } else {
+          rejectedEntries.value.length = 0;
+          rejectedEntries.value.push(...loadedEntries);
+        }
     } catch (error) {
       console.error('Error fetching entries:', error);
     }
@@ -46,9 +49,9 @@ export const useEntryStore = defineStore('entry', () => {
 
   async function reloadLastPage(){
     if (lastPage.rejected) {
-     fetchRejectedEntries(lastPage.page); 
+      fetchEntries(lastPage.page, true)
     } else {
-      fetchEntries(lastPage.page)
+      fetchEntries(lastPage.page, false)
     }
   }
 
@@ -72,19 +75,6 @@ export const useEntryStore = defineStore('entry', () => {
     entries.value.length = 0;
     rejectedEntries.value.length = 0;
     await fetchEntries();
-  }
-
-  async function fetchRejectedEntries(page: number = 1) {
-    try {
-      if (rejectedEntries.value.length === 0){
-        pageCount.rejectedEntries = (await getEntryPageCountDB(true)).data?.pageCount || 0;
-      }
-      const loadedEntries = await getRejectedEntriesDB(page);
-      rejectedEntries.value.length = 0;
-      rejectedEntries.value.push(...loadedEntries);
-    } catch (error) {
-      console.error('Error fetching entries:', error);
-    }
   }
 
   async function fetchUnconfirmedEntryCount(){
@@ -136,5 +126,5 @@ export const useEntryStore = defineStore('entry', () => {
     reloadLastPage();
   }
 
-  return {entries, unconfirmedEntryCount, unloadEntries, pageCount, fetchUnconfirmedEntryCount, rejectedEntries, addEntry, updateEntry, deleteEntry, changeNotRejectedStatus, changeRejectedStatus, fetchEntries, fetchRejectedEntries, totalDebt, fetchTotalDebt, setLastPage };
+  return {entries, unconfirmedEntryCount, unloadEntries, pageCount, fetchUnconfirmedEntryCount, rejectedEntries, addEntry, updateEntry, deleteEntry, changeNotRejectedStatus, changeRejectedStatus, fetchEntries, totalDebt, fetchTotalDebt, setLastPage };
 });

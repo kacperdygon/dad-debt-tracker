@@ -41,7 +41,9 @@ async function fetchDataIfSignedIn () {
 .margin-div {
   margin: auto;
   padding: 1.25rem;
-  width: 50%;
+  width: 100%;
+  display:flex;
+  justify-content: center;
   box-sizing: border-box;
   min-width: 600px;
 }

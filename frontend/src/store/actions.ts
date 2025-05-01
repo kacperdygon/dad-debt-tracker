@@ -9,12 +9,12 @@ export const useActionStore = defineStore('action', () => {
 
   async function fetchActions(page: number) {
     try {
-      if (actions.value.length === 0){
-        pageCount.value = (await getActionPageCountDB()).data?.actionPageCount || 0;
-      }
-      actions.value.push(...(await getActionsDB(page)));
+      pageCount.value = (await getActionPageCountDB()).data?.actionPageCount || 0;
+      const loadedActions = await getActionsDB(page);
+      actions.value.length = 0;
+      actions.value.push(...loadedActions);
     } catch (error) {
-      console.error('Error fetching entries:', error);
+      console.error('Error fetching actions:', error);
     }
   }
 

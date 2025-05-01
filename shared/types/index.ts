@@ -11,6 +11,13 @@ export enum ChartDataPeriod {
     LAST_YEAR = "last-year"
 }
 
+export enum SortBy{
+  DATE_DESC = "date-desc",
+  DATE_ASC = "date-asc",
+  BALANCE_DESC = "balance-desc",
+  BALANCE_ASC = "balance-asc"
+}
+
 export interface IEntry {
   _id: string;
   title: string;
@@ -62,4 +69,25 @@ export enum ActionType {
   RemoveEntry = 'removeEntry',
   UpdateEntry = 'updateEntry',
   ChangeEntryStatus = 'changeEntryStatus',
+}
+
+export interface EntryFilters{
+  author: {
+    dad: boolean,
+    son: boolean
+  },
+  status?: {
+    confirmed: boolean,
+    pending: boolean
+  },
+  sign: {
+    positive: boolean,
+    negative: boolean
+  }
+}
+
+export interface EntryFetchOptions {
+  showRejected: boolean,
+  sortBy: SortBy,
+  filter: EntryFilters
 }

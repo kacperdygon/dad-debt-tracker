@@ -42,6 +42,10 @@ const showLoadMoreButton = computed(() => {
 </template>
 
 <style scoped>
+main{
+  width:50%;
+}
+
 h2{
   margin:0;
 }
