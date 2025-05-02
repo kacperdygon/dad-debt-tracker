@@ -2,21 +2,27 @@ import type { Request, Response } from 'express';
 import { Entry, type IEntryDocument } from '../../models/entryModel';
 import { Types } from 'mongoose';
 import { patchHandlers } from '@/api/controllers/entries/patchHandlers';
-import { ActionType, EntryStatus, IAction } from 'shared';
+import { ActionType, EntryStatus, IAction, SortBy } from 'shared';
 import { addAction } from '@/api/lib/actions';
 import { IAuthDocument } from '@/api/models/authModel';
 import config from '@/api/lib/config';
+import { parseFilters } from '@/api/lib/entries/helpers';
 
 export const getEntries = async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string, 10);
   const limit = config.pageLimit;
-  let query;
-  if (req.query.rejected === 'true'){
-    query = Entry.find({ status: EntryStatus.REJECTED })
-  } else {
-    query = Entry.find({ status: {$ne: EntryStatus.REJECTED} })
+
+  const filters = parseFilters(req);
+  
+  const query = Entry.find(filters);
+
+  switch(req.query.sortBy){
+    case SortBy.DATE_DESC: query.sort({ timestamp: -1, _id: 1 }); break;
+    case SortBy.DATE_ASC: query.sort({timestamp: 1, _id: 1 }); break;
+    case SortBy.BALANCE_DESC: query.sort({balanceChange: -1, _id: 1}); break;
+    case SortBy.BALANCE_ASC: query.sort({balanceChange: 1, _id: 1}); break;
   }
-  query.sort({ timestamp: -1, _id: 1 });
+
   query.skip((page - 1) * limit)
   query.limit(limit);
   try {

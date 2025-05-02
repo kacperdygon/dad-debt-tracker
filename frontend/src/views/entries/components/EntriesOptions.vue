@@ -4,6 +4,19 @@ import { type EntryFetchOptions } from 'shared';
 
 const formData = defineModel<EntryFetchOptions>();
 
+function handleCheckboxChange(event: Event, category: string[]){
+    const target = event.target as HTMLInputElement;
+    if (target.checked) {
+        const index = category.indexOf(target.value);
+        if (index !== -1) throw new Error('Shouldnt happen');
+        category.push(target.value);
+    } else {
+        const index = category.indexOf(target.value);
+        if (index === -1) throw new Error('Shouldnt happen');
+        category.splice(index, 1);
+    }
+}
+
 </script>
 
 <template>
@@ -20,19 +33,25 @@ const formData = defineModel<EntryFetchOptions>();
             <h3>Sort by</h3>
             <div class="option-group">
                 <label>
-                    <input type="radio" name="sortBy" :value="SortBy.DATE_DESC" checked>
+                    <input 
+                      type="radio" 
+                      name="sortBy" 
+                      :value="SortBy.DATE_DESC" 
+                      v-model="formData.sortBy" 
+                      checked
+                    >
                     Date descending
                 </label>
                 <label>
-                    <input type="radio" name="sortBy" :value="SortBy.DATE_ASC">
+                    <input type="radio" name="sortBy" :value="SortBy.DATE_ASC" v-model="formData.sortBy" >
                     Date ascending
                 </label>
                 <label>
-                    <input type="radio" name="sortBy" :value="SortBy.BALANCE_DESC">
+                    <input type="radio" name="sortBy" :value="SortBy.BALANCE_DESC" v-model="formData.sortBy" >
                     Balance descending
                 </label>
                 <label>
-                    <input type="radio" name="sortBy" :value="SortBy.BALANCE_ASC">
+                    <input type="radio" name="sortBy" :value="SortBy.BALANCE_ASC" v-model="formData.sortBy" >
                     Balance ascending
                 </label>
             </div>
@@ -40,43 +59,74 @@ const formData = defineModel<EntryFetchOptions>();
         </section>
 
         <section>
-            <h3>
-                Filter
-            </h3>
-            <div class="option-group">
-                <h4>Author</h4>
-            <label>
-                <input type="checkbox" v-model="formData.filter.author.dad">
-                Dad
-            </label>
-            <label>
-                <input type="checkbox" v-model="formData.filter.author.son">
-                Son
-            </label>
-            </div>
-            <div class="option-group" v-if="!formData.showRejected">
-                <h4>Status</h4>
-                <label>
-                <input type="checkbox" v-model="formData.filter.status.pending">
-                Pending
-            </label>
-            <label>
-                <input type="checkbox" v-model="formData.filter.status.pending">
-                Confirmed
-            </label>
-            </div>
-            <div class="option-group">
-                <h4>Sign</h4>
-            <label>
-                <input type="checkbox" v-model="formData.filter.sign.positive">
-                Positive
-            </label>
-            <label>
-                <input type="checkbox" v-model="formData.filter.sign.negative">
-                Negative
-            </label>
-            </div>
-        </section>
+    <h3>Filter</h3>
+
+    <div class="option-group">
+      <h4>Author</h4>
+      <label>
+        <input 
+          type="checkbox" 
+          @change="handleCheckboxChange($event, formData.filter.author)" 
+          value="dad"
+          checked
+        >
+        Dad
+      </label>
+      <label>
+        <input 
+          type="checkbox" 
+          @change="handleCheckboxChange($event, formData.filter.author)" 
+          value="son"
+          checked
+        >
+        Son
+      </label>
+    </div>
+
+    <div class="option-group" v-if="!formData.showRejected">
+      <h4>Status</h4>
+      <label>
+        <input 
+          type="checkbox" 
+          @change="handleCheckboxChange($event, formData.filter.status)" 
+          value="pending"
+          checked
+        >
+        Pending
+      </label>
+      <label>
+        <input 
+          type="checkbox" 
+          @change="handleCheckboxChange($event, formData.filter.status)" 
+          value="confirmed"
+          checked
+        >
+        Confirmed
+      </label>
+    </div>
+
+    <div class="option-group">
+      <h4>Sign</h4>
+      <label>
+        <input 
+          type="checkbox" 
+          @change="handleCheckboxChange($event, formData.filter.sign)" 
+          value="positive"
+          checked
+        >
+        Positive
+      </label>
+      <label>
+        <input 
+          type="checkbox" 
+          @change="handleCheckboxChange($event, formData.filter.sign)" 
+          value="negative"
+          checked
+        >
+        Negative
+      </label>
+    </div>
+  </section>
     </div>
 
 </template>

@@ -12,7 +12,7 @@ import {
   getEntryPageCountDB
 } from '@/lib/entries';
 import { reactive, ref } from 'vue';
-import type { EntryFetchOptions } from 'shared';
+import { SortBy, type EntryFetchOptions } from 'shared';
 
 export const useEntryStore = defineStore('entry', () => {
   const entries = ref<IEntry[]>([]);
@@ -22,25 +22,38 @@ export const useEntryStore = defineStore('entry', () => {
     entries: 0,
     rejectedEntries: 0
   })
-  const lastPage = reactive({
+  const lastPage = reactive<{
+    page: number,
+    rejected: boolean,
+    options: EntryFetchOptions | undefined
+  }>({
     page: 1,
-    rejected: false
+    rejected: false,
+    options: undefined
   })
 
   const totalDebt = ref<number>(0);
 
   const unconfirmedEntryCount = ref<number>(0);
 
-  async function fetchEntries(page: number = 1, rejected: boolean = false, options?: EntryFetchOptions) {
+  async function fetchEntries(page: number = 1, options: EntryFetchOptions = {
+      showRejected: false,
+      sortBy: SortBy.DATE_DESC,
+      filter: {
+        author: ['dad', 'son'],
+        status: ['confirmed', 'pending'],
+        sign: ['positive', 'negative']
+      }
+  }) {
     try {
         pageCount.entries = (await getEntryPageCountDB(false)).data?.pageCount || 0;
         const loadedEntries = await getEntriesDB(page, options);
-        if (!rejected) {
-          entries.value.length = 0;
-          entries.value.push(...loadedEntries);
-        } else {
+        if (options && options.showRejected) {
           rejectedEntries.value.length = 0;
           rejectedEntries.value.push(...loadedEntries);
+        } else {
+          entries.value.length = 0;
+          entries.value.push(...loadedEntries);
         }
     } catch (error) {
       console.error('Error fetching entries:', error);
@@ -49,15 +62,24 @@ export const useEntryStore = defineStore('entry', () => {
 
   async function reloadLastPage(){
     if (lastPage.rejected) {
-      fetchEntries(lastPage.page, true)
+      fetchEntries(lastPage.page)
     } else {
-      fetchEntries(lastPage.page, false)
+      fetchEntries(lastPage.page)
     }
   }
 
-  function setLastPage(rejected: boolean, page: number){
+  function setLastPage(rejected: boolean, page: number, options: EntryFetchOptions = {
+    showRejected: false,
+    sortBy: SortBy.DATE_DESC,
+    filter: {
+      author: ['dad', 'son'],
+      status: ['confirmed', 'pending'],
+      sign: ['positive', 'negative']
+    }
+}){
     lastPage.rejected = rejected;
     lastPage.page = page;
+    lastPage.options = options;
   }
 
   async function fetchTotalDebt(){

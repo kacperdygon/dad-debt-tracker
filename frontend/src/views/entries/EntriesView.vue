@@ -46,31 +46,23 @@ onUnmounted(() => {
 });
 
 watch(selectedPage, (newValue) => {
-  entriesStore.fetchEntries(newValue, formData.showRejected);
-  entriesStore.setLastPage(formData.showRejected, newValue);
+  entriesStore.fetchEntries(newValue, formData);
+  entriesStore.setLastPage(formData.showRejected, newValue, formData);
 });
 
 const formData = reactive<EntryFetchOptions>({
   showRejected: false,
   sortBy: SortBy.DATE_DESC,
   filter: {
-    author: {
-      dad: true,
-      son: true,
-    },
-    status: {
-      confirmed: true,
-      pending: true,
-    },
-    sign: {
-      positive: true,
-      negative: true
-    }
+    author: ['dad', 'son'],
+    status: ['confirmed', 'pending'],
+    sign: ['positive', 'negative']
   }
 });
 
 watch(formData, (newValue) => {
-  entriesStore.fetchEntries(selectedPage.value, newValue.showRejected, newValue);
+  selectedPage.value = 1;
+  entriesStore.fetchEntries(selectedPage.value, newValue);
 })
 
 

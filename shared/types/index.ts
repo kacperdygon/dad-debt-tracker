@@ -72,18 +72,9 @@ export enum ActionType {
 }
 
 export interface EntryFilters{
-  author: {
-    dad: boolean,
-    son: boolean
-  },
-  status?: {
-    confirmed: boolean,
-    pending: boolean
-  },
-  sign: {
-    positive: boolean,
-    negative: boolean
-  }
+  author: string[];
+  status?: string[];
+  sign: string[];
 }
 
 export interface EntryFetchOptions {
