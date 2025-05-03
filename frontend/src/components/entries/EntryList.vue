@@ -58,10 +58,6 @@ ul {
   list-style: none;
 }
 
-ul > * {
-  box-sizing: border-box;
-}
-
 .entry-placeholder {
   width:100%;
   text-align: center;
@@ -72,7 +68,7 @@ ul > * {
   color:var(--text-gray)
 }
 
-li {
+li > *{
   box-sizing: border-box;
 }
 
