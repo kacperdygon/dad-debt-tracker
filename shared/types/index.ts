@@ -80,5 +80,9 @@ export interface EntryFilters{
 export interface EntryFetchOptions {
   showRejected: boolean,
   sortBy: SortBy,
-  filter: EntryFilters
+  filter: EntryFilters,
+  time?: {
+    startDate?: Date,
+    endDate?: Date
+  }
 }

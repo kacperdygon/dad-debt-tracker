@@ -17,16 +17,7 @@ export interface IEntry {
 
 export async function getEntriesDB(page: number = 1, options: EntryFetchOptions): Promise<IEntry[]> {
 
-  const params = new URLSearchParams({
-    page: page.toString(),
-    rejected: String(options.showRejected),
-    sortBy: options.sortBy,
-});
-
-  if (options.filter.author.length != 0) params.append('author', options.filter.author.join(','));
-  if (options.filter.sign.length != 0) params.append('sign', options.filter.sign.join(','));
-  if (!options.showRejected && options.filter.status && options.filter.status.length != 0) 
-    params.append('status', options.filter.status.join(','));
+  const params = constructParams(page, options);
 
 
   const res = await fetchData<{ message: string, entries: IEntry[] }>(`api/entries?${params}`, {
@@ -39,6 +30,30 @@ export async function getEntriesDB(page: number = 1, options: EntryFetchOptions)
     return [];
   }
   return res.data?.entries as IEntry[];
+}
+
+function constructParams(page: number, options: EntryFetchOptions): URLSearchParams{
+  const params = new URLSearchParams({
+    page: page.toString(),
+    rejected: String(options.showRejected),
+    sortBy: options.sortBy,
+});
+
+  if (options.filter.author.length != 0) params.append('author', options.filter.author.join(','));
+  if (options.filter.sign.length != 0) params.append('sign', options.filter.sign.join(','));
+  if (!options.showRejected && options.filter.status && options.filter.status.length != 0) 
+    params.append('status', options.filter.status.join(','));
+
+  if (options.time?.startDate) {
+    const parsedDate = options.time.startDate.toISOString().split('T')[0];
+    params.append('startDate', parsedDate);
+  }
+  if (options.time?.endDate) {
+    const parsedDate = options.time.endDate.toISOString().split('T')[0];
+    params.append('endDate', parsedDate);
+  }
+
+  return params
 }
 
 export async function addEntryDB(newEntry: Omit<IEntry, '_id' | 'status'>): Promise<IEntry | null> {

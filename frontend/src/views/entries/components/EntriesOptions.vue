@@ -17,6 +17,11 @@ function handleCheckboxChange(event: Event, category: string[]){
     }
 }
 
+function handleDateChange(event: Event, editedField: keyof EntryFetchOptions['time']){
+  const target = event.target as HTMLInputElement;
+  formData.value.time[editedField] = new Date(target.value);
+}
+
 </script>
 
 <template>
@@ -124,6 +129,23 @@ function handleCheckboxChange(event: Event, category: string[]){
           checked
         >
         Negative
+      </label>
+    </div>
+  </section>
+  <section>
+    <h3>Time</h3>
+    <div class="option-group">
+      <label>
+        <h4>Start date</h4>
+        <input type="date" @change="handleDateChange($event, 'startDate')">
+        
+      </label>
+      </div>
+      <div class="option-group">
+      <label>
+        <h4>End date</h4>
+        <input type="date" @change="handleDateChange($event, 'endDate')">
+        
       </label>
     </div>
   </section>

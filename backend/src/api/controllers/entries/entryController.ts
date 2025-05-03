@@ -21,6 +21,7 @@ export const getEntries = async (req: Request, res: Response) => {
     case SortBy.DATE_ASC: query.sort({timestamp: 1, _id: 1 }); break;
     case SortBy.BALANCE_DESC: query.sort({balanceChange: -1, _id: 1}); break;
     case SortBy.BALANCE_ASC: query.sort({balanceChange: 1, _id: 1}); break;
+    default: query.sort({ timestamp: -1, _id: 1 });
   }
 
   query.skip((page - 1) * limit)

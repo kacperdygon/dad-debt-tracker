@@ -57,7 +57,8 @@ const formData = reactive<EntryFetchOptions>({
     author: ['dad', 'son'],
     status: ['confirmed', 'pending'],
     sign: ['positive', 'negative']
-  }
+  },
+  time: {}
 });
 
 watch(formData, (newValue) => {
