@@ -1,90 +1,49 @@
 <script setup lang="ts">
-import Chart from 'chart.js/auto';
-import 'chartjs-adapter-date-fns';
-import { onMounted, ref } from 'vue';
-import { getChartData } from '@/lib/chart';
 import { ChartDataPeriod } from 'shared';
+import ChartComponent from './ChartComponent.vue';
+import { ref } from 'vue';
 
-const props = defineProps<{
-  period: ChartDataPeriod
-}>()
+const selectedPeriod = ref<ChartDataPeriod>(ChartDataPeriod.LAST_3_MONTHS);
 
-const canvasRef = ref<HTMLCanvasElement | null>(null);
-const chartData = ref<
-  {data: {x: string, y: number}[],
-    dates: {startDate: string, endDate: string},
-    options: {maxChartValue: number, minChartValue: number}}
-  | null
->(null);
+const periodsArray = Object.values(ChartDataPeriod)
 
-onMounted(() => {
-  LoadChart();
-});
-
-async function loadChartData(){
-  chartData.value = await getChartData(props.period);
+function formatStringForButton(text: string){
+    text = text.replace(/-/g, ' ');
+    text = text[0].toUpperCase() + text.slice(1);
+    return text;
 }
 
-async function LoadChart(){
-  if (!canvasRef.value) {
-    throw new Error('Canvas ref not set');
-  }
-
-  await loadChartData();
-    if (chartData.value) {
-      new Chart(canvasRef.value, {
-        type: 'line',
-        data: {
-          datasets: [{
-            label: 'Balance',
-            data: chartData.value.data,
-            borderWidth: 1,
-            pointRadius: 0,
-            pointHitRadius: 5,
-            stepped: true,
-          }]
-        },
-        options: {
-
-          scales: {
-
-            x: {
-
-              type: 'time',
-              time: {
-                unit: props.period == ChartDataPeriod.LAST_YEAR ? 'month' : 'day',
-              },
-              ticks: {
-                stepSize: 1,
-                autoSkip: true,
-              },
-              min: chartData.value.dates.endDate,
-              max: chartData.value.dates.startDate,
-            },
-            y: {
-              suggestedMax: chartData.value.options.maxChartValue,
-              suggestedMin: chartData.value.options.minChartValue,
-            }
-          },
-          plugins: {
-            legend: {
-              display: false
-            },
-          }
-        }
-      });
-    }
+function changePeriod(newPeriod: ChartDataPeriod){
+    selectedPeriod.value = newPeriod;
 }
-
 
 </script>
 
 <template>
-<section class="chart">
-  <canvas ref="canvasRef"></canvas>
-</section>
+
+    <ul>
+        <li v-for="(item, index) in periodsArray" :key="index">
+            <button :class="item === selectedPeriod ? 'button-main' : 'secondary-button'" @click="changePeriod(item)">
+                {{ formatStringForButton(item) }}
+            </button>
+        </li>
+    </ul>
+
+<ChartComponent :period="selectedPeriod"/>
+
 </template>
 
 <style scoped>
+
+button{
+    padding:0.75rem;
+}
+
+ul{
+    list-style:none;
+    padding-left:0;
+    display:flex;
+    gap:0.5rem;
+}
 
 </style>
