@@ -1,25 +1,24 @@
 <script setup lang="ts">
-import {   inject, onMounted, reactive, ref, watch } from 'vue';
+import {   inject, onMounted, reactive, Ref, ref, watch } from 'vue';
 import EntryList from '@/components/entries/EntryList.vue';
 import PaginationButtonsComponent from '@/components/pagination/PaginationButtonsComponent.vue';
 import { useRoute } from 'vue-router';
 import EntriesOptions from './components/EntriesOptions.vue';
 import { EntryFetchOptions, IEntry, SortBy } from 'shared';
 import { getEntriesDB } from '@/lib/entries';
+import EntryModal from '@/components/entries/EntryModal.vue';
 
 
-const openEntryModal = inject<() => void | null>('openEntryModal');
-const handleOpenModal = () => {
-  if (!openEntryModal) {
-    throw new Error('Open entry modal not passed');
+const entryModalRef = inject<Ref<InstanceType<typeof EntryModal>> | null>('entryModalRef');
+const handleOpenModal = async () => {
+  if (!entryModalRef) {
+    throw new Error('Entry modal not passed');
   }
-  openEntryModal();
+  const result = await entryModalRef.value.openModal();
+  if (result) loadEntries();
 };
 
-type EntryListExposed = {
-  jumpTo: (id: number) => void;
-};
-const entryListRef = ref<EntryListExposed | null>(null);
+const entryListRef = ref<Ref<InstanceType<typeof EntryList>> | null>(null);
 
 const entries = ref<IEntry[] | null>([]);
 const pageCount = ref<number>(0);

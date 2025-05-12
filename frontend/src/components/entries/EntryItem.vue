@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, inject, onMounted, onUnmounted, ref } from 'vue';
-import { type IEntry } from '@/lib/entries';
+import { computed, inject, onMounted, onUnmounted, type Ref, ref } from 'vue';
+import { changeEntryStatusDB, deleteEntryDB, type IEntry } from '@/lib/entries';
 import { getRole } from '@/lib/auth';
 import { EntryStatus } from 'shared';
+import EntryModal from '@/components/entries/EntryModal.vue';
 
-const openEntryModal = inject<(entry: IEntry) => void | null>('openEntryModal');
+const entryModalRef = inject<Ref<InstanceType<typeof EntryModal>> | null>('entryModalRef');
 const dropdownListRef = ref<HTMLElement | null>(null);
 const dropdownButtonRef = ref<HTMLElement | null>(null);
 const showDropdown = ref(false);
@@ -13,19 +14,25 @@ const props = defineProps<{
   entry: IEntry;
 }>();
 
+const emit = defineEmits<{
+  (e: 'reloadRequested'): void;
+}>();
+
 const userRole = ref<string | null>(null)
 
-function handleDelete() {
+async function handleDelete() {
   toggleDropdown();
-  // delete functionality
+  const response = await deleteEntryDB(props.entry._id);
+  if (response.ok) emit('reloadRequested');
 }
 
-function handleEdit() {
+async function handleEdit() {
   toggleDropdown();
-  if (!openEntryModal) {
+  if (!entryModalRef) {
     throw new Error('Entry modal ref is null');
   }
-  openEntryModal(props.entry);
+  const shouldReload = await entryModalRef.value.openModal();
+  if (shouldReload) emit('reloadRequested');
 }
 
 function toggleDropdown() {
@@ -62,14 +69,9 @@ const closeDropdown = (event: Event) => {
   }
 };
 
-function changeEntryStatus(newStatus: EntryStatus | string) {
-  if (props.entry.status == EntryStatus.REJECTED) {
-    // change status functionality
-  }
-  else {
-    // change status functionality
-  }
-  
+async function changeEntryStatus(newStatus: EntryStatus) {
+  const response = await changeEntryStatusDB(props.entry._id, newStatus);
+  if (response.ok) emit('reloadRequested');
 }
 
 async function loadRole(){
@@ -101,7 +103,7 @@ onUnmounted(() => document.removeEventListener('click', closeDropdown));
         </button>
         <ul class="dropdown-list" ref="dropdownListRef" v-if="showDropdown">
           <li @click="handleEdit">Edit</li>
-          <li v-if="props.entry.status == 'rejected' && userRole == 'dad'" @click="changeEntryStatus('pending')" class="pending-color">Change to pending</li>
+          <li v-if="props.entry.status == 'rejected' && userRole == 'dad'" @click="changeEntryStatus(EntryStatus.PENDING)" class="pending-color">Change to pending</li>
           <li @click="handleDelete" style="color: var(--expense)">Delete</li>
         </ul>
       </div>
@@ -110,10 +112,10 @@ onUnmounted(() => document.removeEventListener('click', closeDropdown));
     <div class="flex">
       <h6 class="balance">{{ balanceText }} zł</h6>
       <div v-if="props.entry.status == 'pending' && userRole == 'dad'"  class="confirmation-buttons">
-        <button @click="changeEntryStatus('rejected')" class="red-color outlined-button">
+        <button @click="changeEntryStatus(EntryStatus.REJECTED)" class="red-color outlined-button">
           Reject
         </button>
-        <button @click="changeEntryStatus('confirmed')" class="green-color outlined-button">
+        <button @click="changeEntryStatus(EntryStatus.CONFIRMED)" class="green-color outlined-button">
           Confirm
         </button>
       </div>

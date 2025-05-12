@@ -1,18 +1,20 @@
 <script setup lang="ts">
 import EntryList from '@/components/entries/EntryList.vue';
-import { inject, onMounted, ref } from 'vue';
+import { inject, onMounted, Ref, ref } from 'vue';
 import { getEntriesDB, getUnconfirmedEntryCountDB } from '@/lib/entries';
 import { IEntry } from 'shared';
+import EntryModal from '@/components/entries/EntryModal.vue';
 
 const lastEntries = ref<IEntry[]>([]);
 const unconfirmedEntryCount = ref<number>(0);
 
-const openEntryModal = inject<() => void | null>('openEntryModal');
-const handleOpenModal = () => {
-  if (!openEntryModal) {
-    throw new Error('Open entry modal not passed');
+const entryModalRef = inject<Ref<InstanceType<typeof EntryModal>> | null>('entryModalRef');
+const handleOpenModal = async () => {
+  if (!entryModalRef) {
+    throw new Error('Entry modal not passed');
   }
-  openEntryModal();
+  const result = await entryModalRef.value.openModal();
+  if (result) loadEntries();
 };
 
 onMounted(() => {
@@ -21,7 +23,8 @@ onMounted(() => {
 });
 
 async function loadEntries() {
-  const response = await getEntriesDB(1);
+  const response = await getEntriesDB();
+  lastEntries.value.length = 0;
   lastEntries.value.push(...response.data.entries.slice(0, 3));
 }
 

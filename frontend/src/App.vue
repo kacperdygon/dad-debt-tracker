@@ -9,7 +9,7 @@ const entryModalRef = ref<typeof EntryModal | null>(null);
 
 onMounted( () => {
   if (!entryModalRef.value) throw new Error('Entry modal ref not set');
-  provide('openEntryModal', entryModalRef.value?.openModal);
+  provide('entryModalRef', entryModalRef);
 });
 
 </script>

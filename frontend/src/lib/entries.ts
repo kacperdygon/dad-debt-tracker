@@ -64,8 +64,8 @@ function constructParams(page: number, options: EntryFetchOptions): URLSearchPar
   return params
 }
 
-export async function addEntryDB(newEntry: Omit<IEntry, '_id' | 'status'>): Promise<IEntry | null> {
-  const res = await fetchData<{ message: string, entry: IEntry }>("api/entries", {
+export async function addEntryDB(newEntry: Omit<IEntry, '_id' | 'status'>): Promise<FetchResponse<{entry: IEntry}>> {
+  const res = await fetchData<{entry: IEntry}>("api/entries", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -74,11 +74,11 @@ export async function addEntryDB(newEntry: Omit<IEntry, '_id' | 'status'>): Prom
     credentials: "include",
   });
 
-  return res.data?.entry ?? null;
+  return res;
 
 }
 
-export async function updateEntryDB(entryId: string, newEntry: Omit<IEntry, '_id' | 'status'>): Promise<IEntry | null> {
+export async function updateEntryDB(entryId: string, newEntry: Omit<IEntry, '_id' | 'status'>): Promise<FetchResponse<{entry: IEntry}>> {
   const res = await fetchData<{ message: string, entry: IEntry }>(`api/entries/${entryId}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
@@ -89,18 +89,18 @@ export async function updateEntryDB(entryId: string, newEntry: Omit<IEntry, '_id
     credentials: "include",
   });
 
-  return res.data?.entry ?? null;
+  return res;
 
 }
 
-export async function deleteEntryDB(entryId: string): Promise<boolean> {
-  const res = await fetchData<{ message: string, entry: IEntry }>(`api/entries/${entryId}`, {
+export async function deleteEntryDB(entryId: string): Promise<FetchResponse> {
+  const res = await fetchData(`api/entries/${entryId}`, {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
   });
 
-  return res.ok;
+  return res;
 }
 
 export async function changeEntryStatusDB(entryId: string, status: EntryStatus): Promise<FetchResponse<{ entry: IEntry }>> {

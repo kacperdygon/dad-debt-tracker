@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { IEntry } from '@/lib/entries.ts';
+import { type FetchResponse } from '@/lib/database';
+import { addEntryDB, updateEntryDB, type IEntry } from '@/lib/entries';
 
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 interface AddEntryFormData {
   title: string;
@@ -16,6 +17,8 @@ const DEFAULT_FORM_DATA: AddEntryFormData = {
 };
 
 let startingFormData: AddEntryFormData;
+
+const shouldReload = ref<boolean | null>(null);
 
 const formData = ref(DEFAULT_FORM_DATA);
 const errorMessage = ref('');
@@ -56,11 +59,16 @@ const onSubmit = async (event: Event) => {
     balanceChange: formData.value.balanceChange,
   };
 
+  let response: FetchResponse<{entry: IEntry}>;
+
   if (targetEntryId.value) {
-    // add entry
+    response = await updateEntryDB(targetEntryId.value, newEntry);
   } else {
-    // update entry
+    response = await addEntryDB(newEntry);
   }
+
+  if (response.ok) shouldReload.value = true;
+  else shouldReload.value = false;
 
 };
 
@@ -81,8 +89,9 @@ const gridTemplate = computed(() => {
 
 const dialogRef = ref<HTMLDialogElement | null>(null);
 
-const openModal = (entry?: IEntry) => {
-  if (!dialogRef.value) {
+async function openModal(entry?: IEntry): Promise<boolean> {
+  return new Promise((resolve) => {
+    if (!dialogRef.value) {
     throw new Error('Dialog ref not set');
   }
 
@@ -98,6 +107,13 @@ const openModal = (entry?: IEntry) => {
 
   targetEntryId.value = entry?._id;
   dialogRef.value.showModal();
+
+  watch(shouldReload, (newValue) => {
+    if (newValue) resolve(true);
+    else resolve(false);
+  });
+  });
+  
 };
 
 const closeModal = () => {
