@@ -6,13 +6,10 @@ export interface FetchResponse<T = unknown> {
 }
 
 export async function fetchData<T = unknown>(url: string, options: RequestInit = {}): Promise<FetchResponse<T>> {
-  if (!import.meta.env.VITE_BACKEND_URL) {
-    throw new Error('No backend url set');
-  }
 
   try {
 
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/${url}`, options);
+    const res = await fetch(`${url}`, options);
 
     const body = await res.json();
 
@@ -26,4 +23,5 @@ export async function fetchData<T = unknown>(url: string, options: RequestInit =
   } catch (error) {
     throw new Error("Fetch error: " + error);
   }
+
 }

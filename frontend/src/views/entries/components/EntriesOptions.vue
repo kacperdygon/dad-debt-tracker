@@ -2,7 +2,7 @@
 import { EntryStatus, SortBy } from 'shared';
 import { type EntryFetchOptions } from 'shared';
 
-const formData = defineModel<EntryFetchOptions>();
+const formData = defineModel<EntryFetchOptions>({ required: true });
 
 function handleCheckboxChange(event: Event, category: string[]){
     const target = event.target as HTMLInputElement;

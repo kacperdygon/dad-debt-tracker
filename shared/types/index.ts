@@ -80,7 +80,7 @@ export interface EntryFilters{
 export interface EntryFetchOptions {
   sortBy: SortBy,
   filter: EntryFilters,
-  time?: {
+  time: {
     startDate?: Date,
     endDate?: Date
   }

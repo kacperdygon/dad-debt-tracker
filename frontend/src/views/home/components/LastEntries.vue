@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import EntryList from '@/components/entries/EntryList.vue';
-import { inject, onMounted, Ref, ref } from 'vue';
+import { inject, onMounted, type Ref, ref } from 'vue';
 import { getEntriesDB, getUnconfirmedEntryCountDB } from '@/lib/entries';
-import { IEntry } from 'shared';
+import { type IEntry } from 'shared';
 import EntryModal from '@/components/entries/EntryModal.vue';
 
 const lastEntries = ref<IEntry[]>([]);
@@ -24,13 +24,17 @@ onMounted(() => {
 
 async function loadEntries() {
   const response = await getEntriesDB();
-  lastEntries.value.length = 0;
-  lastEntries.value.push(...response.data.entries.slice(0, 3));
+  if (response.ok && response.data) {
+    lastEntries.value.length = 0;
+    lastEntries.value.push(...response.data.entries.slice(0, 3));
+  }
 }
 
 async function loadUnconfirmedEntryCount() {
   const response = await getUnconfirmedEntryCountDB();
-  unconfirmedEntryCount.value = response.data.unconfirmedEntryCount;
+  if (response.ok && response.data) {
+    unconfirmedEntryCount.value = response.data.unconfirmedEntryCount;
+  }
 }
 </script>
 

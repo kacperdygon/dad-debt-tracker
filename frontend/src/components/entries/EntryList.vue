@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import EntryItem from '@/components/entries/EntryItem.vue';
-import type { IEntry } from '@/lib/entries.ts';
+import { type IEntry } from '@/lib/entries';
 import SmallEntryItem from '@/components/entries/SmallEntryItem.vue'
 import { ref } from 'vue';
 

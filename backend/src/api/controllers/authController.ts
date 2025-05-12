@@ -18,7 +18,7 @@ export const signIn = async (req: Request, res: Response) => {
     res.cookie('pin', pin, {
       maxAge: 900000,
       httpOnly: true,
-      secure: true,
+      secure: false,
       sameSite: 'none'
     });
     return void res.status(200).json({ message: `Logged in as ${role}`,  data: {

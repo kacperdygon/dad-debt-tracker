@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import {   inject, onMounted, reactive, Ref, ref, watch } from 'vue';
+import {   inject, onMounted, reactive, type Ref, ref, watch } from 'vue';
 import EntryList from '@/components/entries/EntryList.vue';
 import PaginationButtonsComponent from '@/components/pagination/PaginationButtonsComponent.vue';
 import { useRoute } from 'vue-router';
 import EntriesOptions from './components/EntriesOptions.vue';
-import { EntryFetchOptions, IEntry, SortBy } from 'shared';
+import { type EntryFetchOptions, type IEntry, SortBy } from 'shared';
 import { getEntriesDB } from '@/lib/entries';
 import EntryModal from '@/components/entries/EntryModal.vue';
 
@@ -15,12 +15,12 @@ const handleOpenModal = async () => {
     throw new Error('Entry modal not passed');
   }
   const result = await entryModalRef.value.openModal();
-  if (result) loadEntries();
+  if (result) await loadEntries();
 };
 
 const entryListRef = ref<Ref<InstanceType<typeof EntryList>> | null>(null);
 
-const entries = ref<IEntry[] | null>([]);
+const entries = ref<IEntry[]>([]);
 const pageCount = ref<number>(0);
 const selectedPage = ref(1);
 
@@ -42,10 +42,12 @@ onMounted(() => {
 
 async function loadEntries(){
   const response = await getEntriesDB(selectedPage.value, formData);
-  const loadedEntries = response.data.entries;
-  pageCount.value = response.data.pageCount
-  entries.value.length = 0;
-  entries.value.push(...loadedEntries);
+  if (response.ok && response.data) {
+    const loadedEntries = response.data.entries;
+    pageCount.value = response.data.pageCount
+    entries.value.length = 0;
+    entries.value.push(...loadedEntries);
+  }
   
 }
 

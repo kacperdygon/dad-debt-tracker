@@ -31,8 +31,9 @@ coverage
 .prettierrc.json
 .editorconfig
 .env
+.env.production
 .vercel
 
 !frontend/src/**
 package-lock.json
-*/package-lock.json
+**/package-lock.json

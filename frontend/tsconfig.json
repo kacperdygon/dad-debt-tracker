@@ -7,22 +7,5 @@
     {
       "path": "./tsconfig.app.json"
     }
-  ],
-  "include": [
-    "src",
-    "global.d.ts",
-  ],
-"exclude": [
-    "node_modules",
-    "plugins",
-    "public"
-  ],
-  "compilerOptions": {
-    "baseUrl": "./",
-    "paths": {
-      "@/*": ["src/*"]
-    },
-  }
-  
-
+  ]
 }

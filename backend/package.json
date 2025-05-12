@@ -5,9 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon --exec npx tsx src/server.ts",
+    "dev": "cross-env NODE_ENV=development nodemon --exec npx tsx src/server.ts",
     "build": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
-    "production": "node dist/server.js"
+    "production": "cross-env NODE_ENV=production node dist/server.js"
   },
   "dependencies": {
     "cookie-parser": "^1.4.7",
@@ -28,6 +28,7 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.10",
+    "cross-env": "^7.0.3",
     "eslint": "^9.23.0",
     "globals": "^16.0.0",
     "prettier": "^3.3.3",

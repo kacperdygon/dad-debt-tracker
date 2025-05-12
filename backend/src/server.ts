@@ -7,6 +7,6 @@ connectMongoDB().then(() => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`Accepted origin: ${process.env.FRONTEND_URL}`)
+  console.log(`Server running on port ${PORT}`);
+  console.log(`Accepted origin: ${process.env.FRONTEND_URL}`);
 });

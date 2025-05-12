@@ -10,6 +10,7 @@ onMounted(() => {
 
 async function loadTotalDebt(){
   const response = await getTotalDebtDB();
+  if (response.ok && response.data)
   totalDebt.value = response.data.totalDebt;
 }
 </script>

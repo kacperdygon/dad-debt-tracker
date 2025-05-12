@@ -1,12 +1,12 @@
 import express from 'express';
-import cors from 'cors';
 import routes from './routes';
 import cookieParser from 'cookie-parser';
 
 import mongoose from 'mongoose';
 
 import dotenv from 'dotenv';
-dotenv.config();
+const envPath = process.env.NODE_ENV === 'production' ? '.env.production' : '.env';
+dotenv.config({ path: envPath });
 
 export async function connectMongoDB() {
   if (!process.env.MONGODB_URI) {
@@ -18,14 +18,6 @@ export async function connectMongoDB() {
 const app = express();
 
 app.use(express.json());
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL,
-    credentials: true,
-    methods: 'GET, POST, PUT, DELETE, OPTIONS, PATCH',
-
-  })
-);
 app.use(cookieParser());
 
 app.use('/api', routes);
