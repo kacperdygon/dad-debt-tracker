@@ -1,4 +1,4 @@
-import { type EntryFetchOptions } from 'shared';
+import { SortBy, type EntryFetchOptions } from 'shared';
 import { fetchData, type FetchResponse } from './database';
 
 export enum EntryStatus {
@@ -15,7 +15,17 @@ export interface IEntry {
   status: string;
 }
 
-export async function getEntriesDB(page: number = 1, options: EntryFetchOptions): Promise<FetchResponse<{
+const DEFAULT_OPTIONS = {
+  sortBy: SortBy.DATE_DESC,
+  filter: {
+    author: ['dad', 'son'],
+    status: ['confirmed', 'pending'],
+    sign: ['positive', 'negative']
+  },
+  time: {}
+}
+
+export async function getEntriesDB(page: number = 1, options: EntryFetchOptions = DEFAULT_OPTIONS): Promise<FetchResponse<{
   entries: IEntry[],
   pageCount: number
 }>> {

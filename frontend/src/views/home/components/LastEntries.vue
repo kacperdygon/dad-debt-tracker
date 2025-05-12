@@ -1,16 +1,11 @@
 <script setup lang="ts">
-import { useEntryStore } from '@/store/entries';
 import EntryList from '@/components/entries/EntryList.vue';
-import { storeToRefs } from 'pinia';
-import { computed, inject, onMounted } from 'vue';
+import { inject, onMounted, ref } from 'vue';
+import { getEntriesDB, getUnconfirmedEntryCountDB } from '@/lib/entries';
+import { IEntry } from 'shared';
 
-const entriesStore = useEntryStore();
-const lastEntries = storeToRefs(entriesStore).entries;
-const unconfirmedEntryCount = storeToRefs(entriesStore).unconfirmedEntryCount;
-
-const last3Entries = computed(() => { 
-  return lastEntries.value.slice(0, 3);
-});
+const lastEntries = ref<IEntry[]>([]);
+const unconfirmedEntryCount = ref<number>(0);
 
 const openEntryModal = inject<() => void | null>('openEntryModal');
 const handleOpenModal = () => {
@@ -21,14 +16,25 @@ const handleOpenModal = () => {
 };
 
 onMounted(() => {
-  entriesStore.fetchUnconfirmedEntryCount();
+  loadEntries();
+  loadUnconfirmedEntryCount();
 });
+
+async function loadEntries() {
+  const response = await getEntriesDB(1);
+  lastEntries.value.push(...response.data.entries.slice(0, 3));
+}
+
+async function loadUnconfirmedEntryCount() {
+  const response = await getUnconfirmedEntryCountDB();
+  unconfirmedEntryCount.value = response.data.unconfirmedEntryCount;
+}
 </script>
 
 <template>
   <section>
     <h3>Last entries <span v-if="unconfirmedEntryCount !== 0" class="font-1rem orange-color">{{ unconfirmedEntryCount }} not confirmed</span></h3>
-    <EntryList :entries="last3Entries" type="partial" />
+    <EntryList :entries="lastEntries" type="partial" />
     <button @click="handleOpenModal" class="button-main font-125rem padding-075rem">Add new entry</button>
   </section>
 </template>

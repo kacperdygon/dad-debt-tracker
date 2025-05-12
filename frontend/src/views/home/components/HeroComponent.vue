@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { useEntryStore } from '@/store/entries';
-import { storeToRefs } from 'pinia';
-import { onMounted } from 'vue';
+import { getTotalDebtDB } from '@/lib/entries';
+import { onMounted, ref } from 'vue';
 
-const entriesStore = useEntryStore();
-const totalDebt = storeToRefs(entriesStore).totalDebt;
+const totalDebt = ref(0);
 
 onMounted(() => {
-  entriesStore.fetchTotalDebt();
+  loadTotalDebt();
 })
+
+async function loadTotalDebt(){
+  const response = await getTotalDebtDB();
+  totalDebt.value = response.data.totalDebt;
+}
 </script>
 
 <template>

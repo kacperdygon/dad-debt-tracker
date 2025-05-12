@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { computed, inject, onMounted, onUnmounted, ref } from 'vue';
 import { type IEntry } from '@/lib/entries';
-import { useEntryStore } from '@/store/entries';
 import { getRole } from '@/lib/auth';
 import { EntryStatus } from 'shared';
 
-const entryStore = useEntryStore();
 const openEntryModal = inject<(entry: IEntry) => void | null>('openEntryModal');
 const dropdownListRef = ref<HTMLElement | null>(null);
 const dropdownButtonRef = ref<HTMLElement | null>(null);
@@ -19,7 +17,7 @@ const userRole = ref<string | null>(null)
 
 function handleDelete() {
   toggleDropdown();
-  entryStore.deleteEntry(props.entry._id);
+  // delete functionality
 }
 
 function handleEdit() {
@@ -65,10 +63,13 @@ const closeDropdown = (event: Event) => {
 };
 
 function changeEntryStatus(newStatus: EntryStatus | string) {
-  if (props.entry.status == EntryStatus.REJECTED)
-  entryStore.changeRejectedStatus(props.entry._id, newStatus as EntryStatus);
-  else
-  entryStore.changeNotRejectedStatus(props.entry._id, newStatus as EntryStatus)
+  if (props.entry.status == EntryStatus.REJECTED) {
+    // change status functionality
+  }
+  else {
+    // change status functionality
+  }
+  
 }
 
 async function loadRole(){

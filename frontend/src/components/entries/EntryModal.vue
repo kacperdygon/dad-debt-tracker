@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import type { IEntry } from '../../lib/entries.ts';
+import type { IEntry } from '@/lib/entries.ts';
 
 import { computed, ref } from 'vue';
-import { useEntryStore } from '../../store/entries';
 
 interface AddEntryFormData {
   title: string;
@@ -22,8 +21,6 @@ const formData = ref(DEFAULT_FORM_DATA);
 const errorMessage = ref('');
 
 const targetEntryId = ref<string | undefined>(undefined);
-
-const entryStore = useEntryStore();
 
 const onSubmit = async (event: Event) => {
   event.preventDefault();
@@ -60,9 +57,9 @@ const onSubmit = async (event: Event) => {
   };
 
   if (targetEntryId.value) {
-    await entryStore.updateEntry(targetEntryId.value, newEntry);
+    // add entry
   } else {
-    await entryStore.addEntry(newEntry);
+    // update entry
   }
 
 };

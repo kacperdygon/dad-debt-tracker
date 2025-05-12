@@ -3,27 +3,14 @@ import EntryModal from './components/entries/EntryModal.vue';
 import HeaderComponent from './components/header/HeaderComponent.vue';
 import { ref, provide, onMounted } from 'vue';
 import { RouterView } from 'vue-router';
-import { useEntryStore } from '@/store/entries';
-import { useAuthStore } from '@/store/auth';
 import FooterComponent from './components/footer/FooterComponent.vue';
 
 const entryModalRef = ref<typeof EntryModal | null>(null);
 
-const entryStore = useEntryStore();
-const authStore = useAuthStore();
 onMounted( () => {
-  fetchDataIfSignedIn();
   if (!entryModalRef.value) throw new Error('Entry modal ref not set');
   provide('openEntryModal', entryModalRef.value?.openModal);
 });
-
-async function fetchDataIfSignedIn () {
-  if (await authStore.isSignedIn()) {
-    await entryStore.fetchEntries();
-  }
-}
-
-
 
 </script>
 
