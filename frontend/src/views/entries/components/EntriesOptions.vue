@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SortBy } from 'shared';
+import { EntryStatus, SortBy } from 'shared';
 import { type EntryFetchOptions } from 'shared';
 
 const formData = defineModel<EntryFetchOptions>();
@@ -17,6 +17,16 @@ function handleCheckboxChange(event: Event, category: string[]){
     }
 }
 
+function handleRejectedChange(){
+  if (formData.value.filter.status.includes(EntryStatus.REJECTED)) {
+    formData.value.filter.status.length = 0;
+    formData.value.filter.status.push(EntryStatus.CONFIRMED, EntryStatus.PENDING);
+  } else {
+    formData.value.filter.status.length = 0;
+    formData.value.filter.status.push(EntryStatus.REJECTED);
+  }
+}
+
 function handleDateChange(event: Event, editedField: keyof EntryFetchOptions['time']){
   const target = event.target as HTMLInputElement;
   formData.value.time[editedField] = new Date(target.value);
@@ -30,7 +40,7 @@ function handleDateChange(event: Event, editedField: keyof EntryFetchOptions['ti
         <h2>Options</h2>
         
         <label>
-            <input type="checkbox" v-model="formData.showRejected">
+            <input type="checkbox" @change="handleRejectedChange" value="rejected">
             Show rejected
         </label>
 
@@ -88,7 +98,7 @@ function handleDateChange(event: Event, editedField: keyof EntryFetchOptions['ti
       </label>
     </div>
 
-    <div class="option-group" v-if="!formData.showRejected">
+    <div class="option-group" v-if="!formData.filter.status.includes('rejected')">
       <h4>Status</h4>
       <label>
         <input 

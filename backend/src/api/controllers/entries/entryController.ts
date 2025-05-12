@@ -15,6 +15,7 @@ export const getEntries = async (req: Request, res: Response) => {
   const filters = parseFilters(req);
   
   const query = Entry.find(filters);
+  const pagesQuery = Entry.countDocuments(filters);
 
   switch(req.query.sortBy){
     case SortBy.DATE_DESC: query.sort({ timestamp: -1, _id: 1 }); break;
@@ -28,14 +29,22 @@ export const getEntries = async (req: Request, res: Response) => {
   query.limit(limit);
   try {
     const entries: IEntryDocument[] = await query.exec();
+
+    const pageQueryResult = await pagesQuery.exec();
+    const pageCount = Math.ceil(pageQueryResult / config.pageLimit);
+
     if (entries.length === 0) {
       return void res.status(200).json({ message: 'No entries on this page', data: {
-        entries: []
+        entries: [],
+        pageCount: pageCount
       }})
     }
     return void res.status(200).json({ message: 'Returned entries',  data: {
-        entries: entries
+        entries: entries,
+        pageCount: pageCount
     } });
+
+    
   } catch (error) {
     console.error('MongoDB error:', error);
     return void res.status(500).json({ message: 'Server error' });

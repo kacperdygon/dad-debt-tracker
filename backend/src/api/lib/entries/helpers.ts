@@ -1,5 +1,4 @@
-import { Request } from "express";
-import { EntryStatus } from "shared";
+import { Request } from "express"; 
 
 export function getDifferences(oldValue: Record<string, unknown>, newValue: Record<string, unknown>): {
   oldValue: Record<string, unknown>,
@@ -21,14 +20,13 @@ export function getDifferences(oldValue: Record<string, unknown>, newValue: Reco
 export function parseFilters(req: Request){
   let sign, status;
   // let author;
-    const rejected = req.query.rejected === 'true';
 
     let startDate, endDate;
   
     // if (req.query.author && typeof req.query.author === "string")
     //   author = req.query.author?.split(',');
     if (typeof req.query.sign === "string")
-      sign = req.query.sign.split(',');
+      sign = req.query.sign.split(',') as Array<string>;
     if (typeof req.query.status === "string")
       status = req.query.status.split(',');
     if (typeof req.query.startDate === "string")
@@ -37,16 +35,19 @@ export function parseFilters(req: Request){
       endDate = new Date(req.query.endDate);
   
     const signFilters: Array<unknown> = [];
-    if (sign?.includes('negative')) signFilters.push({balanceChange: {$lt: 0}});
-    if (sign?.includes('positive')) signFilters.push({balanceChange: {$gt: 0}});
+    if (sign?.includes('negative')) signFilters.push({balanceChange: {$lte: 0}});
+    if (sign?.includes('positive')) signFilters.push({balanceChange: {$gte: 0}});
+    
 
-
-  
     const filters: Record<string, unknown> = {};
 
     //Applying filters
-    filters.status = rejected ? EntryStatus.REJECTED : {$in: status, $ne: EntryStatus.REJECTED};
+    if (status){
+      filters.status = {$in: status};
+    }
+
     if (signFilters.length != 0) filters.$or = signFilters;
+    else filters.$or = [{balanceChange: 0}];
 
     startDate = (startDate && !isNaN(startDate.getTime())) ? startDate : undefined;
     endDate = (endDate && !isNaN(endDate.getTime())) ? endDate : undefined;
@@ -55,7 +56,6 @@ export function parseFilters(req: Request){
     if (startDate) (filters.timestamp as Record<string, unknown>).$gte = startDate;
     if (endDate) (filters.timestamp as Record<string, unknown>).$lte = endDate;
     
-  
     return filters;
   
 }

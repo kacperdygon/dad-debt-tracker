@@ -1,15 +1,12 @@
 <script setup lang="ts">
-import {  inject, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
-import { useEntryStore } from '@/store/entries';
+import {   inject, onMounted, reactive, ref, watch } from 'vue';
 import EntryList from '@/components/entries/EntryList.vue';
-import { storeToRefs } from 'pinia';
 import PaginationButtonsComponent from '@/components/pagination/PaginationButtonsComponent.vue';
 import { useRoute } from 'vue-router';
 import EntriesOptions from './components/EntriesOptions.vue';
-import { EntryFetchOptions, SortBy } from 'shared';
+import { EntryFetchOptions, IEntry, SortBy } from 'shared';
+import { getEntriesDB } from '@/lib/entries';
 
-const entriesStore = useEntryStore();
-const {entries, rejectedEntries, pageCount} = storeToRefs(entriesStore);
 
 const openEntryModal = inject<() => void | null>('openEntryModal');
 const handleOpenModal = () => {
@@ -24,6 +21,8 @@ type EntryListExposed = {
 };
 const entryListRef = ref<EntryListExposed | null>(null);
 
+const entries = ref<IEntry[] | null>([]);
+const pageCount = ref<number>(0);
 const selectedPage = ref(1);
 
 onMounted(() => {
@@ -32,26 +31,26 @@ onMounted(() => {
   const page = parseInt(params.page as string);
   const rejected = params.rejected;
   if (positionOnPage && page && rejected) {
-    formData.showRejected = params.rejected === 'true';
+    if (rejected === "true") formData.filter.status.push('rejected');
     selectedPage.value = page;
     if (!entryListRef.value) {
       throw new Error('Entry list ref not set');
     }
     entryListRef.value.jumpTo(positionOnPage);
   }
+  loadEntries();
 })
 
-onUnmounted(() => {
-  entriesStore.unloadEntries();
-});
-
-watch(selectedPage, (newValue) => {
-  entriesStore.fetchEntries(newValue, formData);
-  entriesStore.setLastPage(formData.showRejected, newValue, formData);
-});
+async function loadEntries(){
+  const response = await getEntriesDB(selectedPage.value, formData);
+  const loadedEntries = response.data.entries;
+  pageCount.value = response.data.pageCount
+  entries.value.length = 0;
+  entries.value.push(...loadedEntries);
+  
+}
 
 const formData = reactive<EntryFetchOptions>({
-  showRejected: false,
   sortBy: SortBy.DATE_DESC,
   filter: {
     author: ['dad', 'son'],
@@ -61,12 +60,18 @@ const formData = reactive<EntryFetchOptions>({
   time: {}
 });
 
-watch(formData, (newValue) => {
-  selectedPage.value = 1;
-  entriesStore.fetchEntries(selectedPage.value, newValue);
+watch(selectedPage, () => {
+  loadEntries();
+});
+
+watch(formData, () => {
+  if (selectedPage.value === 1) {
+    loadEntries();
+  } else {
+    selectedPage.value = 1;
+  }
+  
 })
-
-
 
 </script>
 
@@ -82,11 +87,11 @@ watch(formData, (newValue) => {
 
     </header>
 
-    <EntryList :entries="formData.showRejected ? rejectedEntries : entries" type="full" ref="entryListRef"/>
+    <EntryList :entries="entries" type="full" ref="entryListRef"/>
     <button @click="handleOpenModal" class="button-main font-125rem padding-075rem">Add new entry</button>
 
     <PaginationButtonsComponent
-      :total-pages="formData.showRejected ? pageCount.rejectedEntries : pageCount.entries"
+      :total-pages="pageCount"
       v-model="selectedPage" />
   </section>
 </main>

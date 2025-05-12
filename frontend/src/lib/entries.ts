@@ -15,34 +15,32 @@ export interface IEntry {
   status: string;
 }
 
-export async function getEntriesDB(page: number = 1, options: EntryFetchOptions): Promise<IEntry[]> {
+export async function getEntriesDB(page: number = 1, options: EntryFetchOptions): Promise<FetchResponse<{
+  entries: IEntry[],
+  pageCount: number
+}>> {
 
   const params = constructParams(page, options);
 
 
-  const res = await fetchData<{ message: string, entries: IEntry[] }>(`api/entries?${params}`, {
+  const res = await fetchData<{ message: string, entries: IEntry[], pageCount: number }>(`api/entries?${params}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
   });
 
-  if (!res.ok) {
-    return [];
-  }
-  return res.data?.entries as IEntry[];
+  return res;
 }
 
 function constructParams(page: number, options: EntryFetchOptions): URLSearchParams{
   const params = new URLSearchParams({
     page: page.toString(),
-    rejected: String(options.showRejected),
     sortBy: options.sortBy,
 });
 
-  if (options.filter.author.length != 0) params.append('author', options.filter.author.join(','));
-  if (options.filter.sign.length != 0) params.append('sign', options.filter.sign.join(','));
-  if (!options.showRejected && options.filter.status && options.filter.status.length != 0) 
-    params.append('status', options.filter.status.join(','));
+  params.append('author', options.filter.author.join(','));
+  params.append('sign', options.filter.sign.join(','));
+  params.append('status', options.filter.status.join(','));
 
   if (options.time?.startDate) {
     const parsedDate = options.time.startDate.toISOString().split('T')[0];
