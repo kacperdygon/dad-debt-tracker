@@ -129,13 +129,28 @@ section{
 
 .parent-div{
   width:70%;
+  min-width:600px;
+  padding:1.25rem;
+  box-sizing: border-box;
 }
 
 aside{
   width:30%;
+  margin-right:1rem;
 }
 
 main{
   width:70%;
+}
+
+@media screen and (max-width: 600px) {
+  .parent-div {
+    width: 100%;
+    min-width: 0;
+    display:flex;
+    flex-wrap: wrap;
+  }
+  main{width:100%}
+  aside{width:100%; margin-right:0; margin-bottom: 1rem;}
 }
 </style>

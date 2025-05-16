@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { EntryStatus, SortBy } from 'shared';
 import { type EntryFetchOptions } from 'shared';
+import { onMounted, ref } from 'vue';
 
 const formData = defineModel<EntryFetchOptions>({ required: true });
 
@@ -15,6 +16,12 @@ function handleCheckboxChange(event: Event, category: string[]){
         if (index === -1) throw new Error('Shouldnt happen');
         category.splice(index, 1);
     }
+}
+
+const showOptions = ref<boolean>(false);
+const isScreenWide = ref<boolean>(window.innerWidth > 600);
+const updateIsScreenWide = () => {
+  isScreenWide.value = window.innerWidth > 600;
 }
 
 function handleRejectedChange(){
@@ -32,14 +39,25 @@ function handleDateChange(event: Event, editedField: keyof EntryFetchOptions['ti
   formData.value.time[editedField] = new Date(target.value);
 }
 
+onMounted(() => {
+  window.addEventListener('resize', updateIsScreenWide);
+})
+
 </script>
 
 <template>
 
     <div class="options">
+      <header>
         <h2>Options</h2>
-        
-        <label>
+        <button class="button-plain" v-if="!isScreenWide" @click="showOptions = !showOptions">
+          <i 
+          :class="{ 'rotate-up': showOptions, 'rotate-down': !showOptions }"
+          class="fa-solid fa-chevron-down"></i>
+        </button>
+      </header>
+      <section v-show="showOptions || isScreenWide">
+<label>
             <input type="checkbox" @change="handleRejectedChange" value="rejected">
             Show rejected
         </label>
@@ -159,18 +177,24 @@ function handleDateChange(event: Event, editedField: keyof EntryFetchOptions['ti
       </label>
     </div>
   </section>
+      </section>
+        
+        
+        
     </div>
 
 </template>
 
 <style scoped>
 
-
+header{
+  display:flex;
+  justify-content: space-between;
+}
 
 .options{
     padding:1.5rem 1rem 1.5rem 1rem;
     background-color: var(--foreground-color);
-    margin:0 1rem 0 0;
     border-radius:0.5rem;
     box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.2);
 
@@ -206,6 +230,31 @@ h3{
 
 h2{
     margin:0;
+}
+
+@keyframes rotate-up {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(180deg);
+  }
+}
+.rotate-up {
+  animation: rotate-up 0.4s;
+  transform: rotate(180deg);
+}
+
+@keyframes rotate-down {
+  0% {
+    transform: rotate(180deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.rotate-down {
+  animation: rotate-down 0.4s;
 }
 
 </style>

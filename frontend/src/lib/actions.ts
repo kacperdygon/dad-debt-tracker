@@ -1,24 +1,13 @@
 import type { IActionResponse } from 'shared';
 import { fetchData, type FetchResponse } from '@/lib/database';
 
-export async function getActionsDB(page: number = 1): Promise<IActionResponse[]> {
-  const res = await fetchData<{ message: string, actions: IActionResponse[] }>(`api/actions?page=${page}`, {
+export async function getActionsDB(page: number = 1): Promise<FetchResponse<{ actions: IActionResponse[], pageCount: number }>> {
+  const res = await fetchData<{ actions: IActionResponse[], pageCount: number }>(`api/actions?page=${page}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
   });
 
-  if (!res.ok) {
-    return [];
-  }
-  return res.data?.actions as IActionResponse[];
-}
+  return res;
 
-export async function getActionPageCountDB(): Promise<FetchResponse<{ actionPageCount: number }>>{
-  const result = await fetchData<{ actionPageCount: number }>(`api/actions/page-count`, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-  });
-  return result;
 }

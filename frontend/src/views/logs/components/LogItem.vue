@@ -129,7 +129,6 @@ async function handleJumpTo(id: string | undefined){
 
 <style scoped>
 .log-item{
-  caret-color: transparent;
   background-color: var(--foreground-color);
   padding: 1.25rem;
   box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.2);
@@ -141,6 +140,12 @@ header{
   display:flex;
   flex-direction: row-reverse;
   justify-content: space-between;
+}
+
+@media screen and (max-width: 450px){
+  header{
+    flex-direction: column;
+  }
 }
 
 h4{

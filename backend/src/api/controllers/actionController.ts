@@ -13,6 +13,8 @@ export async function getActions (req: Request, res: Response): Promise<void> {
   query.lean();
   query.skip((page - 1) * limit)
   query.limit(limit);
+
+  const pagesQuery = Action.countDocuments();
   try {
     const actions: IActionDocument[] = await query;
 
@@ -27,8 +29,12 @@ export async function getActions (req: Request, res: Response): Promise<void> {
       return {...action, targetExists: targetExists ? true : false}
     }))
 
+    const pageQueryResult = await pagesQuery.exec();
+    const pageCount = Math.ceil(pageQueryResult / config.pageLimit);
+
     return void res.status(200).json({ message: 'Returned actions', data: {
-      actions: mappedActions
+      actions: mappedActions,
+      pageCount: pageCount
       } });
   } catch (error) {
     console.error('MongoDB error:', error);

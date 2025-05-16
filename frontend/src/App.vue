@@ -26,19 +26,8 @@ onMounted( () => {
 
 <style scoped>
 .margin-div {
-  margin: auto;
-  padding: 1.25rem;
   width: 100%;
   display:flex;
   justify-content: center;
-  box-sizing: border-box;
-  min-width: 600px;
-}
-
-@media screen and (max-width: 600px) {
-  .margin-div {
-    width: 100%;
-    min-width: 0;
-  }
 }
 </style>

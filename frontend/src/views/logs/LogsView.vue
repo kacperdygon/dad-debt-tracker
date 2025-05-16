@@ -1,31 +1,34 @@
 <script setup lang="ts">
 
-import { useActionStore } from '@/store/actions';
+import { getActionsDB } from '@/lib/actions';
 import LogList from '@/views/logs/components/LogList.vue';
-import { storeToRefs } from 'pinia';
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import type { IActionResponse } from 'shared';
+import { onMounted, ref, watch } from 'vue';
+import PaginationButtonsComponent from '@/components/pagination/PaginationButtonsComponent.vue';
 
-const actionStore = useActionStore();
-
-const actions = storeToRefs(actionStore).actions;
+const actions = ref<IActionResponse[]>([]);
+const pageCount = ref(1);
+const selectedPage = ref(1);
 
 onMounted(() => {
-  actionStore.fetchActions(page.value);
+  loadActions();
 });
 
-onUnmounted(() => {
-  actionStore.unloadActions();
-})
-
-const page = ref(1);
-function handleLoadMore(){
-    page.value++;
-    actionStore.fetchActions(page.value);
+async function loadActions(){
+  const response = await getActionsDB(selectedPage.value);
+  if (response.ok){
+    const loadedActions = response.data?.actions;
+    actions.value.length = 0;
+    if (loadedActions && response.data?.pageCount){
+      actions.value.push(...loadedActions);
+      pageCount.value = response.data.pageCount;
+    }
+  }
 }
 
-const showLoadMoreButton = computed(() => {
-  return page.value < storeToRefs(actionStore).pageCount.value;
-})
+watch(selectedPage, () => {
+  loadActions();
+});
 
 </script>
 
@@ -36,7 +39,9 @@ const showLoadMoreButton = computed(() => {
         <h2>Logs</h2>
       </header>
       <LogList :actions="actions" />
-      <button v-show="showLoadMoreButton" class="button-plain secondary-text-color" @click="handleLoadMore">Load more</button>
+      <PaginationButtonsComponent
+      :total-pages="pageCount"
+      v-model="selectedPage" />
     </section>
   </main>
 </template>
@@ -44,6 +49,13 @@ const showLoadMoreButton = computed(() => {
 <style scoped>
 main{
   width:50%;
+  padding:1.25rem;
+  min-width:600px;
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 600px) {
+  main{width:100%; min-width: 0}
 }
 
 h2{

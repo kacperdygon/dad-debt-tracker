@@ -6,7 +6,7 @@
   "scripts": {
     "frontend": "cd frontend && npm run dev",
     "frontend-build": "cd frontend && npm run build",
-    "frontend-build-only": "cd frontend && npm run build-only",
+    "frontend-prod": "cd frontend && npm run preview",
     "server": "cd backend && npm run dev",
     "server-build": "cd backend && npm run build",
     "server-prod": "cd backend && npm run production",

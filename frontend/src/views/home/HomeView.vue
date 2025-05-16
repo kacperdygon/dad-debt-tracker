@@ -15,5 +15,12 @@ import ChartSection from '@/views/home/components/ChartSection.vue';
 <style scoped>
 main{
   width:50%;
+  padding:1.25rem;
+  min-width:600px;
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 600px) {
+  main{width:100%; min-width: 0}
 }
 </style>
