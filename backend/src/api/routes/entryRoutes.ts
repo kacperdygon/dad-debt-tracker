@@ -9,12 +9,9 @@ import {
   getEntryPageCount,
   getEntryPosition
 } from '@/api/controllers/entries/entryController';
-import { validateRequest } from '@/api/controllers/authController';
 import { getChartData } from '@/api/controllers/entries/chartDataController';
 
 const router = Router();
-
-router.use(validateRequest)
 
 router.get('/', getEntries);
 router.post('/', addEntry);

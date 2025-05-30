@@ -5,6 +5,7 @@ import { getActionPageCount, getActions } from '@/api/controllers/actionControll
 const router = Router();
 
 router.get('/', getActions);
+router.get('/:id', getActions);
 router.get('/page-count', getActionPageCount)
 
 export default router;

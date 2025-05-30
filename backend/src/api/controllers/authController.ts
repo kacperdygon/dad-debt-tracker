@@ -62,6 +62,9 @@ export const signOut = async (req: Request, res: Response) => {
 };
 
 export const validateRequest = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  if (req.path === '/auth/sign-in') {
+    return next();
+  }
   const pin = req.cookies['pin'];
   if (!pin) {
     return void res.status(401).json({ message: 'Not logged in' });
