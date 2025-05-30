@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {   inject, onMounted, reactive, type Ref, ref, watch } from 'vue';
+import {   inject, onMounted, provide, reactive, type Ref, ref, watch } from 'vue';
 import EntryList from '@/components/entries/EntryList.vue';
 import PaginationButtonsComponent from '@/components/pagination/PaginationButtonsComponent.vue';
 import { useRoute } from 'vue-router';
@@ -50,6 +50,8 @@ async function loadEntries(){
   }
   
 }
+
+provide('reloadEntries', loadEntries);
 
 const formData = reactive<EntryFetchOptions>({
   sortBy: SortBy.DATE_DESC,

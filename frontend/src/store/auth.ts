@@ -4,12 +4,16 @@ import type { FetchResponse } from '@/lib/database.ts';
 import { getRole, signInDB, signOutDB } from '@/lib/auth';
 
 export const useAuthStore = defineStore('auth', () => {
-  const role = ref<string | null>(null);
+  const userRole = ref<string | null>(null);
 
   //for router and app mount
   const isSignedIn = async () => {
-    role.value = await getRole();
-    return !!role.value;
+    userRole.value = await getRole();
+    return !!userRole.value;
+  }
+
+  async function reloadRole() {
+    userRole.value = await getRole();
   }
 
   async function signIn(pin: string): Promise<FetchResponse<{ role: string }>> {
@@ -18,7 +22,7 @@ export const useAuthStore = defineStore('auth', () => {
     if (res.ok
     && res.data != null // res data always not null when res is ok
     ) {
-      role.value = res.data.role
+      userRole.value = res.data.role
     }
     return res;
   }
@@ -29,10 +33,10 @@ export const useAuthStore = defineStore('auth', () => {
     if (res.ok
       && res.data != null // res data always not null when res is ok
     ) {
-      role.value = null
+      userRole.value = null
     }
     return res;
   }
 
-  return { role, isSignedIn, signIn, signOut };
+  return { userRole, isSignedIn, signIn, signOut, reloadRole };
 });

@@ -1,29 +1,39 @@
 <script setup lang="ts">
 import { computed, inject, onMounted, onUnmounted, type Ref, ref } from 'vue';
 import { changeEntryStatusDB, deleteEntryDB, type IEntry } from '@/lib/entries';
-import { getRole } from '@/lib/auth';
 import { EntryStatus } from 'shared';
 import EntryModal from '@/components/entries/EntryModal.vue';
+import { storeToRefs } from 'pinia';
+import { useAuthStore } from '@/store/auth';
 
 const entryModalRef = inject<Ref<InstanceType<typeof EntryModal>> | null>('entryModalRef');
 const dropdownListRef = ref<HTMLElement | null>(null);
 const dropdownButtonRef = ref<HTMLElement | null>(null);
 const showDropdown = ref(false);
 
+const authStore = useAuthStore();
+const { userRole }  = storeToRefs(authStore)
+
 const props = defineProps<{
   entry: IEntry;
 }>();
 
-const emit = defineEmits<{
-  (e: 'reloadRequested'): void;
-}>();
+const reloadEntries = inject<() => void>('reloadEntries')
 
-const userRole = ref<string | null>(null)
 
 async function handleDelete() {
   toggleDropdown();
   const response = await deleteEntryDB(props.entry._id);
-  if (response.ok) emit('reloadRequested');
+  if (response.ok) {
+    handleReloadEntries();
+  } else {
+    // handle error
+  }
+}
+
+function handleReloadEntries(){
+  if (!reloadEntries) throw new Error('Reload entries not provided');
+  reloadEntries();
 }
 
 async function handleEdit() {
@@ -31,8 +41,11 @@ async function handleEdit() {
   if (!entryModalRef) {
     throw new Error('Entry modal ref is null');
   }
-  const shouldReload = await entryModalRef.value.openModal();
-  if (shouldReload) emit('reloadRequested');
+  const shouldReload = await entryModalRef.value.openModal(props.entry);
+  console.log(shouldReload);
+  if (shouldReload) {
+    handleReloadEntries();
+  }
 }
 
 function toggleDropdown() {
@@ -71,16 +84,16 @@ const closeDropdown = (event: Event) => {
 
 async function changeEntryStatus(newStatus: EntryStatus) {
   const response = await changeEntryStatusDB(props.entry._id, newStatus);
-  if (response.ok) emit('reloadRequested');
-}
-
-async function loadRole(){
-  userRole.value = await getRole();
+  if (response.ok) {
+    handleReloadEntries();
+  } else {
+    // handle error
+  }
 }
 
 onMounted(() => {
   document.addEventListener('click', closeDropdown);
-  loadRole();
+  authStore.reloadRole();
 });
 onUnmounted(() => document.removeEventListener('click', closeDropdown));
 </script>

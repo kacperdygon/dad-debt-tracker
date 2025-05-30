@@ -45,6 +45,11 @@ const router = createRouter({
       name: 'logs',
       component: LogsView,
     },
+    {
+      path: '/logs/:id',
+      name: 'entry-history',
+      component: LogsView,
+    }
   ],
 });
 
