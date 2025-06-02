@@ -10,12 +10,13 @@ import EntryModal from '@/components/entries/EntryModal.vue';
 
 
 const entryModalRef = inject<Ref<InstanceType<typeof EntryModal>> | null>('entryModalRef');
-const handleOpenModal = async () => {
+const handleOpenModal = () => {
   if (!entryModalRef) {
     throw new Error('Entry modal not passed');
   }
-  const result = await entryModalRef.value.openModal();
-  if (result) await loadEntries();
+  entryModalRef.value.openModal().then((shouldReload) => {
+    if (shouldReload) loadEntries();
+  });
 };
 
 const entryListRef = ref<Ref<InstanceType<typeof EntryList>> | null>(null);

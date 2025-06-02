@@ -93,28 +93,32 @@ async function openModal(entry?: IEntry): Promise<boolean> {
   return new Promise((resolve) => {
     if (!dialogRef.value) {
     throw new Error('Dialog ref not set');
-  }
+    }
 
-  if (entry) {
-    formData.value = JSON.parse(JSON.stringify(entry));
-    const jsDate = new Date(entry.timestamp);
-    formData.value.timestamp = jsDate.toISOString().split('T')[0];
-  } else {
-    formData.value = JSON.parse(JSON.stringify(DEFAULT_FORM_DATA));
-  }
+    if (entry) {
+      formData.value = JSON.parse(JSON.stringify(entry));
+      const jsDate = new Date(entry.timestamp);
+      formData.value.timestamp = jsDate.toISOString().split('T')[0];
+    } else {
+      formData.value = JSON.parse(JSON.stringify(DEFAULT_FORM_DATA));
+    }
 
-  startingFormData = JSON.parse(JSON.stringify(formData.value));
+    startingFormData = JSON.parse(JSON.stringify(formData.value));
 
-  targetEntryId.value = entry?._id;
-  dialogRef.value.showModal();
+    targetEntryId.value = entry?._id;
+    dialogRef.value.showModal();
 
-  watch(shouldReload, (newValue) => {
-    if (newValue) resolve(true);
-    else resolve(false);
+    watch(shouldReload, (newValue) => {
+      if (newValue) {
+        resolve(true);
+      } else {
+        resolve(false);
+      }
+      shouldReload.value = null;
+    }, { once: true });
+
   });
-  });
-  
-};
+}
 
 const closeModal = () => {
   if (!dialogRef.value) {
