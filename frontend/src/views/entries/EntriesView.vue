@@ -139,7 +139,7 @@ section{
 
 .parent-div{
   width:70%;
-  min-width:600px;
+  min-width:800px;
   padding:1.25rem;
   box-sizing: border-box;
 }
@@ -153,7 +153,7 @@ main{
   width:70%;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 800px) {
   .parent-div {
     width: 100%;
     min-width: 0;

@@ -19,9 +19,9 @@ function handleCheckboxChange(event: Event, category: string[]){
 }
 
 const showOptions = ref<boolean>(false);
-const isScreenWide = ref<boolean>(window.innerWidth > 600);
+const isScreenWide = ref<boolean>(window.innerWidth > 800);
 const updateIsScreenWide = () => {
-  isScreenWide.value = window.innerWidth > 600;
+  isScreenWide.value = window.innerWidth > 800;
 }
 
 function handleRejectedChange(){
@@ -164,14 +164,14 @@ onMounted(() => {
     <h3>Time</h3>
     <div class="option-group">
       <label>
-        <h4>Start date</h4>
+        Start date
         <input type="date" @change="handleDateChange($event, 'startDate')">
         
       </label>
       </div>
       <div class="option-group">
       <label>
-        <h4>End date</h4>
+        End date
         <input type="date" @change="handleDateChange($event, 'endDate')">
         
       </label>

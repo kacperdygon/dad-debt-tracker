@@ -1,6 +1,7 @@
 import express from 'express';
 import routes from './routes';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 
 import mongoose from 'mongoose';
 
@@ -16,6 +17,12 @@ export async function connectMongoDB() {
 }
 
 const app = express();
+
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  credentials: true,
+}));
 
 app.use(express.json());
 app.use(cookieParser());

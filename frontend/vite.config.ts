@@ -8,7 +8,6 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 export default defineConfig(({mode}) => {
 
   const env = loadEnv(mode, process.cwd());
-  console.log(env);
 
   return {
     build: {

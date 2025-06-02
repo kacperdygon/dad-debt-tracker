@@ -26,6 +26,12 @@ body {
   margin: 0;
 }
 
+#app{
+  min-height: 100vh;
+  display:flex;
+  flex-direction: column;
+}
+
 h4{
   font-weight:200;
 }

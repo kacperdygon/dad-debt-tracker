@@ -9,7 +9,9 @@ export async function fetchData<T = unknown>(url: string, options: RequestInit =
 
   try {
 
-    const res = await fetch(`${window.location.origin}/${url}`, options);
+    const urlStart = import.meta.env.PROD ? import.meta.env.VITE_BACKEND_URL : window.location.origin; // proxy works in dev mode
+
+    const res = await fetch(`${urlStart}/${url}`, options);
 
     const body = await res.json();
 

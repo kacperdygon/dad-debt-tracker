@@ -13,11 +13,18 @@ function handleSignOut(): void {
 </script>
 
 <template>
-  <button @click="handleSignOut">
-    Sign out
-  </button>
+  <main>
+    <button @click="handleSignOut">
+      Sign out
+    </button>
+  </main>
+
 </template>
 
 <style scoped>
-
+  main{
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+  }
 </style>
