@@ -26,7 +26,7 @@ export async function getActions (req: Request, res: Response): Promise<void> {
   query.skip((page - 1) * limit)
   query.limit(limit);
 
-  const pagesQuery = Action.countDocuments();
+  const pagesQuery = Action.countDocuments(filters);
   try {
     const actions: IActionDocument[] = await query;
 

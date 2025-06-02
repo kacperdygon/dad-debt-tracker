@@ -5,6 +5,7 @@ import { EntryStatus } from 'shared';
 import EntryModal from '@/components/entries/EntryModal.vue';
 import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/store/auth';
+import { useRouter } from 'vue-router';
 
 const entryModalRef = inject<Ref<InstanceType<typeof EntryModal>> | null>('entryModalRef');
 const dropdownListRef = ref<HTMLElement | null>(null);
@@ -12,11 +13,16 @@ const dropdownButtonRef = ref<HTMLElement | null>(null);
 const showDropdown = ref(false);
 
 const authStore = useAuthStore();
-const { userRole }  = storeToRefs(authStore)
+const { userRole }  = storeToRefs(authStore);
 
 const props = defineProps<{
   entry: IEntry;
 }>();
+
+defineExpose({
+  animateGlow,
+  scrollIntoView
+})
 
 const reloadEntries = inject<() => void>('reloadEntries')
 
@@ -42,10 +48,14 @@ async function handleEdit() {
     throw new Error('Entry modal ref is null');
   }
   const shouldReload = await entryModalRef.value.openModal(props.entry);
-  console.log(shouldReload);
   if (shouldReload) {
     handleReloadEntries();
   }
+}
+
+const router = useRouter();
+async function handleReroute(){
+  router.push(`/logs/${props.entry._id}`)
 }
 
 function toggleDropdown() {
@@ -91,6 +101,19 @@ async function changeEntryStatus(newStatus: EntryStatus) {
   }
 }
 
+const showGlow = ref(false);
+function animateGlow(){
+  showGlow.value = true;
+  setTimeout(() => {
+    showGlow.value = false;
+  }, 1000);
+}
+
+const rootElement = ref<HTMLElement | null>(null);
+function scrollIntoView(){
+  rootElement.value?.scrollIntoView();
+}
+
 onMounted(() => {
   document.addEventListener('click', closeDropdown);
   authStore.reloadRole();
@@ -99,9 +122,9 @@ onUnmounted(() => document.removeEventListener('click', closeDropdown));
 </script>
 
 <template>
-  <div class="entry-item">
+  <div class="entry-item" :class="{'glow': showGlow}" ref="rootElement">
     <div class="flex">
-      <h6 class="title">
+      <h6 class="title" @click="animateGlow">
         {{ props.entry.title }}
         <span v-if="props.entry.status != 'confirmed'"
               class="font-1rem"
@@ -116,6 +139,7 @@ onUnmounted(() => document.removeEventListener('click', closeDropdown));
         </button>
         <ul class="dropdown-list" ref="dropdownListRef" v-if="showDropdown">
           <li @click="handleEdit">Edit</li>
+          <li @click="handleReroute">Show history</li>
           <li v-if="props.entry.status == 'rejected' && userRole == 'dad'" @click="changeEntryStatus(EntryStatus.PENDING)" class="pending-color">Change to pending</li>
           <li @click="handleDelete" style="color: var(--expense)">Delete</li>
         </ul>
@@ -155,6 +179,7 @@ i {
   box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.2);
   border-radius: 0.25rem;
   box-sizing: border-box;
+  transition: box-shadow 0.5s ease;
 }
 
 h6 {
@@ -222,5 +247,9 @@ h6 {
 .confirmation-buttons{
   display:flex;
   gap:0.5rem;
+}
+
+.entry-item.glow {
+  box-shadow: 0 0 15px rgba(79, 195, 247, 1);
 }
 </style>

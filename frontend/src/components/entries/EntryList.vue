@@ -9,19 +9,21 @@ const props = defineProps<{
   type: 'full' | 'partial',
 }>();
 
-const entryListUlRef = ref<HTMLDivElement | null>(null);
+const entryListElementsRef = ref<(InstanceType<typeof EntryItem> | null)[]>([]);
 
 function jumpTo(position: number){
-  if (props.entries.length == 0) return;
-  if (!entryListUlRef.value){
-    throw new Error('Entry list ul ref value not set');
-  }
-  const liElements = entryListUlRef.value.querySelectorAll('li');
-  liElements[position].scrollIntoView();
+  if (props.entries.length == 0 || props.type === 'partial') return;
+  entryListElementsRef.value[position]?.scrollIntoView();
+}
+
+function highlightChild(position: number){
+  if (props.entries.length == 0 || props.type === 'partial') return;
+  entryListElementsRef.value[position]?.animateGlow();
 }
 
 defineExpose({
-  jumpTo
+  jumpTo,
+  highlightChild
 })
 
 </script>
@@ -30,14 +32,17 @@ defineExpose({
   <div>
     <span v-if="!entries.length" class="entry-placeholder">No entries to show here</span>
     <Suspense>
-      <ul v-if="props.type == 'full'" ref="entryListUlRef">
-        <li v-for="entry in props.entries" :key="entry._id" >
-          <EntryItem :entry="entry" />
-        </li>
-      </ul>
-      <ul v-else ref="entryListUlRef">
-        <li v-for="entry in props.entries" :key="entry._id" >
-          <SmallEntryItem :entry="entry" />
+      <ul>
+        <li v-for="(entry, index) in props.entries" :key="entry._id" >
+          <EntryItem 
+          v-if="props.type == 'full'"
+          :entry="entry" 
+          :ref="(el) => entryListElementsRef[index] = el as InstanceType<typeof EntryItem>"
+          />
+          <SmallEntryItem 
+          v-else
+          :entry="entry"
+          />
         </li>
       </ul>
     </Suspense>

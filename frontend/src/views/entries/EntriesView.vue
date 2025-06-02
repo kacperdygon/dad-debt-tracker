@@ -32,13 +32,21 @@ onMounted(() => {
   if (positionOnPage && page && rejected) {
     if (rejected === "true") formData.filter.status.push('rejected');
     selectedPage.value = page;
-    if (!entryListRef.value) {
-      throw new Error('Entry list ref not set');
-    }
-    entryListRef.value.jumpTo(positionOnPage);
   }
-  loadEntries();
+  loadEntries().then(() => {
+    if (!Number.isNaN(positionOnPage)){
+      jumpToEntry(positionOnPage);
+    }
+  });
 })
+
+function jumpToEntry(positionOnPage: number){
+  if (!entryListRef.value) {
+    throw new Error('Entry list ref not set');
+  }
+  entryListRef.value.jumpTo(positionOnPage);
+  entryListRef.value.highlightChild(positionOnPage);
+}
 
 async function loadEntries(){
   const response = await getEntriesDB(selectedPage.value, formData);
@@ -48,7 +56,6 @@ async function loadEntries(){
     entries.value.length = 0;
     entries.value.push(...loadedEntries);
   }
-  
 }
 
 provide('reloadEntries', loadEntries);

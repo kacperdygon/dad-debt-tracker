@@ -5,17 +5,27 @@ import LogList from '@/views/logs/components/LogList.vue';
 import type { IActionResponse } from 'shared';
 import { onMounted, ref, watch } from 'vue';
 import PaginationButtonsComponent from '@/components/pagination/PaginationButtonsComponent.vue';
+import { useRoute } from 'vue-router';
 
 const actions = ref<IActionResponse[]>([]);
 const pageCount = ref(1);
 const selectedPage = ref(1);
 
+const entryId = ref<string | null>(null);
+
 onMounted(() => {
+  loadParams();
   loadActions();
 });
 
+const route = useRoute();
+function loadParams(){
+  const params = route.params;
+ if (params.id && typeof params.id == 'string') entryId.value = params.id;
+}
+
 async function loadActions(){
-  const response = await getActionsDB(selectedPage.value);
+  const response = await getActionsDB(selectedPage.value, entryId.value ?? undefined);
   if (response.ok){
     const loadedActions = response.data?.actions;
     actions.value.length = 0;
@@ -23,12 +33,18 @@ async function loadActions(){
       actions.value.push(...loadedActions);
       pageCount.value = response.data.pageCount;
     }
+  } else {
+    // handle error
   }
 }
 
-watch(selectedPage, () => {
+watch(selectedPage, loadActions);
+watch(() => route.fullPath, reloadComponent)
+function reloadComponent(){
+  selectedPage.value = 1;
+  entryId.value = null;
   loadActions();
-});
+}
 
 </script>
 
@@ -36,7 +52,7 @@ watch(selectedPage, () => {
   <main>
     <section>
       <header>
-        <h2>Logs</h2>
+        <h2>{{ entryId ? `Showing history of entry with id ${entryId}` : `Logs` }}</h2>
       </header>
       <LogList :actions="actions" />
       <PaginationButtonsComponent

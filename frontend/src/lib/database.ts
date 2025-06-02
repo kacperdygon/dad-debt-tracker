@@ -9,7 +9,7 @@ export async function fetchData<T = unknown>(url: string, options: RequestInit =
 
   try {
 
-    const res = await fetch(`${url}`, options);
+    const res = await fetch(`${window.location.origin}/${url}`, options);
 
     const body = await res.json();
 
