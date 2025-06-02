@@ -4,15 +4,12 @@ import { fetchData, type FetchResponse } from '@/lib/database';
 export async function getActionsDB(page: number = 1, entryId?: string): Promise<FetchResponse<{ actions: IActionResponse[], pageCount: number }>> {
 
   const URL = constructURL(page, entryId);
-  console.log(URL);
 
-  const res = await fetchData<{ actions: IActionResponse[], pageCount: number }>(URL, {
+  return await fetchData<{ actions: IActionResponse[], pageCount: number }>(URL, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
   });
-
-  return res;
 
 }
 

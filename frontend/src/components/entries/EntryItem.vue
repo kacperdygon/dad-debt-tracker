@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, inject, onMounted, onUnmounted, type Ref, ref } from 'vue';
-import { changeEntryStatusDB, deleteEntryDB, type IEntry } from '@/lib/entries';
-import { EntryStatus } from 'shared';
+import { changeEntryStatusDB, deleteEntryDB } from '@/lib/entries';
+import { EntryStatus, type IEntry } from 'shared';
 import EntryModal from '@/components/entries/EntryModal.vue';
 import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/store/auth';

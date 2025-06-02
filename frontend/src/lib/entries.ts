@@ -1,19 +1,6 @@
-import { SortBy, type EntryFetchOptions } from 'shared';
+import { type EntryFetchOptions, type EntryStatus, type IEntry, SortBy } from 'shared';
 import { fetchData, type FetchResponse } from './database';
 
-export enum EntryStatus {
-  CONFIRMED = 'confirmed',
-  PENDING = 'pending',
-  REJECTED = 'rejected',
-}
-
-export interface IEntry {
-  _id: string;
-  title: string;
-  timestamp: Date;
-  balanceChange: number;
-  status: string;
-}
 
 const DEFAULT_OPTIONS = {
   sortBy: SortBy.DATE_DESC,
@@ -65,7 +52,7 @@ function constructParams(page: number, options: EntryFetchOptions): URLSearchPar
 }
 
 export async function addEntryDB(newEntry: Omit<IEntry, '_id' | 'status'>): Promise<FetchResponse<{entry: IEntry}>> {
-  const res = await fetchData<{entry: IEntry}>("api/entries", {
+  return await fetchData<{ entry: IEntry }>("api/entries", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -73,13 +60,10 @@ export async function addEntryDB(newEntry: Omit<IEntry, '_id' | 'status'>): Prom
     }),
     credentials: "include",
   });
-
-  return res;
-
 }
 
 export async function updateEntryDB(entryId: string, newEntry: Omit<IEntry, '_id' | 'status'>): Promise<FetchResponse<{entry: IEntry}>> {
-  const res = await fetchData<{ message: string, entry: IEntry }>(`api/entries/${entryId}`, {
+  return await fetchData<{ message: string, entry: IEntry }>(`api/entries/${entryId}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -88,19 +72,14 @@ export async function updateEntryDB(entryId: string, newEntry: Omit<IEntry, '_id
     }),
     credentials: "include",
   });
-
-  return res;
-
 }
 
 export async function deleteEntryDB(entryId: string): Promise<FetchResponse> {
-  const res = await fetchData(`api/entries/${entryId}`, {
+  return await fetchData(`api/entries/${entryId}`, {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
   });
-
-  return res;
 }
 
 export async function changeEntryStatusDB(entryId: string, status: EntryStatus): Promise<FetchResponse<{ entry: IEntry }>> {
@@ -132,12 +111,11 @@ export async function getUnconfirmedEntryCountDB(): Promise<FetchResponse<{ unco
 }
 
 export async function getEntryPageCountDB(rejected: boolean): Promise<FetchResponse<{ pageCount: number }>>{
-  const result = await fetchData<{ pageCount: number }>(`api/entries/page-count${rejected ? '/?rejected=true' : ''}`  , {
+  return await fetchData<{ pageCount: number }>(`api/entries/page-count${rejected ? '/?rejected=true' : ''}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
   });
-  return result;
 }
 
 export async function getEntryPosition(id: string): Promise<FetchResponse<{
@@ -145,7 +123,7 @@ export async function getEntryPosition(id: string): Promise<FetchResponse<{
   positionOnPage: number,
   rejected: boolean
 }>>{
-  const result = await fetchData<{
+  return await fetchData<{
     page: number,
     positionOnPage: number,
     rejected: boolean
@@ -153,6 +131,5 @@ export async function getEntryPosition(id: string): Promise<FetchResponse<{
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
-  })
-  return result;
+  });
 }
