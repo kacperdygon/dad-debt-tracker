@@ -1,5 +1,6 @@
 import { type EntryFetchOptions, type EntryStatus, type IEntry, SortBy } from 'shared';
-import { fetchData, type FetchResponse } from './database';
+import { fetchData, type FetchResponse } from '@/lib/database';
+import { constructParams } from '@/lib/entries/fetchOptionsHelper';
 
 
 const DEFAULT_OPTIONS = {
@@ -27,28 +28,6 @@ export async function getEntriesDB(page: number = 1, options: EntryFetchOptions 
   });
 
   return res;
-}
-
-function constructParams(page: number, options: EntryFetchOptions): URLSearchParams{
-  const params = new URLSearchParams({
-    page: page.toString(),
-    sortBy: options.sortBy,
-});
-
-  params.append('author', options.filter.author.join(','));
-  params.append('sign', options.filter.sign.join(','));
-  params.append('status', options.filter.status.join(','));
-
-  if (options.time?.startDate) {
-    const parsedDate = options.time.startDate.toISOString().split('T')[0];
-    params.append('startDate', parsedDate);
-  }
-  if (options.time?.endDate) {
-    const parsedDate = options.time.endDate.toISOString().split('T')[0];
-    params.append('endDate', parsedDate);
-  }
-
-  return params
 }
 
 export async function addEntryDB(newEntry: Omit<IEntry, '_id' | 'status'>): Promise<FetchResponse<{entry: IEntry}>> {

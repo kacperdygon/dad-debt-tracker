@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import EntryList from '@/components/entries/EntryList.vue';
 import { inject, onMounted, type Ref, ref } from 'vue';
-import { getEntriesDB, getUnconfirmedEntryCountDB } from '@/lib/entries';
+import { getEntriesDB, getUnconfirmedEntryCountDB } from '@/lib/entries/entries';
 import { type IEntry } from 'shared';
 import EntryModal from '@/components/entries/EntryModal.vue';
 

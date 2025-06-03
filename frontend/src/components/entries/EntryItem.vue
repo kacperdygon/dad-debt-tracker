@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, inject, onMounted, onUnmounted, type Ref, ref } from 'vue';
-import { changeEntryStatusDB, deleteEntryDB } from '@/lib/entries';
+import { changeEntryStatusDB, deleteEntryDB } from '@/lib/entries/entries';
 import { EntryStatus, type IEntry } from 'shared';
 import EntryModal from '@/components/entries/EntryModal.vue';
 import { storeToRefs } from 'pinia';
@@ -124,12 +124,13 @@ onUnmounted(() => document.removeEventListener('click', closeDropdown));
 <template>
   <div class="entry-item" :class="{'glow': showGlow}" ref="rootElement">
     <div class="flex">
-      <h6 class="title" @click="animateGlow">
+      <h6 class="title">
         {{ props.entry.title }}
-        <span v-if="props.entry.status != 'confirmed'"
+        <span 
+              v-if="props.entry.status && props.entry.status != 'confirmed'"
               class="font-1rem"
               :class="props.entry.status == 'pending' ? 'orange-color' : 'red-color'">
-          {{props.entry.status == 'pending' ? 'Not confirmed' : 'Rejected'}}
+          {{props.entry.status == 'pending' || props.entry.status ? 'Not confirmed' : 'Rejected'}}
         </span>
       </h6>
 
