@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { getTotalDebtDB } from '@/lib/entries';
 import { onMounted, ref } from 'vue';
+import { handleError } from '@/lib/errorHandler.ts';
 
 const totalDebt = ref(0);
 
@@ -9,9 +10,13 @@ onMounted(() => {
 })
 
 async function loadTotalDebt(){
-  const response = await getTotalDebtDB();
-  if (response.ok && response.data)
-  totalDebt.value = response.data.totalDebt;
+  try {
+    const response = await getTotalDebtDB();
+    if (response.ok && response.data)
+      totalDebt.value = response.data.totalDebt;
+  } catch (error) {
+    handleError(error);
+  }
 }
 </script>
 

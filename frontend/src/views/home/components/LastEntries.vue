@@ -4,6 +4,7 @@ import { inject, onMounted, type Ref, ref } from 'vue';
 import { getEntriesDB, getUnconfirmedEntryCountDB } from '@/lib/entries';
 import { type IEntry } from 'shared';
 import EntryModal from '@/components/entries/EntryModal.vue';
+import { handleError } from '@/lib/errorHandler.ts';
 
 const lastEntries = ref<IEntry[]>([]);
 const unconfirmedEntryCount = ref<number>(0);
@@ -11,10 +12,11 @@ const unconfirmedEntryCount = ref<number>(0);
 const entryModalRef = inject<Ref<InstanceType<typeof EntryModal>> | null>('entryModalRef');
 const handleOpenModal = async () => {
   if (!entryModalRef) {
-    throw new Error('Entry modal not passed');
+    console.warn('Entry modal ref not passed');
+    return;
   }
   const result = await entryModalRef.value.openModal();
-  if (result) loadEntries();
+  if (result) void loadEntries();
 };
 
 onMounted(() => {
@@ -23,17 +25,26 @@ onMounted(() => {
 });
 
 async function loadEntries() {
-  const response = await getEntriesDB();
-  if (response.ok && response.data) {
-    lastEntries.value.length = 0;
-    lastEntries.value.push(...response.data.entries.slice(0, 3));
+  try {
+    const response = await getEntriesDB();
+
+    if (response.ok && response.data) {
+      lastEntries.value.length = 0;
+      lastEntries.value.push(...response.data.entries.slice(0, 3));
+    }
+  } catch (error) {
+    handleError(error);
   }
 }
 
 async function loadUnconfirmedEntryCount() {
-  const response = await getUnconfirmedEntryCountDB();
-  if (response.ok && response.data) {
-    unconfirmedEntryCount.value = response.data.unconfirmedEntryCount;
+  try {
+    const response = await getUnconfirmedEntryCountDB();
+    if (response.ok && response.data) {
+      unconfirmedEntryCount.value = response.data.unconfirmedEntryCount;
+    }
+  } catch (error) {
+    handleError(error);
   }
 }
 </script>

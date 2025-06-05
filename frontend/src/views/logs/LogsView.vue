@@ -6,6 +6,7 @@ import type { IActionResponse } from 'shared';
 import { onMounted, ref, watch } from 'vue';
 import PaginationButtonsComponent from '@/components/pagination/PaginationButtonsComponent.vue';
 import { useRoute } from 'vue-router';
+import { addErrorToast, handleError } from '@/lib/errorHandler.ts';
 
 const actions = ref<IActionResponse[]>([]);
 const pageCount = ref(1);
@@ -25,17 +26,22 @@ function loadParams(){
 }
 
 async function loadActions(){
-  const response = await getActionsDB(selectedPage.value, entryId.value ?? undefined);
-  if (response.ok){
-    const loadedActions = response.data?.actions;
-    actions.value.length = 0;
-    if (loadedActions && response.data?.pageCount){
-      actions.value.push(...loadedActions);
-      pageCount.value = response.data.pageCount;
+  try {
+    const response = await getActionsDB(selectedPage.value, entryId.value ?? undefined);
+    if (response.ok){
+      const loadedActions = response.data?.actions;
+      actions.value.length = 0;
+      if (loadedActions && response.data?.pageCount){
+        actions.value.push(...loadedActions);
+        pageCount.value = response.data.pageCount;
+      }
+    } else {
+      addErrorToast('Error while loading actions: ' + response.message);
     }
-  } else {
-    // handle error
+  } catch (error) {
+    handleError(error);
   }
+
 }
 
 watch(selectedPage, loadActions);

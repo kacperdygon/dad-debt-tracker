@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/store/auth';
+import { handleError } from '@/lib/errorHandler.ts';
 
 const input = ref('');
 const showErrorMessage = ref(false);
@@ -9,12 +10,17 @@ const router = useRouter();
 const authStore = useAuthStore();
 
 async function handleSubmit() {
-  const res = await authStore.signIn(input.value);
-  if (res.ok) {
-    await router.push('/');
-  } else {
-    showErrorMessage.value = true;
+  try {
+    const res = await authStore.signIn(input.value);
+    if (res.ok) {
+      await router.push('/');
+    } else {
+      showErrorMessage.value = true;
+    }
+  } catch (error) {
+    handleError(error);
   }
+
 }
 </script>
 

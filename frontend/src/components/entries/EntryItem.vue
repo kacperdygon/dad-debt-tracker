@@ -6,6 +6,7 @@ import EntryModal from '@/components/entries/EntryModal.vue';
 import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/store/auth';
 import { useRouter } from 'vue-router';
+import { addErrorToast } from '@/lib/errorHandler.ts';
 
 const entryModalRef = inject<Ref<InstanceType<typeof EntryModal>> | null>('entryModalRef');
 const dropdownListRef = ref<HTMLElement | null>(null);
@@ -33,19 +34,23 @@ async function handleDelete() {
   if (response.ok) {
     handleReloadEntries();
   } else {
-    // handle error
+    addErrorToast("Failed to delete entry: " + response.message);
   }
 }
 
 function handleReloadEntries(){
-  if (!reloadEntries) throw new Error('Reload entries not provided');
+  if (!reloadEntries) {
+    console.warn('Reload entries not provided');
+    return
+  }
   reloadEntries();
 }
 
 async function handleEdit() {
   toggleDropdown();
   if (!entryModalRef) {
-    throw new Error('Entry modal ref is null');
+    console.warn('Entry modal ref is not passed');
+    return;
   }
   const shouldReload = await entryModalRef.value.openModal(props.entry);
   if (shouldReload) {
@@ -54,7 +59,7 @@ async function handleEdit() {
 }
 
 const router = useRouter();
-async function handleReroute(){
+function handleReroute(){
   router.push(`/logs/${props.entry._id}`)
 }
 
@@ -97,7 +102,7 @@ async function changeEntryStatus(newStatus: EntryStatus) {
   if (response.ok) {
     handleReloadEntries();
   } else {
-    // handle error
+    addErrorToast("Failed to edit entry: " + response.message);
   }
 }
 

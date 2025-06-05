@@ -8,7 +8,10 @@ import FooterComponent from './components/footer/FooterComponent.vue';
 const entryModalRef = ref<typeof EntryModal | null>(null);
 
 onMounted( () => {
-  if (!entryModalRef.value) throw new Error('Entry modal ref not set');
+  if (!entryModalRef.value) {
+    console.warn('Entry modal ref not set');
+    return;
+  }
   provide('entryModalRef', entryModalRef);
 });
 

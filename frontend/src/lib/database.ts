@@ -25,5 +25,4 @@ export async function fetchData<T = unknown>(url: string, options: RequestInit =
   } catch (error) {
     throw new Error("Fetch error: " + error);
   }
-
 }

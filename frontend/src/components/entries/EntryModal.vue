@@ -4,6 +4,7 @@ import { addEntryDB, updateEntryDB } from '@/lib/entries';
 import type { IEntry } from 'shared';
 
 import { computed, ref, watch } from 'vue';
+import { addErrorToast, handleError } from '@/lib/errorHandler.ts';
 
 interface AddEntryFormData {
   title: string;
@@ -48,9 +49,12 @@ const onSubmit = async (event: Event) => {
     return;
   }
   }
-  
 
-  if (!dialogRef.value) throw new Error('Dialog ref not set');
+  if (!dialogRef.value) {
+    console.warn('Dialog ref not set');
+    return;
+  }
+
   dialogRef.value.close();
   errorMessage.value = '';
 
@@ -62,14 +66,22 @@ const onSubmit = async (event: Event) => {
 
   let response: FetchResponse<{entry: IEntry}>;
 
-  if (targetEntryId.value) {
-    response = await updateEntryDB(targetEntryId.value, newEntry);
-  } else {
-    response = await addEntryDB(newEntry);
+  try {
+    if (targetEntryId.value) {
+      response = await updateEntryDB(targetEntryId.value, newEntry);
+    } else {
+      response = await addEntryDB(newEntry);
+    }
+  } catch (error) {
+    handleError(error);
+    return;
   }
 
-  if (response.ok) shouldReload.value = true;
-  else shouldReload.value = false;
+  if (response.ok) {
+    shouldReload.value = true;
+  } else {
+    addErrorToast(response.message);
+  }
 
 };
 
@@ -92,8 +104,10 @@ const dialogRef = ref<HTMLDialogElement | null>(null);
 
 async function openModal(entry?: IEntry): Promise<boolean> {
   return new Promise((resolve) => {
+
     if (!dialogRef.value) {
-    throw new Error('Dialog ref not set');
+      console.warn('Dialog ref not set');
+      return;
     }
 
     if (entry) {
@@ -122,9 +136,12 @@ async function openModal(entry?: IEntry): Promise<boolean> {
 }
 
 const closeModal = () => {
+
   if (!dialogRef.value) {
-    throw new Error('Dialog ref not set');
+    console.warn('Dialog ref not set');
+    return;
   }
+
   dialogRef.value.close();
   errorMessage.value = '';
 };

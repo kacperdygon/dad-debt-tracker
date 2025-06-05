@@ -1,4 +1,4 @@
-import { fetchData } from '@/lib/database';
+import { fetchData, type FetchResponse } from '@/lib/database';
 import { type BalanceByDate, ChartDataPeriod } from 'shared';
 
 export async function getChartData(period: ChartDataPeriod): Promise<{
@@ -7,24 +7,11 @@ export async function getChartData(period: ChartDataPeriod): Promise<{
   options: { maxChartValue: number, minChartValue: number };
 }| null> {
 
-  const res = await fetchData<{
-    minValue: number,
-    maxValue: number,
-    balanceByDate: BalanceByDate[]
-  }>(`api/entries/chart-data?period=${period}`, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-  });
-
-  if (!res.ok) {
-    throw new Error(`Error fetching chart data for ${period}`);
-  }
+  const res = await fetchChartData(period);
 
   if (res.data) {
 
     const result = res.data.balanceByDate.map((value) => {
-
       return {
         x: new Date(value._id).toISOString().split('T')[0],
         y: value.summedBalance
@@ -64,6 +51,28 @@ export async function getChartData(period: ChartDataPeriod): Promise<{
 
   return null;
 
+}
+
+async function fetchChartData(period: ChartDataPeriod): Promise<FetchResponse<{
+  minValue: number,
+  maxValue: number,
+  balanceByDate: BalanceByDate[]
+}>>{
+  const res = await fetchData<{
+    minValue: number,
+    maxValue: number,
+    balanceByDate: BalanceByDate[]
+  }>(`api/entries/chart-data?period=${period}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    throw new Error(`Error fetching chart data for ${period}`);
+  }
+
+  return res;
 }
 
 function getMonthsForPeriod(period: ChartDataPeriod): number {

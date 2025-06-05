@@ -11,6 +11,7 @@ import AuthView from '@/views/auth/AuthView.vue';
 import SettingsView from '@/views/settings/SettingsView.vue';
 import { useAuthStore } from '@/store/auth';
 import LogsView from '@/views/logs/LogsView.vue';
+import { handleError } from '@/lib/errorHandler.ts';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -55,15 +56,22 @@ const router = createRouter({
 
 router.beforeEach(async ( to: RouteLocationNormalized, from: RouteLocationNormalizedLoaded, next: NavigationGuardNext) => {
   const authStore = useAuthStore();
-  if (await authStore.isSignedIn()) {
-    next();
-  } else {
-    if (to.path == '/auth') {
+
+  try {
+    if (await authStore.isSignedIn()) {
       next();
     } else {
-      next('/auth');
+      if (to.path == '/auth') {
+        next();
+      } else {
+        next('/auth');
+      }
     }
+  } catch (error) {
+    handleError(error);
+    next();
   }
+
 });
 
 export default router;

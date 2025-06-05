@@ -20,13 +20,11 @@ export async function getEntriesDB(page: number = 1, options: EntryFetchOptions 
   const params = constructParams(page, options);
 
 
-  const res = await fetchData<{ message: string, entries: IEntry[], pageCount: number }>(`api/entries?${params}`, {
+  return await fetchData<{ message: string, entries: IEntry[], pageCount: number }>(`api/entries?${params}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
   });
-
-  return res;
 }
 
 function constructParams(page: number, options: EntryFetchOptions): URLSearchParams{

@@ -5,6 +5,7 @@ import { constructLogMessage } from '@/views/logs/logMessageHelpers';
 import { computed, onMounted, ref } from 'vue';
 import { getEntryPosition } from '@/lib/entries';
 import { useRouter } from 'vue-router';
+import { addErrorToast, handleError } from '@/lib/errorHandler.ts';
 
 const props = defineProps<{
   action: IActionResponse;
@@ -64,9 +65,17 @@ const router = useRouter();
 
 async function handleJumpTo(id: string | undefined){
   if (!id) return;
-  const response = await getEntryPosition(id);
+
+  let response;
+
+  try {
+    response = await getEntryPosition(id);
+  } catch (error) {
+    handleError(error);
+    return;
+  }
+
   if (response.ok) {
-  
     await router.push({path: '/entries',
     query: {
       page: response.data?.page,
@@ -75,10 +84,9 @@ async function handleJumpTo(id: string | undefined){
     }
   })
   } else {
-    throw new Error('Error: ' + response.message)
+    addErrorToast(response.message);
   }
 
-  
 }
 
 </script>

@@ -7,12 +7,14 @@ import EntriesOptions from './components/EntriesOptions.vue';
 import { type EntryFetchOptions, type IEntry, SortBy } from 'shared';
 import { getEntriesDB } from '@/lib/entries';
 import EntryModal from '@/components/entries/EntryModal.vue';
+import { addErrorToast, handleError } from '@/lib/errorHandler.ts';
 
 
 const entryModalRef = inject<Ref<InstanceType<typeof EntryModal>> | null>('entryModalRef');
 const handleOpenModal = () => {
   if (!entryModalRef) {
-    throw new Error('Entry modal not passed');
+    console.warn('Entry modal ref not passed');
+    return;
   }
   entryModalRef.value.openModal().then((shouldReload) => {
     if (shouldReload) loadEntries();
@@ -43,19 +45,29 @@ onMounted(() => {
 
 function jumpToEntry(positionOnPage: number){
   if (!entryListRef.value) {
-    throw new Error('Entry list ref not set');
+    console.warn('Entry list ref not set');
+    return;
   }
   entryListRef.value.jumpTo(positionOnPage);
   entryListRef.value.highlightChild(positionOnPage);
 }
 
 async function loadEntries(){
-  const response = await getEntriesDB(selectedPage.value, formData);
+  let response;
+  try {
+    response = await getEntriesDB(selectedPage.value, formData);
+  } catch (error) {
+    handleError(error);
+    return;
+  }
+
   if (response.ok && response.data) {
     const loadedEntries = response.data.entries;
     pageCount.value = response.data.pageCount
     entries.value.length = 0;
     entries.value.push(...loadedEntries);
+  } else {
+    addErrorToast('Error while loading entries: ' + response.message);
   }
 }
 

@@ -5,6 +5,7 @@ import { onMounted, ref } from 'vue';
 import { getChartData } from '@/lib/chart';
 import { ChartDataPeriod } from 'shared';
 import { watch } from 'vue';
+import { handleError } from '@/lib/errorHandler.ts';
 
 const props = defineProps<{
   period: ChartDataPeriod
@@ -29,12 +30,17 @@ watch(() => props.period, () => {
 })
 
 async function loadChartData(){
-  chartData.value = await getChartData(props.period);
+  try {
+    chartData.value = await getChartData(props.period);
+  } catch (error) {
+    handleError(error);
+  }
 }
 
 async function loadChart(){
   if (!canvasRef.value) {
-    throw new Error('Canvas ref not set');
+    console.warn('Canvas ref not set');
+    return;
   }
 
   await loadChartData();

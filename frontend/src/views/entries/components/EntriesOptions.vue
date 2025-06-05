@@ -9,11 +9,11 @@ function handleCheckboxChange(event: Event, category: string[]){
     const target = event.target as HTMLInputElement;
     if (target.checked) {
         const index = category.indexOf(target.value);
-        if (index !== -1) throw new Error('Shouldnt happen');
+        if (index !== -1) return; // I don't know if error handling is needed
         category.push(target.value);
     } else {
         const index = category.indexOf(target.value);
-        if (index === -1) throw new Error('Shouldnt happen');
+        if (index === -1) return; // I don't know if error handling is needed
         category.splice(index, 1);
     }
 }

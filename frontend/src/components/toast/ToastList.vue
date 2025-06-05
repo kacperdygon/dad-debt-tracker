@@ -16,12 +16,6 @@ const { toastList }  = storeToRefs(toastStore);
         <ToastItem :toast="toast" />
       </li>
     </TransitionGroup>
-    <button @click="toastStore.addToast({message: 'sigma'})" style="margin-top: 1rem">
-      Add base toast
-    </button>
-    <button @click="toastStore.addToast({message: 'sigmaaew aiwhguoeshg seiuhgsurihgsr giusrhgiuhsn', duration: 15000})">
-      Add long toast
-    </button>
   </div>
 </template>
 
