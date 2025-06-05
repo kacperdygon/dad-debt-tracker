@@ -60,18 +60,16 @@ router.beforeEach(async ( to: RouteLocationNormalized, from: RouteLocationNormal
   try {
     if (await authStore.isSignedIn()) {
       next();
-    } else {
-      if (to.path == '/auth') {
-        next();
-      } else {
-        next('/auth');
-      }
+      return;
     }
   } catch (error) {
     handleError(error);
-    next();
-  }
 
+  }
+  if (to.path !== '/auth')
+    next('/auth');
+  else
+    next();
 });
 
 export default router;

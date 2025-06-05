@@ -3,7 +3,7 @@
 import { ActionType, type IActionResponse } from 'shared';
 import { constructLogMessage } from '@/views/logs/logMessageHelpers';
 import { computed, onMounted, ref } from 'vue';
-import { getEntryPosition } from '@/lib/entries';
+import { getEntryPosition } from '@/lib/entries/entries';
 import { useRouter } from 'vue-router';
 import { addErrorToast, handleError } from '@/lib/errorHandler.ts';
 

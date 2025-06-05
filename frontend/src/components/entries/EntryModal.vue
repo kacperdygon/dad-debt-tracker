@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { type FetchResponse } from '@/lib/database';
-import { addEntryDB, updateEntryDB } from '@/lib/entries';
+import { addEntryDB, updateEntryDB } from '@/lib/entries/entries';
 import type { IEntry } from 'shared';
 
 import { computed, ref, watch } from 'vue';

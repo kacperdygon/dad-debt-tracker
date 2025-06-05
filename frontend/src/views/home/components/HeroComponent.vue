@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getTotalDebtDB } from '@/lib/entries';
+import { getTotalDebtDB } from '@/lib/entries/entries';
 import { onMounted, ref } from 'vue';
 import { handleError } from '@/lib/errorHandler.ts';
 

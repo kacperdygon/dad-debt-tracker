@@ -47,7 +47,7 @@ export function parseFilters(req: Request){
     }
 
     if (signFilters.length != 0) filters.$or = signFilters;
-    else filters.$or = [{balanceChange: 0}];
+    else if (req.query.sign) filters.$or = [{balanceChange: 0}];
 
     startDate = (startDate && !isNaN(startDate.getTime())) ? startDate : undefined;
     endDate = (endDate && !isNaN(endDate.getTime())) ? endDate : undefined;
@@ -55,7 +55,7 @@ export function parseFilters(req: Request){
     if (startDate || endDate) filters.timestamp = {};
     if (startDate) (filters.timestamp as Record<string, unknown>).$gte = startDate;
     if (endDate) (filters.timestamp as Record<string, unknown>).$lte = endDate;
-    
+
     return filters;
   
 }
