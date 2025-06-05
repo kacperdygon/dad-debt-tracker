@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Navbar from './NavbarComponent.vue';
 import { useRoute } from 'vue-router';
+import ToastList from '@/components/toast/ToastList.vue';
 </script>
 
 <template>
@@ -9,6 +10,7 @@ import { useRoute } from 'vue-router';
       <h1>Dad debt tracker</h1>
       <Navbar v-if="useRoute().path !== '/auth'" />
     </header>
+    <ToastList/>
   </div>
 </template>
 

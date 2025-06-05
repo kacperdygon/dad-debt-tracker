@@ -12,7 +12,7 @@ const props = defineProps<{
   <div>
     <span v-if="!actions.length" class="entry-placeholder">Seems like nothing happened yet</span>
     <Suspense>
-      <ul>
+      <ul class="base-ul flex-ul">
         <LogItem v-for="action in props.actions" :key="action._id" :action="action" />
       </ul>
     </Suspense>
@@ -20,13 +20,6 @@ const props = defineProps<{
 </template>
 
 <style scoped>
-ul {
-  padding-left: 0;
-}
-
-ul > * {
-  margin: 0 0 1rem;
-}
 
 .entry-placeholder {
   width:100%;

@@ -32,7 +32,7 @@ defineExpose({
   <div>
     <span v-if="!entries.length" class="entry-placeholder">No entries to show here</span>
     <Suspense>
-      <ul>
+      <ul class="base-ul flex-ul">
         <li v-for="(entry, index) in props.entries" :key="entry._id" >
           <EntryItem 
           v-if="props.type == 'full'"
@@ -52,15 +52,6 @@ defineExpose({
 <style scoped>
 div{
   width:100%;
-}
-
-ul {
-  margin:0;
-  padding-left: 0;
-  display:flex;
-  flex-direction:column;
-  gap:1rem;
-  list-style: none;
 }
 
 .entry-placeholder {

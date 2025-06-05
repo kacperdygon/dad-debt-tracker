@@ -11,6 +11,7 @@
   --primary-color: #0051e7;
   --income: #006513;
   --expense: #960000;
+  --error: #Ff4336;
   --light-border: #dadce0;
   --text-font-size: 1rem;
   --warning: #BD6500;
@@ -115,10 +116,38 @@ h1 {
   padding: 0.75rem;
 }
 
+.padding-1rem{
+  padding:1rem;
+}
+
 .secondary-button{
   border: solid 1px var(--secondary-text-color);
   background-color: transparent;
   border-radius: 0.375rem;
   cursor: pointer;
   box-sizing: border-box;
+}
+
+ul.base-ul {
+  margin:0;
+  padding-left: 0;
+  list-style: none;
+}
+
+ul.flex-ul {
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
+}
+
+ul.ul-margin li {
+  margin-bottom:0.5rem;
+}
+
+ul.ul-margin li:last-child {
+  margin-bottom: 0;
+}
+
+.margin-0{
+  margin:0;
 }
