@@ -35,12 +35,16 @@ export const signIn = async (req: Request, res: Response) => {
 export const verifySession = async (req: Request, res: Response) => {
   const pin = req.cookies['pin'];
   if (!pin) {
-    return void res.status(401).json({ message: 'No pin' });
+    return void res.status(200).json({ message: 'No pin', data: {
+        role: null
+      }});
   }
   try {
     const role = await getRoleByPin(pin);
     if (!role) {
-      return void res.status(401).json({ message: 'Invalid pin' });
+      return void res.status(200).json({ message: 'Invalid pin', data: {
+          role: null
+        } });
     } else {
       return void res.status(200).json({ message: `Valid pin`,  data: {
           role: role
@@ -61,8 +65,11 @@ export const signOut = async (req: Request, res: Response) => {
   return void res.status(200).json({ message: 'Signed out' });
 };
 
+const allowedPaths = ['/auth/sign-in', '/auth/verify-session'];
+
 export const validateRequest = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  if (req.path === '/auth/sign-in') {
+
+  if (allowedPaths.includes(req.path)) {
     return next();
   }
   const pin = req.cookies['pin'];
