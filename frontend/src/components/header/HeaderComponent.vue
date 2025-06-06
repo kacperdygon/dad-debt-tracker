@@ -1,27 +1,32 @@
 <script setup lang="ts">
 import Navbar from './NavbarComponent.vue';
 import { useRoute } from 'vue-router';
-import ToastList from '@/components/toast/ToastList.vue';
 </script>
 
 <template>
-  <div class="header-border">
-    <header>
-      <h1>Dad debt tracker</h1>
-      <Navbar v-if="useRoute().path !== '/auth'" />
-    </header>
-    <ToastList/>
+  <div class="static-wraper">
+    <div class="header-border">
+      <header>
+        <h1>Dad debt tracker</h1>
+        <Navbar v-if="useRoute().path !== '/auth'" />
+      </header>
+    </div>
   </div>
 </template>
 
 <style scoped>
+.static-wraper {
+  height:4rem;
+}
+
 h1 {
   text-wrap: nowrap;
 }
 
 .header-border {
   border-bottom: solid 1px var(--light-border);
-  position: relative;
+  position: fixed;
+  width:100%;
   z-index: 10;
   background-color: var(--foreground-color);
 }
@@ -35,7 +40,7 @@ header {
   min-width: 800px;
   box-sizing: border-box;
   align-items: center;
-  height: 5rem;
+  height: 4rem;
 }
 
 a {

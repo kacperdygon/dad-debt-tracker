@@ -11,7 +11,7 @@ import AuthView from '@/views/auth/AuthView.vue';
 import SettingsView from '@/views/settings/SettingsView.vue';
 import { useAuthStore } from '@/store/auth';
 import LogsView from '@/views/logs/LogsView.vue';
-import { handleError } from '@/lib/errorHandler.ts';
+import { handleErrorWithToast } from '@/lib/toastHandlers.ts';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -63,7 +63,7 @@ router.beforeEach(async ( to: RouteLocationNormalized, from: RouteLocationNormal
       return;
     }
   } catch (error) {
-    handleError(error);
+    handleErrorWithToast(error);
 
   }
   if (to.path !== '/auth')

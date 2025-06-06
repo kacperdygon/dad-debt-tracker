@@ -2,7 +2,8 @@ import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
 export enum ToastType {
-  ERROR = 'error'
+  ERROR = 'error',
+  SUCCESS = 'success',
 }
 
 // base toast

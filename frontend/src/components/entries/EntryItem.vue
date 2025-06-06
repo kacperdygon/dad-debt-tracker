@@ -6,7 +6,7 @@ import EntryModal from '@/components/entries/EntryModal.vue';
 import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/store/auth';
 import { useRouter } from 'vue-router';
-import { addErrorToast } from '@/lib/errorHandler.ts';
+import { addErrorToast, addSuccessToast } from '@/lib/toastHandlers.ts';
 
 const entryModalRef = inject<Ref<InstanceType<typeof EntryModal>> | null>('entryModalRef');
 const dropdownListRef = ref<HTMLElement | null>(null);
@@ -33,6 +33,7 @@ async function handleDelete() {
   const response = await deleteEntryDB(props.entry._id);
   if (response.ok) {
     handleReloadEntries();
+    addSuccessToast('Entry deleted successfully');
   } else {
     addErrorToast("Failed to delete entry: " + response.message);
   }
@@ -101,6 +102,7 @@ async function changeEntryStatus(newStatus: EntryStatus) {
   const response = await changeEntryStatusDB(props.entry._id, newStatus);
   if (response.ok) {
     handleReloadEntries();
+    addSuccessToast(`Changed status to ${newStatus}`)
   } else {
     addErrorToast("Failed to edit entry: " + response.message);
   }
@@ -129,13 +131,12 @@ onUnmounted(() => document.removeEventListener('click', closeDropdown));
 <template>
   <div class="entry-item" :class="{'glow': showGlow}" ref="rootElement">
     <div class="flex">
-      <h6 class="title">
+      <h6 class="title" @click="animateGlow">
         {{ props.entry.title }}
-        <span 
-              v-if="props.entry.status && props.entry.status != 'confirmed'"
+        <span v-if="props.entry.status != 'confirmed'"
               class="font-1rem"
               :class="props.entry.status == 'pending' ? 'orange-color' : 'red-color'">
-          {{props.entry.status == 'pending' || props.entry.status ? 'Not confirmed' : 'Rejected'}}
+          {{props.entry.status == 'pending' ? 'Not confirmed' : 'Rejected'}}
         </span>
       </h6>
 

@@ -4,7 +4,7 @@ import { addEntryDB, updateEntryDB } from '@/lib/entries/entries';
 import type { IEntry } from 'shared';
 
 import { computed, ref, watch } from 'vue';
-import { addErrorToast, handleError } from '@/lib/errorHandler.ts';
+import { addErrorToast, addSuccessToast, handleErrorWithToast } from '@/lib/toastHandlers.ts';
 
 interface AddEntryFormData {
   title: string;
@@ -71,14 +71,16 @@ const onSubmit = async (event: Event) => {
       response = await updateEntryDB(targetEntryId.value, newEntry);
     } else {
       response = await addEntryDB(newEntry);
+
     }
   } catch (error) {
-    handleError(error);
+    handleErrorWithToast(error);
     return;
   }
 
   if (response.ok) {
     shouldReload.value = true;
+    addSuccessToast(targetEntryId.value ? 'Entry edited successfully' : 'Entry added successfully');
   } else {
     addErrorToast(response.message);
   }

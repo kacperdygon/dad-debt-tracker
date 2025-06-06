@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/store/auth';
-import { handleError } from '@/lib/errorHandler.ts';
+import { handleErrorWithToast } from '@/lib/toastHandlers.ts';
 
 const input = ref('');
 const showErrorMessage = ref(false);
@@ -18,7 +18,7 @@ async function handleSubmit() {
       showErrorMessage.value = true;
     }
   } catch (error) {
-    handleError(error);
+    handleErrorWithToast(error);
   }
 
 }
