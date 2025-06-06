@@ -5,7 +5,7 @@ import { constructLogMessage } from '@/views/logs/logMessageHelpers';
 import { computed, onMounted, ref } from 'vue';
 import { getEntryPosition } from '@/lib/entries/entries';
 import { useRouter } from 'vue-router';
-import { addErrorToast, handleError } from '@/lib/errorHandler.ts';
+import { addErrorToast, handleErrorWithToast } from '@/lib/toastHandlers.ts';
 
 const props = defineProps<{
   action: IActionResponse;
@@ -71,7 +71,7 @@ async function handleJumpTo(id: string | undefined){
   try {
     response = await getEntryPosition(id);
   } catch (error) {
-    handleError(error);
+    handleErrorWithToast(error);
     return;
   }
 

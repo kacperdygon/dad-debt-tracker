@@ -21,12 +21,14 @@ const { toastList }  = storeToRefs(toastStore);
 
 <style scoped>
 .toast-list {
-  margin-right: 0;
-  position:absolute;
-  top:calc(100% + 1rem);
+  position:fixed;
+  top:calc(4rem + 1rem);
   right:0;
   padding-right: 1rem;
   overflow-x:hidden;
+  width:20rem;
+  height:calc(100vh - (4rem + 1rem));
+  pointer-events: none;
 }
 
 ul{

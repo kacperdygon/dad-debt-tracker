@@ -6,7 +6,7 @@ import type { IActionResponse } from 'shared';
 import { onMounted, ref, watch } from 'vue';
 import PaginationButtonsComponent from '@/components/pagination/PaginationButtonsComponent.vue';
 import { useRoute } from 'vue-router';
-import { addErrorToast, handleError } from '@/lib/errorHandler.ts';
+import { addErrorToast, handleErrorWithToast } from '@/lib/toastHandlers.ts';
 
 const actions = ref<IActionResponse[]>([]);
 const pageCount = ref(1);
@@ -39,7 +39,7 @@ async function loadActions(){
       addErrorToast('Error while loading actions: ' + response.message);
     }
   } catch (error) {
-    handleError(error);
+    handleErrorWithToast(error);
   }
 
 }

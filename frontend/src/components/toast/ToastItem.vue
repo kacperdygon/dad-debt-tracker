@@ -10,6 +10,8 @@ const backgroundColor = computed(() => {
   switch(props.toast.type){
     case ToastType.ERROR:
       return 'var(--error)';
+    case ToastType.SUCCESS:
+      return 'var(--success)';
     default:
       return 'transparent'
   }
@@ -44,6 +46,7 @@ function removeThisToast() {
   border-radius: 0.5rem;
   position:relative;
   overflow: hidden;
+  pointer-events: auto;
 }
 
 .top-section {

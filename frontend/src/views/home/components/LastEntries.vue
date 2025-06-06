@@ -4,7 +4,7 @@ import { inject, onMounted, type Ref, ref } from 'vue';
 import { getEntriesDB, getUnconfirmedEntryCountDB } from '@/lib/entries/entries';
 import { type IEntry } from 'shared';
 import EntryModal from '@/components/entries/EntryModal.vue';
-import { handleError } from '@/lib/errorHandler.ts';
+import { handleErrorWithToast } from '@/lib/toastHandlers.ts';
 
 const lastEntries = ref<IEntry[]>([]);
 const unconfirmedEntryCount = ref<number>(0);
@@ -33,7 +33,7 @@ async function loadEntries() {
       lastEntries.value.push(...response.data.entries.slice(0, 3));
     }
   } catch (error) {
-    handleError(error);
+    handleErrorWithToast(error);
   }
 }
 
@@ -44,7 +44,7 @@ async function loadUnconfirmedEntryCount() {
       unconfirmedEntryCount.value = response.data.unconfirmedEntryCount;
     }
   } catch (error) {
-    handleError(error);
+    handleErrorWithToast(error);
   }
 }
 </script>

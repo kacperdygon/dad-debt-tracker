@@ -2,7 +2,8 @@ import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
 export enum ToastType {
-  ERROR = 'error'
+  ERROR = 'error',
+  SUCCESS = 'success',
 }
 
 // base toast
@@ -37,7 +38,7 @@ export const useToastStore = defineStore('toast', () => {
       ...newToast,
     };
 
-    _toastList.value.push({...toast, id: nextId});
+    _toastList.value.unshift({...toast, id: nextId});
 
     setTimeout(() => {
       removeToast(nextId);

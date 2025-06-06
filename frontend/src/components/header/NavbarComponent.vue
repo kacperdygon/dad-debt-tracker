@@ -5,7 +5,7 @@ import { useRoute } from 'vue-router';
 const displayUl = ref(false);
 
 const ulTop = computed(() => {
-  return displayUl.value ? '5rem' : '-15rem';
+  return displayUl.value ? '4rem' : '-15rem';
 });
 
 function toggleNavbar() {
@@ -117,7 +117,7 @@ button {
     top: -15rem;
   }
   100% {
-    top: 5rem;
+    top: 4rem;
   }
 }
 .slide-down {
@@ -126,7 +126,7 @@ button {
 
 @keyframes slide-up {
   0% {
-    top: 5rem;
+    top: 4rem;
   }
   100% {
     top: -15rem;

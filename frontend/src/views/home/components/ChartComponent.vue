@@ -5,7 +5,7 @@ import { onMounted, ref } from 'vue';
 import { getChartData } from '@/lib/chart';
 import { ChartDataPeriod } from 'shared';
 import { watch } from 'vue';
-import { handleError } from '@/lib/errorHandler.ts';
+import { handleErrorWithToast } from '@/lib/toastHandlers.ts';
 
 const props = defineProps<{
   period: ChartDataPeriod
@@ -33,7 +33,7 @@ async function loadChartData(){
   try {
     chartData.value = await getChartData(props.period);
   } catch (error) {
-    handleError(error);
+    handleErrorWithToast(error);
   }
 }
 

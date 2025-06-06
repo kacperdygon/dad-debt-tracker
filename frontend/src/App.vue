@@ -4,6 +4,7 @@ import HeaderComponent from './components/header/HeaderComponent.vue';
 import { ref, provide, onMounted } from 'vue';
 import { RouterView } from 'vue-router';
 import FooterComponent from './components/footer/FooterComponent.vue';
+import ToastList from '@/components/toast/ToastList.vue';
 
 const entryModalRef = ref<typeof EntryModal | null>(null);
 
@@ -25,6 +26,7 @@ onMounted( () => {
   <FooterComponent />
 
   <EntryModal ref="entryModalRef" />
+  <ToastList/>
 </template>
 
 <style scoped>
