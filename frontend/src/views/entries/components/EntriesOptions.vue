@@ -97,30 +97,7 @@ onMounted(() => {
         </section>
 
         <section>
-    <h3>Filter</h3>
-
-    <div class="option-group">
-      <h4>Author</h4>
-      <label>
-        <input 
-          type="checkbox" 
-          @change="handleCheckboxChange($event, formData.filter.author)" 
-          value="dad"
-          checked
-        >
-        Dad
-      </label>
-      <label>
-        <input 
-          type="checkbox" 
-          @change="handleCheckboxChange($event, formData.filter.author)" 
-          value="son"
-          checked
-        >
-        Son
-      </label>
-    </div>
-
+    <h3>Filters</h3>
     <div class="option-group" v-if="!formData.filter.status.includes('rejected')">
       <h4>Status</h4>
       <label>

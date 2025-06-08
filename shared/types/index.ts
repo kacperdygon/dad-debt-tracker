@@ -72,7 +72,6 @@ export enum ActionType {
 }
 
 export interface EntryFilters{
-  author: string[];
   status: string[];
   time: {
     startDate?: Date,

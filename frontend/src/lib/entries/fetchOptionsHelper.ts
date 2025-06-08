@@ -4,7 +4,6 @@ export function getDefaultFetchOptions(){
   const options: EntryFetchOptions = {
     sortBy: SortBy.DATE_DESC,
     filter: {
-      author: ['dad', 'son'],
       status: ['confirmed', 'pending'],
       time: {},
       balanceChange: {}
@@ -28,9 +27,6 @@ export function constructParams(page: number, options: EntryFetchOptions): URLSe
 
   const defaultOptions = getDefaultFetchOptions();
 
-  if (!arraysEqual(options.filter.author, defaultOptions.filter.author)){
-    params.append('author', options.filter.author.join(','));
-  }
   if (!arraysEqual(options.filter.status, defaultOptions.filter.status)){
     params.append('status', options.filter.status.join(','));
   }
