@@ -1,24 +1,15 @@
-import { type EntryFetchOptions, type EntryStatus, type IEntry, SortBy } from 'shared';
+import { type EntryFetchOptions, type EntryStatus, type IEntry } from 'shared';
 import { fetchData, type FetchResponse } from '@/lib/database';
-import { constructParams } from '@/lib/entries/fetchOptionsHelper';
+import { constructParams, getDefaultFetchOptions } from '@/lib/entries/fetchOptionsHelper';
 
 
-const DEFAULT_OPTIONS = {
-  sortBy: SortBy.DATE_DESC,
-  filter: {
-    author: ['dad', 'son'],
-    status: ['confirmed', 'pending'],
-    sign: ['positive', 'negative']
-  },
-  time: {}
-}
-
-export async function getEntriesDB(page: number = 1, options: EntryFetchOptions = DEFAULT_OPTIONS): Promise<FetchResponse<{
+export async function getEntriesDB(page: number = 1, options?: EntryFetchOptions): Promise<FetchResponse<{
   entries: IEntry[],
   pageCount: number
 }>> {
 
-  const params = constructParams(page, options);
+  const fetchOptions = options || getDefaultFetchOptions();
+  const params = constructParams(page, fetchOptions);
 
 
   return await fetchData<{ message: string, entries: IEntry[], pageCount: number }>(`api/entries?${params}`, {

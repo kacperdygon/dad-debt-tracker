@@ -4,7 +4,7 @@ import { Types } from 'mongoose';
 import { ActionType, EntryStatus, IAction } from 'shared';
 import { addAction } from '@/api/lib/actions';
 import { IAuthDocument } from '@/api/models/authModel';
-import { getDifferences } from '@/api/lib/entries/helpers';
+import { getDifferences } from '@/api/lib/actions';
 
 export const patchHandlers: Record<string, (req: Request, res: Response) => Promise<void>>  = {
 

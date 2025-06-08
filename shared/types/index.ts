@@ -74,14 +74,17 @@ export enum ActionType {
 export interface EntryFilters{
   author: string[];
   status: string[];
-  sign: string[];
+  time: {
+    startDate?: Date,
+    endDate?: Date
+  };
+  balanceChange: {
+    min?: number,
+    max?: number
+  }
 }
 
 export interface EntryFetchOptions {
   sortBy: SortBy,
   filter: EntryFilters,
-  time: {
-    startDate?: Date,
-    endDate?: Date
-  }
 }

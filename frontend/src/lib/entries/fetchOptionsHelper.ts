@@ -1,14 +1,14 @@
 import { SortBy, type EntryFetchOptions } from "shared";
 
 export function getDefaultFetchOptions(){
-  const options = {
+  const options: EntryFetchOptions = {
     sortBy: SortBy.DATE_DESC,
     filter: {
       author: ['dad', 'son'],
       status: ['confirmed', 'pending'],
-      sign: ['positive', 'negative']
+      time: {},
+      balanceChange: {}
     },
-    time: {}
   }
   return options;
 }
@@ -31,19 +31,24 @@ export function constructParams(page: number, options: EntryFetchOptions): URLSe
   if (!arraysEqual(options.filter.author, defaultOptions.filter.author)){
     params.append('author', options.filter.author.join(','));
   }
-  if (!arraysEqual(options.filter.sign, defaultOptions.filter.sign)){
-    params.append('sign', options.filter.sign.join(','));
-  }
   if (!arraysEqual(options.filter.status, defaultOptions.filter.status)){
     params.append('status', options.filter.status.join(','));
   }
-  if (options.time?.startDate) {
-    const parsedDate = options.time.startDate.toISOString().split('T')[0];
+  if (options.filter.time?.startDate) {
+    const parsedDate = options.filter.time.startDate.toISOString().split('T')[0];
     params.append('startDate', parsedDate);
   }
-  if (options.time?.endDate) {
-    const parsedDate = options.time.endDate.toISOString().split('T')[0];
+  if (options.filter.time?.endDate) {
+    const parsedDate = options.filter.time.endDate.toISOString().split('T')[0];
     params.append('endDate', parsedDate);
+  }
+  if (options.filter.balanceChange?.min !== undefined) {
+    const minBalanceChange = String(options.filter.balanceChange.min);
+    params.append('minChange', minBalanceChange);
+  }
+  if (options.filter.balanceChange?.max !== undefined) {
+    const maxBalanceChange = String(options.filter.balanceChange.max);
+    params.append('maxChange', maxBalanceChange);
   }
 
   return params

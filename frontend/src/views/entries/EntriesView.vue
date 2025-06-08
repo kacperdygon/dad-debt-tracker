@@ -4,10 +4,11 @@ import EntryList from '@/components/entries/EntryList.vue';
 import PaginationButtonsComponent from '@/components/pagination/PaginationButtonsComponent.vue';
 import { useRoute } from 'vue-router';
 import EntriesOptions from './components/EntriesOptions.vue';
-import { type EntryFetchOptions, type IEntry, SortBy } from 'shared';
+import { type EntryFetchOptions, type IEntry } from 'shared';
 import { getEntriesDB } from '@/lib/entries/entries';
 import EntryModal from '@/components/entries/EntryModal.vue';
 import { addErrorToast, handleErrorWithToast } from '@/lib/toastHandlers.ts';
+import { getDefaultFetchOptions } from '@/lib/entries/fetchOptionsHelper.ts';
 
 
 const entryModalRef = inject<Ref<InstanceType<typeof EntryModal>> | null>('entryModalRef');
@@ -73,15 +74,7 @@ async function loadEntries(){
 
 provide('reloadEntries', loadEntries);
 
-const formData = reactive<EntryFetchOptions>({
-  sortBy: SortBy.DATE_DESC,
-  filter: {
-    author: ['dad', 'son'],
-    status: ['confirmed', 'pending'],
-    sign: ['positive', 'negative']
-  },
-  time: {}
-});
+const formData = reactive<EntryFetchOptions>(getDefaultFetchOptions());
 
 watch(selectedPage, () => {
   loadEntries();

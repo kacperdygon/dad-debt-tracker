@@ -6,7 +6,7 @@ import { ActionType, EntryStatus, IAction, SortBy } from 'shared';
 import { addAction } from '@/api/lib/actions';
 import { IAuthDocument } from '@/api/models/authModel';
 import config from '@/api/lib/config';
-import { parseFilters } from '@/api/lib/entries/helpers';
+import { parseFilters } from '@/api/lib/entries/filterHelpers';
 
 export const getEntries = async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string, 10);

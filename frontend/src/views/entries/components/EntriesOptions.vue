@@ -34,9 +34,14 @@ function handleRejectedChange(){
   }
 }
 
-function handleDateChange(event: Event, editedField: keyof EntryFetchOptions['time']){
+function handleDateChange(event: Event, editedField: keyof EntryFetchOptions['filter']['time']){
   const target = event.target as HTMLInputElement;
-  formData.value.time[editedField] = new Date(target.value);
+  formData.value.filter.time[editedField] = target.value ? new Date(target.value) : undefined;
+}
+
+function handleMinMaxBalanceChange(event: Event, editedField: keyof EntryFetchOptions['filter']['balanceChange']){
+  const target = event.target as HTMLInputElement;
+  formData.value.filter.balanceChange[editedField] = parseFloat(target.value);
 }
 
 onMounted(() => {
@@ -137,31 +142,9 @@ onMounted(() => {
         Confirmed
       </label>
     </div>
-
-    <div class="option-group">
-      <h4>Sign</h4>
-      <label>
-        <input 
-          type="checkbox" 
-          @change="handleCheckboxChange($event, formData.filter.sign)" 
-          value="positive"
-          checked
-        >
-        Positive
-      </label>
-      <label>
-        <input 
-          type="checkbox" 
-          @change="handleCheckboxChange($event, formData.filter.sign)" 
-          value="negative"
-          checked
-        >
-        Negative
-      </label>
-    </div>
   </section>
   <section>
-    <h3>Time</h3>
+    <h4>Time</h4>
     <div class="option-group">
       <label>
         Start date
@@ -177,6 +160,22 @@ onMounted(() => {
       </label>
     </div>
   </section>
+        <section>
+          <h4>Balance</h4>
+          <div class="option-group">
+            <label>
+              Min
+              <input type="number" @change="handleMinMaxBalanceChange($event, 'min')">
+
+            </label>
+          </div>
+          <div class="option-group">
+            <label>
+              Max
+              <input type="number" @change="handleMinMaxBalanceChange($event, 'max')">
+            </label>
+          </div>
+        </section>
       </section>
         
         
